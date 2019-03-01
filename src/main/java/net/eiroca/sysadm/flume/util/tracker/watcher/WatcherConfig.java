@@ -61,7 +61,7 @@ public class WatcherConfig {
    * Whether to cache the list of files matching the specified file patterns till parent directory
    * is modified.
    */
-  final transient private BooleanParameter pCchePatternMatching = new BooleanParameter(params, "cache-pattern-matching", true);
+  final transient private BooleanParameter pCachePatternMatching = new BooleanParameter(params, "cache-pattern-matching", true);
   /** Max Age (in seconds) of matched file (now- last_modified) < maxAge. MaxAge = -1 -> no check */
   final transient private IntegerParameter pLocalMaxAge = new IntegerParameter(params, "max-age", -2);
   final transient private IntegerParameter pMaxCacheTime = new IntegerParameter(params, "max-cache-time", 60 * 1000);
@@ -124,7 +124,7 @@ public class WatcherConfig {
     WatcherConfig.logger.trace("TrackedFileConfig prefix: {} config: {}", prefix, config);
     params.laodConfig(config, prefix);
     //
-    cachePatternMatching = pCchePatternMatching.get();
+    cachePatternMatching = pCachePatternMatching.get();
     int localMaxAge = pLocalMaxAge.get();
     if (localMaxAge == -2) {
       localMaxAge = parent.maxAge;

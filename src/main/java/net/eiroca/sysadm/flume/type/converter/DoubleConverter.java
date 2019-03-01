@@ -1,0 +1,48 @@
+/**
+ *
+ * Copyright (C) 2001-2019 eIrOcA (eNrIcO Croce & sImOnA Burzio) - AGPL >= 3.0
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU Affero General Public License as published by the Free Software Foundation, either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <http://www.gnu.org/licenses/>.
+ *
+ **/
+package net.eiroca.sysadm.flume.type.converter;
+
+import com.google.common.collect.ImmutableMap;
+import net.eiroca.library.core.Helper;
+import net.eiroca.library.parameter.DoubleParameter;
+import net.eiroca.sysadm.flume.core.util.Converter;
+
+/**
+ * Converter that converts the passed in value into milliseconds using the specified formatting
+ * pattern
+ */
+public class DoubleConverter extends Converter<Double> {
+
+  final private transient DoubleParameter pDefault = new DoubleParameter(params, "default", 0);
+  final private transient DoubleParameter pScale = new DoubleParameter(params, "scale", 1);
+
+  protected double scale;
+  protected double defVal;
+
+  @Override
+  public void configure(final ImmutableMap<String, String> config, final String prefix) {
+    super.configure(config, prefix);
+    scale = pScale.get();
+    defVal = pDefault.get();
+  }
+
+  @Override
+  public Double doConvert(final String value) {
+    return Helper.getDouble(value, defVal) * scale;
+  }
+
+}

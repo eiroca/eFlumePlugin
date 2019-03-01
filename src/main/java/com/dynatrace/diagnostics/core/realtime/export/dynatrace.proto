@@ -1,0 +1,80 @@
+//After changing something in this class, the corresponding java class has to be re-generated using protoc. see generateBtExportClass.bat in the projects root directory.
+//The required binaries can be downloaded from: http://code.google.com/p/protobuf/downloads/list
+syntax = "proto2";
+
+option java_package = "com.dynatrace.diagnostics.core.realtime.export";
+
+option optimize_for = SPEED;
+
+package export.bt;
+
+message BusinessTransactions {
+	repeated BusinessTransaction businessTransactions = 1;
+	optional int32 lostTransactions = 2;
+	optional string serverName = 3;
+}
+
+message BusinessTransaction {
+	required string name = 1;
+	enum Type {
+		PUREPATH = 0;
+		USER_ACTION = 1;
+		VISIT = 2;
+	}
+	optional Type type = 2;
+	optional string application = 3;
+	repeated string measureNames = 4;
+	repeated string dimensionNames = 5;
+	repeated BtOccurrence occurrences = 6;
+	optional string systemProfile = 7;
+}
+
+message BtOccurrence {
+	required int64 startTime = 1;				//java time stamp
+	optional int64 endTime = 2;					//java time stamp
+	optional string purePathId = 5; 
+	repeated double values = 6;
+	repeated string dimensions = 7;
+	optional string actionName = 8;
+	optional string url = 9;
+	optional string query = 10; 				//not set currently
+	optional int64 visitId = 11;
+	optional string user = 12;
+	optional double apdex = 13;
+	optional bool converted = 14;
+	optional double responseTime = 15;			//ms
+	optional double cpuTime = 16;				//ms
+	optional double syncTime = 17;				//ms
+	optional double waitTime = 18;				//ms
+	optional double suspensionTime = 19;		//ms
+	optional double execTime = 20;				//ms
+	optional double duration = 21;				//ms
+	optional bool failed = 22;
+	
+	optional int32 nrOfActions = 23;
+	optional string clientFamily = 24;
+	optional string clientIP = 25;
+	optional string continent = 26;
+	optional string country = 27;
+	optional string city = 28;
+	optional int32 failedActions = 29;
+	optional int32 clientErrors = 30;
+	optional bool exitActionFailed = 31;
+	optional bool bounce = 32;
+	optional string osFamily = 33;
+	optional string osName = 34;
+	optional string connectionType = 35;
+	repeated string convertedBy = 36;
+	
+	optional double clientTime = 37;			//ms
+	optional double networkTime = 38;			//ms
+	optional double serverTime = 39;			//ms
+	optional int32 urlRedirectionTime = 40;		//ms
+	optional int32 dnsTime = 41;				//ms
+	optional int32 connectTime = 42;			//ms
+	optional int32 sslTime = 43;				//ms
+	optional int32 documentRequestTime = 44;	//ms
+	optional int32 documentResponseTime = 45;	//ms
+	optional int32 processingTime = 46;			//ms
+	
+}

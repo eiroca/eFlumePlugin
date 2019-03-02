@@ -96,10 +96,10 @@ public class DirectoryWatcher extends Watcher implements DirectoryStream.Filter<
    *
    * @param sourceGroup arbitrary name of the group given by the config
    * @param sourcePattern parent directory plus regex pattern. No wildcards are allowed in directory
-   *          name
+   *        name
    * @param cachePatternMatching default true, recommended in every setup especially with huge
-   *          parent directories. Don't set when local system clock is not used for stamping mtime
-   *          (eg: remote filesystems)
+   *        parent directories. Don't set when local system clock is not used for stamping mtime
+   *        (eg: remote filesystems)
    */
   public DirectoryWatcher(final WatcherConfig config) {
     super(config);

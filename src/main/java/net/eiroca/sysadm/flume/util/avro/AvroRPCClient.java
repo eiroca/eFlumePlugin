@@ -609,7 +609,7 @@ public class AvroRPCClient extends AbstractRpcClient implements RpcClient {
     /**
      * Creates a TransceiverThreadFactory that creates threads with the specified name.
      * @param prefix the name prefix to use for all threads created by this ThreadFactory. A unique
-     *          ID will be appended to this prefix to form the final thread name.
+     *        ID will be appended to this prefix to form the final thread name.
      */
     public TransceiverThreadFactory(final String prefix) {
       this.prefix = prefix;

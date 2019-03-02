@@ -251,12 +251,12 @@ public class MacroExpander {
    *
    * @param needRounding - Should the timestamp be rounded down?
    * @param unit - if needRounding is true, what unit to round down to. This must be one of the
-   *          units specified by {@link java.util.Calendar} - HOUR, MINUTE or SECOND. Defaults to
-   *          second, if none of these are present. Ignored if needRounding is false.
+   *        units specified by {@link java.util.Calendar} - HOUR, MINUTE or SECOND. Defaults to
+   *        second, if none of these are present. Ignored if needRounding is false.
    * @param roundDown - if needRounding is true, The time should be rounded to the largest multiple
-   *          of this value, smaller than the time supplied, defaults to 1, if <= 0(rounds off to
-   *          the second/minute/hour immediately lower than the timestamp supplied. Ignored if
-   *          needRounding is false.
+   *        of this value, smaller than the time supplied, defaults to 1, if <= 0(rounds off to the
+   *        second/minute/hour immediately lower than the timestamp supplied. Ignored if
+   *        needRounding is false.
    * @return Escaped string.
    */
   public static String expand(final String macro, final Map<String, String> headers, final String body, final Map<String, String> fields, final TimeZone timeZone, final boolean needRounding, final int unit, final int roundDown, final boolean useLocalTimeStamp) {

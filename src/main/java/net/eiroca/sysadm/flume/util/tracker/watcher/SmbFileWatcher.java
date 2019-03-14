@@ -38,7 +38,7 @@ public class SmbFileWatcher extends Watcher {
     final List<IWatcherResult> result = Lists.newArrayList();
     SmbFile f;
     try {
-      f = LibSmb.build(config.path, config.principal, config.shareMode);
+      f = LibSmb.build(config.path, config.principal);
       if (f != null) {
         SmbFileWatcher.logger.debug("Checking " + f.getPath() + " exists:" + f.exists() + " isFile:" + f.isFile());
         if (f.exists() && f.isFile()) {

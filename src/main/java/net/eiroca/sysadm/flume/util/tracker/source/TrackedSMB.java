@@ -17,6 +17,7 @@
 package net.eiroca.sysadm.flume.util.tracker.source;
 
 import java.io.IOException;
+import jcifs.CIFSContext;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbRandomAccessFile;
@@ -25,14 +26,15 @@ import net.eiroca.sysadm.flume.util.tracker.watcher.WatcherConfig;
 
 public class TrackedSMB extends TrackedStream {
 
-  private transient SmbFile file;
   private transient SmbRandomAccessFile channel;
+  CIFSContext context;
+  private SmbFile file;
 
-  public TrackedSMB(final SmbFile file, final long commitPos, final WatcherConfig config) {
+  public TrackedSMB(SmbFile file, final long commitPos, final WatcherConfig config) {
     this.commitPos = commitPos;
     this.config = config;
     this.file = file;
-    id = null;
+    this.context = file.getContext();
     source = file.getURL().toString();
   }
 
@@ -75,7 +77,7 @@ public class TrackedSMB extends TrackedStream {
   public void open(final long pos) throws IOException {
     id = LibSmb.getID(file);
     TrackedSource.logger.info(String.format("Opening file: %s ID: %s pos: %d", file, getID(), pos));
-    channel = new SmbRandomAccessFile(file, "r");
+    channel = new SmbRandomAccessFile(source, "r", config.shareMode, context);
     openDate = System.currentTimeMillis();
     commit(pos);
     seek(pos);

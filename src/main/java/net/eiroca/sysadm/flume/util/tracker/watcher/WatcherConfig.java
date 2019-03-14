@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.smb.NtlmPasswordAuthenticator;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.parameter.BooleanParameter;
 import net.eiroca.library.parameter.ByteParameter;
@@ -86,7 +86,7 @@ public class WatcherConfig {
   public GroupType type = GroupType.UNKNOWN;
   public String path;
   public String filter;
-  public transient NtlmPasswordAuthentication principal;
+  public transient NtlmPasswordAuthenticator principal;
 
   public boolean cachePatternMatching;
   public int maxCacheTime;

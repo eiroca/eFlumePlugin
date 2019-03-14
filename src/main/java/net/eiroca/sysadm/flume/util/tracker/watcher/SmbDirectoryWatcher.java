@@ -56,7 +56,7 @@ public class SmbDirectoryWatcher extends Watcher implements Comparator<IWatcherR
   public SmbDirectoryWatcher(final WatcherConfig config) throws MalformedURLException {
     super(config);
     if (LibStr.isNotEmptyOrNull(config.filter) && LibStr.isNotEmptyOrNull(config.path)) {
-      basePath = LibSmb.build(config.path, config.principal, config.shareMode);
+      basePath = LibSmb.build(config.path, config.principal);
       regex = Pattern.compile(config.filter);
     }
     else {

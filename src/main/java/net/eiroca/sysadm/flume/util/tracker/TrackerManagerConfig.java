@@ -21,7 +21,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.smb.NtlmPasswordAuthenticator;
 import net.eiroca.ext.library.gson.JSonUtil;
 import net.eiroca.ext.library.smb.LibSmb;
 import net.eiroca.library.core.LibStr;
@@ -98,7 +98,7 @@ public class TrackerManagerConfig {
   public boolean canBakeOff;
 
   public Map<String, WatcherConfig> watcherConfigs = new HashMap<>();
-  public transient Map<String, NtlmPasswordAuthentication> principalConfigs = new HashMap<>();
+  public transient Map<String, NtlmPasswordAuthenticator> principalConfigs = new HashMap<>();
 
   public TrackerManagerConfig(final ImmutableMap<String, String> config, final String prefix) {
     params.laodConfig(config, prefix);
@@ -127,7 +127,7 @@ public class TrackerManagerConfig {
     for (final String principalName : principals) {
       final String basePrefix = LibStr.concatenate(prefix, TrackerManagerConfig.PRINCIPAL_PREFIX, ".", principalName);
       final PrincipalConfig conf = new PrincipalConfig(context, basePrefix);
-      final NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(conf.domain, conf.username, conf.password);
+      final NtlmPasswordAuthenticator auth = new NtlmPasswordAuthenticator(conf.domain, conf.username, conf.password);
       principalConfigs.put(principalName, auth);
       TrackerManagerConfig.logger.debug(" {} Auth: {}", principalName, auth);
     }

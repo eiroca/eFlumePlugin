@@ -16,10 +16,10 @@
  **/
 package net.eiroca.sysadm.flume.util.tracker;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import jcifs.util.Base64;
 import net.eiroca.library.parameter.Parameters;
 import net.eiroca.library.parameter.StringParameter;
 import net.eiroca.library.system.Logs;
@@ -49,7 +49,7 @@ public class PrincipalConfig {
     username = pUsername.get();
     password = pPassword.get();
     if (password != null) {
-      password = new String(Base64.decode(password));
+      password = new String(Base64.decodeBase64(password));
     }
   }
 

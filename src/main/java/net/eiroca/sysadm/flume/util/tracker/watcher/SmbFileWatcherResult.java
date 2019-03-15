@@ -24,7 +24,7 @@ import net.eiroca.sysadm.flume.util.tracker.source.TrackedSMB;
 
 public class SmbFileWatcherResult extends WatcherResult {
 
-  private SmbFile file;
+  private transient SmbFile file;
 
   public SmbFileWatcherResult(final SmbFile file) throws SmbException {
     this.file = file;

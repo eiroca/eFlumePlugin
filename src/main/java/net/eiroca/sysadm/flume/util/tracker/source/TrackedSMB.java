@@ -27,8 +27,8 @@ import net.eiroca.sysadm.flume.util.tracker.watcher.WatcherConfig;
 public class TrackedSMB extends TrackedStream {
 
   private transient SmbRandomAccessFile channel;
-  CIFSContext context;
-  private SmbFile file;
+  private transient CIFSContext context;
+  private transient SmbFile file;
 
   public TrackedSMB(SmbFile file, final long commitPos, final WatcherConfig config) {
     this.commitPos = commitPos;

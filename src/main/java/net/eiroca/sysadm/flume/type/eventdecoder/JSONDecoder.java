@@ -19,7 +19,7 @@ package net.eiroca.sysadm.flume.type.eventdecoder;
 import org.apache.flume.Event;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import net.eiroca.library.parameter.StringParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.sysadm.flume.core.util.EventDecoder;
 
 public class JSONDecoder extends EventDecoder<String> {

@@ -30,10 +30,10 @@ import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
-import net.eiroca.library.parameter.IntegerParameter;
-import net.eiroca.library.parameter.ListParameter;
-import net.eiroca.library.parameter.Parameters;
-import net.eiroca.library.parameter.StringParameter;
+import net.eiroca.library.config.Parameters;
+import net.eiroca.library.config.parameter.IntegerParameter;
+import net.eiroca.library.config.parameter.ListParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.sysadm.flume.core.util.Flume;
 import net.eiroca.sysadm.flume.util.tcp.MultiportAcceptor;
 

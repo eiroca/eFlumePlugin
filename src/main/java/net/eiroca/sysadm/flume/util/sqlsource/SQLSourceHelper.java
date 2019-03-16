@@ -18,11 +18,11 @@ import org.hibernate.service.ServiceRegistry;
 import org.hibernate.transform.Transformers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.eiroca.library.parameter.BooleanParameter;
-import net.eiroca.library.parameter.IntegerParameter;
-import net.eiroca.library.parameter.Parameters;
-import net.eiroca.library.parameter.PathParameter;
-import net.eiroca.library.parameter.StringParameter;
+import net.eiroca.library.config.Parameters;
+import net.eiroca.library.config.parameter.BooleanParameter;
+import net.eiroca.library.config.parameter.IntegerParameter;
+import net.eiroca.library.config.parameter.PathParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.system.LibFile;
 import net.eiroca.sysadm.flume.core.util.Flume;
 

@@ -21,8 +21,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import com.google.common.collect.ImmutableMap;
-import net.eiroca.library.parameter.ListParameter;
-import net.eiroca.library.parameter.StringParameter;
+import net.eiroca.library.config.parameter.ListParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.system.LibFile;
 import net.eiroca.sysadm.flume.core.util.FilterBlackOrWhite;
 

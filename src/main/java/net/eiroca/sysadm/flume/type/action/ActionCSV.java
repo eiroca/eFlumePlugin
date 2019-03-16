@@ -19,7 +19,7 @@ package net.eiroca.sysadm.flume.type.action;
 import java.util.Map;
 import org.slf4j.Logger;
 import com.google.common.collect.ImmutableMap;
-import net.eiroca.library.parameter.StringParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.core.util.Action;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;

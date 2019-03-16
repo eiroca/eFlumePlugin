@@ -21,9 +21,9 @@ import java.io.OutputStream;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.serialization.EventSerializer;
-import net.eiroca.library.parameter.BooleanParameter;
-import net.eiroca.library.parameter.Parameters;
-import net.eiroca.library.parameter.StringParameter;
+import net.eiroca.library.config.Parameters;
+import net.eiroca.library.config.parameter.BooleanParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.sysadm.flume.core.util.Flume;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;
 

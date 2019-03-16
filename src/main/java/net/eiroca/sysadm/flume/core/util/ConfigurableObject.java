@@ -18,7 +18,7 @@ package net.eiroca.sysadm.flume.core.util;
 
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.ext.library.gson.GsonUtil;
-import net.eiroca.library.parameter.Parameters;
+import net.eiroca.library.config.Parameters;
 import net.eiroca.sysadm.flume.api.IConfigurable;
 import net.eiroca.sysadm.flume.api.INamedObject;
 

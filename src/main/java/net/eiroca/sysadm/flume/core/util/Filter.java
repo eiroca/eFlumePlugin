@@ -18,8 +18,8 @@ package net.eiroca.sysadm.flume.core.util;
 
 import java.util.Map;
 import com.google.common.collect.ImmutableMap;
+import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.library.core.LibStr;
-import net.eiroca.library.parameter.BooleanParameter;
 import net.eiroca.sysadm.flume.api.IEventFilter;
 
 abstract public class Filter extends ConfigurableObject implements IEventFilter {

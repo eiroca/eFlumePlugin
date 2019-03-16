@@ -19,8 +19,8 @@ package net.eiroca.sysadm.flume.type.eventencoder;
 import java.util.List;
 import org.apache.flume.Event;
 import com.google.common.collect.ImmutableMap;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.LibStr;
-import net.eiroca.library.parameter.StringParameter;
 import net.eiroca.sysadm.flume.api.ext.IEventListEncoder;
 import net.eiroca.sysadm.flume.core.util.EventEncoder;
 

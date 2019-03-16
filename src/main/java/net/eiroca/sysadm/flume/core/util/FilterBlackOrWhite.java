@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import com.google.common.collect.ImmutableMap;
+import net.eiroca.library.config.parameter.BooleanParameter;
+import net.eiroca.library.config.parameter.IntegerParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.LibStr;
-import net.eiroca.library.parameter.BooleanParameter;
-import net.eiroca.library.parameter.IntegerParameter;
-import net.eiroca.library.parameter.StringParameter;
 import net.eiroca.library.system.Logs;
 
 abstract public class FilterBlackOrWhite extends Filter {

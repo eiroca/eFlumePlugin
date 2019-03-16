@@ -17,8 +17,8 @@
 package net.eiroca.sysadm.flume.type.converter;
 
 import com.google.common.collect.ImmutableMap;
+import net.eiroca.library.config.parameter.DoubleParameter;
 import net.eiroca.library.core.Helper;
-import net.eiroca.library.parameter.DoubleParameter;
 import net.eiroca.sysadm.flume.core.util.Converter;
 
 /**

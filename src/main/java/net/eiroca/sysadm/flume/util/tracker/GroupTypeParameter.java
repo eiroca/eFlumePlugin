@@ -16,9 +16,9 @@
  **/
 package net.eiroca.sysadm.flume.util.tracker;
 
+import net.eiroca.library.config.Parameter;
+import net.eiroca.library.config.Parameters;
 import net.eiroca.library.core.LibStr;
-import net.eiroca.library.parameter.Parameter;
-import net.eiroca.library.parameter.Parameters;
 
 public class GroupTypeParameter extends Parameter<GroupType> {
 
@@ -31,18 +31,25 @@ public class GroupTypeParameter extends Parameter<GroupType> {
   }
 
   @Override
-  public void formString(final String value) {
-    if (LibStr.isEmptyOrNull(value)) {
-      this.value = defValue;
+  public GroupType convertString(final String strValue) {
+    GroupType value;
+    if (LibStr.isEmptyOrNull(strValue)) {
+      value = defValue;
     }
     else {
       try {
-        this.value = GroupType.valueOf(value.toUpperCase());
+        value = GroupType.valueOf(strValue.toUpperCase());
       }
       catch (final IllegalArgumentException e) {
-        this.value = defValue;
+        value = defValue;
       }
     }
+    return value;
+  }
+
+  @Override
+  public boolean isValid(final Object value) {
+    return value instanceof GroupType;
   }
 
 }

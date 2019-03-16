@@ -19,7 +19,7 @@ package net.eiroca.sysadm.flume.type.action;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import com.google.common.collect.ImmutableMap;
-import net.eiroca.library.parameter.LongParameter;
+import net.eiroca.library.config.parameter.LongParameter;
 import net.eiroca.sysadm.flume.core.util.HeaderAction;
 
 public class HeaderSequence extends HeaderAction {

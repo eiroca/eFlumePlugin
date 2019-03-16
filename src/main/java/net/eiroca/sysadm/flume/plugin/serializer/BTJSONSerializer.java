@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import net.eiroca.library.parameter.CharParameter;
-import net.eiroca.library.parameter.Parameters;
-import net.eiroca.library.parameter.StringParameter;
+import net.eiroca.library.config.Parameters;
+import net.eiroca.library.config.parameter.CharParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.sysadm.flume.core.util.Flume;
 import net.eiroca.sysadm.flume.type.eventdecoder.ext.DTJSONDecoder;
 

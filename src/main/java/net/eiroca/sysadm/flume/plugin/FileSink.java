@@ -39,10 +39,10 @@ import org.apache.flume.sink.AbstractSink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import net.eiroca.library.parameter.IntegerParameter;
-import net.eiroca.library.parameter.LongParameter;
-import net.eiroca.library.parameter.Parameters;
-import net.eiroca.library.parameter.StringParameter;
+import net.eiroca.library.config.Parameters;
+import net.eiroca.library.config.parameter.IntegerParameter;
+import net.eiroca.library.config.parameter.LongParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.sysadm.flume.core.util.Flume;
 
 public class FileSink extends AbstractSink implements Configurable, Runnable {

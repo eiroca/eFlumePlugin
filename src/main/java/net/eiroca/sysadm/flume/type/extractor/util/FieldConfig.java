@@ -18,11 +18,11 @@ package net.eiroca.sysadm.flume.type.extractor.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import net.eiroca.library.config.Parameters;
+import net.eiroca.library.config.parameter.BooleanParameter;
+import net.eiroca.library.config.parameter.ListParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.LibStr;
-import net.eiroca.library.parameter.BooleanParameter;
-import net.eiroca.library.parameter.ListParameter;
-import net.eiroca.library.parameter.Parameters;
-import net.eiroca.library.parameter.StringParameter;
 import net.eiroca.sysadm.flume.api.IConverter;
 import net.eiroca.sysadm.flume.core.Converters;
 

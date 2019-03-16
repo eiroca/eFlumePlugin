@@ -18,7 +18,7 @@ package net.eiroca.sysadm.flume.core.util;
 
 import org.apache.flume.Context;
 import org.apache.flume.serialization.EventSerializer;
-import net.eiroca.library.parameter.StringParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.sysadm.flume.plugin.serializer.FormattedSerializer;
 
 public class BinaryEventSink<T extends GenericSinkContext<?>> extends GenericSink<T> {

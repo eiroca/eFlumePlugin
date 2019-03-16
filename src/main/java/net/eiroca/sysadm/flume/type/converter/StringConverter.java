@@ -17,9 +17,9 @@
 package net.eiroca.sysadm.flume.type.converter;
 
 import com.google.common.collect.ImmutableMap;
-import net.eiroca.library.parameter.BooleanParameter;
-import net.eiroca.library.parameter.IntegerParameter;
-import net.eiroca.library.parameter.StringParameter;
+import net.eiroca.library.config.parameter.BooleanParameter;
+import net.eiroca.library.config.parameter.IntegerParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.sysadm.flume.core.util.Converter;
 
 public class StringConverter extends Converter<String> {

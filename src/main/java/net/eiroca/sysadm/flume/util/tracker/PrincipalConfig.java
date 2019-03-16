@@ -20,8 +20,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import net.eiroca.library.parameter.Parameters;
-import net.eiroca.library.parameter.StringParameter;
+import net.eiroca.library.config.Parameters;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.system.Logs;
 
 public class PrincipalConfig {

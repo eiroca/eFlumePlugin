@@ -26,9 +26,9 @@ import org.apache.flume.conf.Configurable;
 import org.apache.flume.instrumentation.SinkCounter;
 import org.apache.flume.sink.AbstractSink;
 import org.slf4j.Logger;
-import net.eiroca.library.parameter.IntegerParameter;
-import net.eiroca.library.parameter.Parameters;
-import net.eiroca.library.parameter.StringParameter;
+import net.eiroca.library.config.Parameters;
+import net.eiroca.library.config.parameter.IntegerParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.system.Logs;
 
 abstract public class GenericSink<T extends GenericSinkContext<?>> extends AbstractSink implements Configurable {

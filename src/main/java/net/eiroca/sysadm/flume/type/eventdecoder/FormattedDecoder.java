@@ -18,7 +18,7 @@ package net.eiroca.sysadm.flume.type.eventdecoder;
 
 import org.apache.flume.Event;
 import com.google.common.collect.ImmutableMap;
-import net.eiroca.library.parameter.StringParameter;
+import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.sysadm.flume.core.util.EventDecoder;
 import net.eiroca.sysadm.flume.core.util.Flume;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;

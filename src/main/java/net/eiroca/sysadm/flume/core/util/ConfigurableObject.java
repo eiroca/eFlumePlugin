@@ -17,7 +17,7 @@
 package net.eiroca.sysadm.flume.core.util;
 
 import com.google.common.collect.ImmutableMap;
-import net.eiroca.ext.library.gson.JSonUtil;
+import net.eiroca.ext.library.gson.GsonUtil;
 import net.eiroca.library.parameter.Parameters;
 import net.eiroca.sysadm.flume.api.IConfigurable;
 import net.eiroca.sysadm.flume.api.INamedObject;
@@ -59,7 +59,7 @@ public class ConfigurableObject implements INamedObject, IConfigurable {
 
   @Override
   public String toString() {
-    return JSonUtil.toJSON(this);
+    return GsonUtil.toJSON(this);
   }
 
   @Override

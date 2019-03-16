@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import jcifs.smb.NtlmPasswordAuthenticator;
-import net.eiroca.ext.library.gson.JSonUtil;
+import net.eiroca.ext.library.gson.GsonUtil;
 import net.eiroca.ext.library.smb.LibSmb;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.parameter.BooleanParameter;
@@ -149,7 +149,7 @@ public class TrackerManagerConfig {
 
   @Override
   public String toString() {
-    return JSonUtil.toJSON(this);
+    return GsonUtil.toJSON(this);
   }
 
 }

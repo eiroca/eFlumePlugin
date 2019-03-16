@@ -27,7 +27,7 @@ import org.apache.flume.Clock;
 import org.apache.flume.Event;
 import org.apache.flume.SystemClock;
 import org.slf4j.Logger;
-import net.eiroca.ext.library.gson.JSonUtil;
+import net.eiroca.ext.library.gson.GsonUtil;
 import net.eiroca.library.core.LibFormat;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.system.Logs;
@@ -82,7 +82,7 @@ public class MacroExpander {
       String timestampHeader = null;
       timestampHeader = (headers != null) ? headers.get(MacroExpander.HEADER_TIMESTAMP) : null;
       if (timestampHeader == null) {
-        MacroExpander.logger.info("MacroExpand - Missing timestamp: {}", JSonUtil.toJSON(headers));
+        MacroExpander.logger.info("MacroExpand - Missing timestamp: {}", GsonUtil.toJSON(headers));
         timestampHeader = String.valueOf(ts);
       }
       try {

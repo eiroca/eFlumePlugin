@@ -19,7 +19,7 @@ package net.eiroca.sysadm.flume.util.sessions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import net.eiroca.ext.library.gson.JSonUtil;
+import net.eiroca.ext.library.gson.GsonUtil;
 
 public class Session {
 
@@ -135,7 +135,7 @@ public class Session {
 
   @Override
   public String toString() {
-    return JSonUtil.toJSON(this);
+    return GsonUtil.toJSON(this);
   }
 
 }

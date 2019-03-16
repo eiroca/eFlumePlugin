@@ -16,7 +16,7 @@
  **/
 package net.eiroca.sysadm.flume.util.tracker;
 
-import net.eiroca.ext.library.gson.JSonUtil;
+import net.eiroca.ext.library.gson.GsonUtil;
 import net.eiroca.sysadm.flume.api.ext.ITrackedSource;
 
 public class TrackedSource {
@@ -51,7 +51,7 @@ public class TrackedSource {
 
   @Override
   public String toString() {
-    return JSonUtil.toJSON(this);
+    return GsonUtil.toJSON(this);
   }
 
   public String me() {

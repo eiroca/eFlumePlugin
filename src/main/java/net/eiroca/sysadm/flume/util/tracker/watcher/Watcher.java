@@ -17,7 +17,7 @@
 package net.eiroca.sysadm.flume.util.tracker.watcher;
 
 import com.google.common.base.Preconditions;
-import net.eiroca.ext.library.gson.JSonUtil;
+import net.eiroca.ext.library.gson.GsonUtil;
 import net.eiroca.sysadm.flume.api.ext.IWatcher;
 
 abstract public class Watcher implements IWatcher {
@@ -50,7 +50,7 @@ abstract public class Watcher implements IWatcher {
 
   @Override
   public String toString() {
-    return JSonUtil.toJSON(this);
+    return GsonUtil.toJSON(this);
   }
 
 }

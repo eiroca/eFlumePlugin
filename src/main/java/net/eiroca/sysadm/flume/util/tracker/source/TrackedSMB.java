@@ -30,11 +30,11 @@ public class TrackedSMB extends TrackedStream {
   private transient CIFSContext context;
   private transient SmbFile file;
 
-  public TrackedSMB(SmbFile file, final long commitPos, final WatcherConfig config) {
+  public TrackedSMB(final SmbFile file, final long commitPos, final WatcherConfig config) {
     this.commitPos = commitPos;
     this.config = config;
     this.file = file;
-    this.context = file.getContext();
+    context = file.getContext();
     source = file.getURL().toString();
   }
 

@@ -122,7 +122,7 @@ public class WatcherConfig {
       prefix = prefix + ".";
     }
     WatcherConfig.logger.trace("TrackedFileConfig prefix: {} config: {}", prefix, config);
-    params.laodConfig(config, prefix);
+    params.loadConfig(config, prefix);
     //
     cachePatternMatching = pCachePatternMatching.get();
     int localMaxAge = pLocalMaxAge.get();

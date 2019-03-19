@@ -44,7 +44,7 @@ public class PrincipalConfig {
 
   public void configure(final ImmutableMap<String, String> config, final String basePrefix) {
     PrincipalConfig.logger.trace("PrincipalConfig prefix: " + basePrefix);
-    params.laodConfig(config, basePrefix);
+    params.loadConfig(config, basePrefix);
     domain = pDomain.get();
     username = pUsername.get();
     password = pPassword.get();

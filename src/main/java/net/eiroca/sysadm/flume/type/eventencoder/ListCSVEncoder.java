@@ -34,7 +34,7 @@ public class ListCSVEncoder extends EventEncoder<List<Object>> implements IEvent
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
-    params.laodConfig(config, prefix);
+    params.loadConfig(config, prefix);
     sep = pSeparator.get();
     nullVal = pNullValue.get();
   }

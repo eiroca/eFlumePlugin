@@ -64,7 +64,7 @@ public class ConfigurableObject implements INamedObject, IConfigurable {
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
-    params.laodConfig(config, prefix);
+    params.loadConfig(config, prefix);
   }
 
 }

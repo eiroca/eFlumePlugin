@@ -45,7 +45,7 @@ public class HeaderSession extends HeaderAction {
     super.configure(config, prefix);
     final String value = config.get(prefix);
     final String sessionPrefix = LibStr.concatenate(prefix, ".");
-    params.laodConfig(config, sessionPrefix);
+    params.loadConfig(config, sessionPrefix);
     if (value == null) {
       force = true;
     }

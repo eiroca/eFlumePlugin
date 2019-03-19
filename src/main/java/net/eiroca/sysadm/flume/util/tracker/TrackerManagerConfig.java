@@ -101,7 +101,7 @@ public class TrackerManagerConfig {
   public transient Map<String, NtlmPasswordAuthenticator> principalConfigs = new HashMap<>();
 
   public TrackerManagerConfig(final ImmutableMap<String, String> config, final String prefix) {
-    params.laodConfig(config, prefix);
+    params.loadConfig(config, prefix);
     positionFilePath = pPositionFilePath.get().toString();
     skipToEnd = pSkipToEnd.get();
     sourceHeaderName = pSetOffsetHeader.get() ? pSourceHeaderName.get() : null;

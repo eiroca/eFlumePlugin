@@ -62,7 +62,7 @@ public class DTCSVDecoder extends EventDecoder<List<String>> implements IDynaTra
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
-    params.laodConfig(config, prefix);
+    params.loadConfig(config, prefix);
     serverHeader = pServerHeader.get();
     numericDate = pNumericDate.get();
     fieldDelimiter = pFieldDelimiter.get();

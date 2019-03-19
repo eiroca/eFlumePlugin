@@ -57,7 +57,7 @@ public class RemappedJSONDecoder extends EventDecoder<JsonObject> {
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
-    params.laodConfig(config, prefix);
+    params.loadConfig(config, prefix);
     encoding = pEncoding.get();
     expandName = pExpandName.get();
     bodyName = pBodyName.get();

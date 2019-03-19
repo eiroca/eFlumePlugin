@@ -92,12 +92,12 @@ public class Flume {
 
   public static void laodConfig(final Parameters params, final Context context) throws IllegalArgumentException {
     final ImmutableMap<String, String> config = context.getParameters();
-    params.laodConfig(config, null);
+    params.loadConfig(config, null);
   }
 
   public static void laodConfig(final Parameters params, final Context context, final String prefix) throws IllegalArgumentException {
     final ImmutableMap<String, String> config = context.getParameters();
-    params.laodConfig(config, prefix);
+    params.loadConfig(config, prefix);
   }
 
 }

@@ -33,7 +33,7 @@ public class FormattedDecoder extends EventDecoder<String> {
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
-    params.laodConfig(config, prefix);
+    params.loadConfig(config, prefix);
     encoding = pEncoding.get();
     messageFormat = pFormat.get();
   }

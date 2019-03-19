@@ -120,13 +120,13 @@ public class UltimateConfig {
 
   protected void configure(final ImmutableMap<String, String> config) {
     UltimateConfig.logger.trace("Starting config");
-    params.laodConfig(config, null);
+    params.loadConfig(config, null);
     encoding = pEncoding.get();
     silentError = pSilentError.get();
     // Headers
     Actions.load(pHeaders.get(), config, UltimateConfig.CTX_HEADER_PREFIX, headers);
     // Body
-    paramsBody.laodConfig(config, UltimateConfig.CTX_BODY_PREFIX);
+    paramsBody.loadConfig(config, UltimateConfig.CTX_BODY_PREFIX);
     bodyLimit = pBodyLimit.get();
     final String trim = pTrim.get();
     if (trim != null) {
@@ -147,7 +147,7 @@ public class UltimateConfig {
     // Transform
     IExtractor extractor;
     extractors.clear();
-    paramsExtractor.laodConfig(config, UltimateConfig.CTX_EXTRACTOR_PREFIX);
+    paramsExtractor.loadConfig(config, UltimateConfig.CTX_EXTRACTOR_PREFIX);
     String type = pExtractorType.get();
     if ((type == null) && (config.get(UltimateConfig.CTX_EXTRACTOR_PREFIX + "regex.pattern") != null)) {
       type = "regex";
@@ -171,12 +171,12 @@ public class UltimateConfig {
     }
     extractorsFields = ActionExtractor.buildExtractorFields(extractors, pExtractorFields.get(), config, UltimateConfig.CTX_EXTRACTORFIELD_PREFIX);
     // Success Actions
-    paramsSuccess.laodConfig(config, UltimateConfig.CTX_SUCCESS_PREFIX);
+    paramsSuccess.loadConfig(config, UltimateConfig.CTX_SUCCESS_PREFIX);
     successOutput = pSuccessOutput.get();
     successEncoding = pSuccessEncoding.get();
     Actions.load(pSuccessHeaders.get(), config, UltimateConfig.CTX_SUCCESS_PREFIX + UltimateConfig.CTX_HEADER_PREFIX, successHeaders);
     // Failed Actions
-    paramsFailed.laodConfig(config, UltimateConfig.CTX_FAILED_PREFIX);
+    paramsFailed.loadConfig(config, UltimateConfig.CTX_FAILED_PREFIX);
     failedOutput = pFailedOutput.get();
     failedEncoding = pFailedEncoding.get();
     Actions.load(pFailedHeaders.get(), config, UltimateConfig.CTX_FAILED_PREFIX + UltimateConfig.CTX_HEADER_PREFIX, failedHeaders);
@@ -185,7 +185,7 @@ public class UltimateConfig {
   private void loadCustomReplacement(final ImmutableMap<String, String> config, final List<PairEntry<String, String>> replacements, final String[] customReplacements) {
     if ((customReplacements == null) || (customReplacements.length == 0)) { return; }
     for (final String replacement : customReplacements) {
-      paramsReplacement.laodConfig(config, LibStr.concatenate(UltimateConfig.CTX_REPLACEMENT, replacement));
+      paramsReplacement.loadConfig(config, LibStr.concatenate(UltimateConfig.CTX_REPLACEMENT, replacement));
       final String from = pReplacementFrom.get();
       if (from == null) {
         continue;

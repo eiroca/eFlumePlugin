@@ -52,7 +52,7 @@ public class HeaderRegEx extends HeaderAction {
     final String regexPrefix = LibStr.concatenate(prefix, ".");
     HeaderRegEx.logger.trace("prefix: {} name: {}", prefix, name);
     HeaderRegEx.logger.trace("regexprefix: {}", regexPrefix);
-    params.laodConfig(config, regexPrefix);
+    params.loadConfig(config, regexPrefix);
     if (value == null) {
       force = true;
     }

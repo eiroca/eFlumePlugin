@@ -31,7 +31,7 @@ public class HeaderSequence extends HeaderAction {
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
     super.configure(config, prefix);
-    params.laodConfig(config, prefix);
+    params.loadConfig(config, prefix);
     HeaderSequence.sequence = new AtomicLong(pInitialValue.get());
   }
 

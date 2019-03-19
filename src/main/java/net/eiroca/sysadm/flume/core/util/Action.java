@@ -59,7 +59,7 @@ abstract public class Action extends ConfigurableObject implements IAction {
       Action.logger.warn("Invalid configuration {} must be null", prefix);
     }
     final String sessionPrefix = LibStr.concatenate(prefix, ".");
-    params.laodConfig(config, sessionPrefix);
+    params.loadConfig(config, sessionPrefix);
     defaultNull = pDefaultNull.get();
     force = pForce.get();
     expand = pExpand.get();

@@ -54,7 +54,7 @@ public class FieldConfig {
 
   public FieldConfig(final ImmutableMap<String, String> config, final String prefix, final String name) {
     final String baseKey = LibStr.concatenate(prefix, name, ".");
-    paramsField.laodConfig(config, baseKey);
+    paramsField.loadConfig(config, baseKey);
     String[] source = pFieldSource.get();
     if (source == null) {
       source = new String[] {

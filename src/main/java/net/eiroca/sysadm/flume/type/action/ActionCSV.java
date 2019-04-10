@@ -63,9 +63,7 @@ public class ActionCSV extends Action {
       for (final Map.Entry<String, String> entry : extraHeaderInfo.entrySet()) {
         final String key = entry.getKey();
         final String val = entry.getValue();
-        if (force || (!headers.containsKey(key))) {
-          setHeader(headers, key, val);
-        }
+        setHeader(headers, body, key, val);
       }
     }
   }

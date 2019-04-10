@@ -82,7 +82,7 @@ public class SmbDirectoryWatcher extends Watcher implements Comparator<IWatcherR
       }
     }
     catch (final SmbException e) {
-      SmbDirectoryWatcher.logger.info("SbmException in DirectoryWatching", e);
+      SmbDirectoryWatcher.logger.info("SbmException in DirectoryWatching: " + getName() + " -> " + basePath, e);
     }
     return result;
   }

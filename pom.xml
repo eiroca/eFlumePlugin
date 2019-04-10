@@ -4,7 +4,7 @@
    <name>eFlumePlugin</name>
    <artifactId>eFlumePlugin</artifactId>
    <groupId>net.eiroca</groupId>
-   <version>0.0.7</version>
+   <version>0.0.8</version>
    <packaging>jar</packaging>
    <organization>
       <name>net.eiroca</name>
@@ -12,9 +12,9 @@
    </organization>
    <properties>
       <jdk.version>1.7</jdk.version>
-      <eLib.version>0.0.7</eLib.version>
-      <eLicense.version>0.0.3</eLicense.version>
-      <eJDBCDrivers.version>0.0.2</eJDBCDrivers.version>
+      <eLib.version>0.0.8</eLib.version>
+      <eLicense.version>0.0.8</eLicense.version>
+      <eJDBCDrivers.version>0.0.8</eJDBCDrivers.version>
    </properties>
    <build>
       <finalName>${project.name}-${project.version}</finalName>

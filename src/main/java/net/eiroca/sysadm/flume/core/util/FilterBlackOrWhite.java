@@ -64,7 +64,7 @@ abstract public class FilterBlackOrWhite extends Filter {
     if (ignoreCase) {
       match = match.toLowerCase();
     }
-    FilterBlackOrWhite.logger.trace(getClass().getCanonicalName() + ": " + match);
+    FilterBlackOrWhite.logger.trace("FilterBlackOrWhite: " + match);
     final boolean inWhiteList = isInWhiteList(match);
     final boolean inBlackList = isInBlackList(match);
     final String rule = (inWhiteList ? "T" : "F") + (inBlackList ? "T" : "F");

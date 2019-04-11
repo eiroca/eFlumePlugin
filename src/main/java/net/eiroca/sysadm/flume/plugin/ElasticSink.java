@@ -36,6 +36,7 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   /** Server URL */
   final StringParameter pEndPoint = new StringParameter(params, "server", null, true, false);
   final StringParameter pIndex = new StringParameter(params, "elastic-index", null, true, false);
+  final BooleanParameter pUseEventTime = new BooleanParameter(params, "use-event-time", false);
   final StringParameter pType = new StringParameter(params, "elastic-type", "flume");
   final StringParameter pID = new StringParameter(params, "elastic-id", null);
   final StringParameter pPipeline = new StringParameter(params, "elastic-pipeline", null);
@@ -59,6 +60,7 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   String pipeline;
   int queueLimit;
   int bakeoffLimit;
+  boolean useEventTime;
 
   PriorityHelper priorityHelper = new PriorityHelper();
 
@@ -74,6 +76,7 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
     index = pIndex.get();
     type = pType.get();
     id = pID.get();
+    useEventTime = pUseEventTime.get();
     pipeline = pPipeline.get();
     final int bulkSize = pBulkSize.get();
     final int threads = pNumThread.get();
@@ -115,7 +118,7 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
       final Map<String, String> headers = event.getHeaders();
       final String body = Flume.getBody(event, encoding);
       if (priorityHelper.isEnabled(headers, body)) {
-        final String _index = MacroExpander.expand(index, headers, body);
+        final String _index = MacroExpander.expand(index, headers, body, null, null, false, 0, 0, !useEventTime);
         final String _type = MacroExpander.expand(type, headers, body);
         final String _id = (id != null) ? MacroExpander.expand(id, headers, body) : null;
         final String _pipeline = (pipeline != null) ? MacroExpander.expand(pipeline, headers, body) : null;

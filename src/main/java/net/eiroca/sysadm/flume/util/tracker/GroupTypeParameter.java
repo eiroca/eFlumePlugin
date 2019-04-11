@@ -34,14 +34,14 @@ public class GroupTypeParameter extends Parameter<GroupType> {
   public GroupType convertString(final String strValue) {
     GroupType value;
     if (LibStr.isEmptyOrNull(strValue)) {
-      value = defValue;
+      value = getDefault();
     }
     else {
       try {
         value = GroupType.valueOf(strValue.toUpperCase());
       }
       catch (final IllegalArgumentException e) {
-        value = defValue;
+        value = getDefault();
       }
     }
     return value;

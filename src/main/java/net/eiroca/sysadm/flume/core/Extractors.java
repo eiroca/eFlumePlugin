@@ -21,6 +21,8 @@ import net.eiroca.library.core.Registry;
 import net.eiroca.sysadm.flume.api.IExtractor;
 import net.eiroca.sysadm.flume.core.util.Flume;
 import net.eiroca.sysadm.flume.type.extractor.RegExExtractor;
+import net.eiroca.sysadm.flume.type.extractor.SpacerExtractor;
+import net.eiroca.sysadm.flume.type.extractor.SplitterExtractor;
 
 public class Extractors {
 
@@ -31,6 +33,11 @@ public class Extractors {
     Extractors.registry.addEntry("regex", RegExExtractor.class.getName());
     Extractors.registry.addEntry("pattern", RegExExtractor.class.getName());
     Extractors.registry.addEntry("pattern", RegExExtractor.class.getName());
+    Extractors.registry.addEntry("spacer", SpacerExtractor.class.getName());
+    Extractors.registry.addEntry("space", SpacerExtractor.class.getName());
+    Extractors.registry.addEntry("separtor", SplitterExtractor.class.getName());
+    Extractors.registry.addEntry("split", SplitterExtractor.class.getName());
+    Extractors.registry.addEntry("splitter", SplitterExtractor.class.getName());
   }
 
   public static IExtractor build(final String type, final ImmutableMap<String, String> config, final String prefix) {

@@ -35,7 +35,7 @@ public class Extractors {
     Extractors.registry.addEntry("pattern", RegExExtractor.class.getName());
     Extractors.registry.addEntry("spacer", SpacerExtractor.class.getName());
     Extractors.registry.addEntry("space", SpacerExtractor.class.getName());
-    Extractors.registry.addEntry("separtor", SplitterExtractor.class.getName());
+    Extractors.registry.addEntry("separator", SplitterExtractor.class.getName());
     Extractors.registry.addEntry("split", SplitterExtractor.class.getName());
     Extractors.registry.addEntry("splitter", SplitterExtractor.class.getName());
   }

@@ -263,7 +263,7 @@ public class MacroExpander {
     if (macro == null) { return null; }
     if (macro.equals("%()")) { return (body != null) ? body : ""; }
     final long ts = MacroExpander.clock.currentTimeMillis();
-    final StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
     int i = 0;
     final int size = macro.length();
     ExtractedName r;

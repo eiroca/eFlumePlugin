@@ -18,7 +18,7 @@ package net.eiroca.sysadm.flume.core.util;
 
 public class ExtractedName {
 
-  StringBuffer name = new StringBuffer();
+  StringBuilder name = new StringBuilder();
   boolean complete = false;
   int newPos;
 

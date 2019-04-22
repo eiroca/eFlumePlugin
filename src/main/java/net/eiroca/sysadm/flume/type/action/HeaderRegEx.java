@@ -17,14 +17,13 @@
 package net.eiroca.sysadm.flume.type.action;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.IntegerParameter;
-import net.eiroca.library.config.parameter.RegExParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.LibStr;
+import net.eiroca.library.regex.ARegEx;
+import net.eiroca.library.regex.RegularExpression;
 import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.core.util.HeaderAction;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;
@@ -34,16 +33,14 @@ public class HeaderRegEx extends HeaderAction {
   transient private static final Logger logger = Logs.getLogger();
 
   final private transient StringParameter pRegExSource = new StringParameter(params, "source", " %() ");
-  final private transient RegExParameter pRegExPattern = new RegExParameter(params, "pattern", "\\s(.*)\\s");
+  final private transient StringParameter pRegExPattern = new StringParameter(params, "pattern", "\\s(.*)\\s");
   final private transient IntegerParameter pRegExLimit = new IntegerParameter(params, "size-limit", 16 * 1024);
+  final private transient IntegerParameter pRegExEngine = new IntegerParameter(params, "regex-engine", 0);
   final private transient IntegerParameter pRegExMinSize = new IntegerParameter(params, "min-size", 512);
   final private transient IntegerParameter pRegExMaxTime = new IntegerParameter(params, "max-time", 100);
 
   public String source;
-  public Pattern rule;
-  public int limit = -1;
-  public int minSize = 1024;
-  public int maxTime = 100;
+  public ARegEx rule;
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
@@ -60,58 +57,19 @@ public class HeaderRegEx extends HeaderAction {
       force = new Boolean(String.valueOf(value));
     }
     source = pRegExSource.get();
-    rule = pRegExPattern.get();
-    limit = pRegExLimit.get();
-    minSize = pRegExMinSize.get();
-    maxTime = pRegExMaxTime.get();
+    rule = RegularExpression.build(pRegExPattern.get(), pRegExEngine.get());
+    rule.sizeLimit = pRegExLimit.get();
+    rule.sizeMin = pRegExMinSize.get();
+    rule.timeLimit = pRegExMaxTime.get();
   }
 
   @Override
   public String getValue(final Map<String, String> headers, final String body) {
-    final String value = runRegEx(headers, body);
+    final String text = MacroExpander.expand(source, headers, body);
+    HeaderRegEx.logger.trace("looking \"{}\" in \"{}\"", rule.pattern, text);
+    final String value = rule.findFirst(text);
     if (value != null) {
       HeaderRegEx.logger.trace("{}->{}", name, value);
-    }
-    return value;
-  }
-
-  protected String runRegEx(final Map<String, String> headers, final String body) {
-    final long now = System.currentTimeMillis();
-    String value = null;
-    boolean crash = false;
-    final String match = LibStr.limit(MacroExpander.expand(source, headers, body), limit);
-    HeaderRegEx.logger.trace("looking \"{}\" in \"{}\"", rule.pattern(), match);
-    boolean success = false;
-    Matcher matcher = null;
-    try {
-      matcher = rule.matcher(match);
-      success = matcher.find();
-    }
-    catch (final StackOverflowError err) {
-      crash = true;
-      HeaderRegEx.logger.info("Pattern too complex: {}", rule.pattern());
-    }
-    if (success) {
-      value = (matcher != null) ? matcher.group(1) : null;
-    }
-    final long elapsed = (System.currentTimeMillis() - now);
-    if ((elapsed >= maxTime) || crash) {
-      final int theMinSize = (limit > 0) ? Math.min(minSize, limit) : minSize;
-      int newLimit;
-      if (limit < 1) {
-        newLimit = match.length() / 2;
-      }
-      else {
-        newLimit = limit / 2;
-      }
-      newLimit = Math.max(newLimit, theMinSize);
-      if (limit != newLimit) {
-        HeaderRegEx.logger.info(String.format("REGEX %6d ms LIMITED %6d->%6d: %s", elapsed, limit, newLimit, rule.pattern()));
-        limit = newLimit;
-      }
-      else {
-        HeaderRegEx.logger.warn(String.format("SLOW REGEX %6d ms: %s", elapsed, rule.pattern()));
-      }
     }
     return value;
   }

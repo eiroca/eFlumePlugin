@@ -127,7 +127,7 @@ public class UltimateInterceptor implements Interceptor {
   @Override
   public Event intercept(final Event event) {
     boolean isSuccess = false;
-    long elapsed = System.currentTimeMillis();
+    final long now = System.currentTimeMillis();
     UltimateInterceptor.logger.trace("Intercept {}...", this);
     try {
       UltimateInterceptor.logger.trace("Intercept Event: {}", event);
@@ -230,7 +230,7 @@ public class UltimateInterceptor implements Interceptor {
     catch (final Exception e) {
       UltimateInterceptor.logger.error("Interceptor unexpexted error: ", e);
     }
-    elapsed = System.currentTimeMillis() - elapsed;
+    final long elapsed = System.currentTimeMillis() - now;
     UltimateInterceptor.logger.debug("Success: {} event: {}", isSuccess, event);
     if (elapsed > UltimateInterceptor.EVENT_TIME_LIMIT) {
       UltimateInterceptor.logger.info("SLOW processing {} ms event: {}", elapsed, event);
@@ -250,7 +250,6 @@ public class UltimateInterceptor implements Interceptor {
       Collections.sort(events, sorter);
       UltimateInterceptor.logger.trace("Sorted {} events in {}ms", size, (System.currentTimeMillis() - now));
     }
-
     while (i < events.size()) {
       final Event e = events.get(i);
       final Event newEvent = intercept(e);

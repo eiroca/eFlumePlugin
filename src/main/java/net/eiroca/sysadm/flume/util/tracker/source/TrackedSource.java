@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import net.eiroca.library.core.LibStr;
-import net.eiroca.library.system.LibRegEx;
+import net.eiroca.library.regex.LibRegEx;
 import net.eiroca.sysadm.flume.api.ext.ITrackedSource;
 import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 import net.eiroca.sysadm.flume.util.tracker.watcher.WatcherConfig;

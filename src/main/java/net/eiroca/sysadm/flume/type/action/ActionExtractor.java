@@ -68,7 +68,9 @@ public class ActionExtractor extends Action {
     if ((extractor == null) || (body == null)) { return null; }
     ActionExtractor.logger.trace("Extrator: {}", extractor);
     ActionExtractor.logger.trace("Body: {}", body);
-    final Map<String, String> fields = extractor.getFields(body);
+    final List<String> names = extractor.getNames();
+    final List<String> values = extractor.getValues(body);
+    final Map<String, String> fields = LibMap.buildMap(names, values);
     if (fields != null) {
       for (final Entry<String, FieldConfig> fieldEntry : extractorsFields.entrySet()) {
         final FieldConfig fieldConfig = fieldEntry.getValue();

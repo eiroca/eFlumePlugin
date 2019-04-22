@@ -52,7 +52,7 @@ public class SplitterExtractor extends Extractor {
 
   @Override
   public List<String> getNames() {
-    List<String> result = new ArrayList<>();
+    final List<String> result = new ArrayList<>();
     LibStr.addAll(result, fields);
     return result;
   }
@@ -60,7 +60,7 @@ public class SplitterExtractor extends Extractor {
   @Override
   public List<String> getValues(final String value) {
     if ((fields == null) || (value == null)) { return null; }
-    List<String> result = LibStr.getList(value, separator, fields.length);
+    final List<String> result = LibStr.getList(value, separator, fields.length);
     return result;
   }
 

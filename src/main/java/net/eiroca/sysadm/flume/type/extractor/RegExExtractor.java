@@ -16,17 +16,15 @@
  **/
 package net.eiroca.sysadm.flume.type.extractor;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.library.config.parameter.IntegerParameter;
-import net.eiroca.library.config.parameter.RegExParameter;
-import net.eiroca.library.core.LibStr;
-import net.eiroca.library.system.LibRegEx;
+import net.eiroca.library.config.parameter.StringParameter;
+import net.eiroca.library.regex.ARegEx;
+import net.eiroca.library.regex.LibRegEx;
+import net.eiroca.library.regex.RegularExpression;
 import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.core.util.Extractor;
 
@@ -37,11 +35,12 @@ public class RegExExtractor extends Extractor {
 
   transient private static final Logger logger = Logs.getLogger();
 
-  final private transient RegExParameter pRegEx = new RegExParameter(params, "pattern");
+  final private transient StringParameter pRegEx = new StringParameter(params, "pattern");
   final private transient BooleanParameter pRegExExtractNamed = new BooleanParameter(params, "extract-named", true);
+  final private transient IntegerParameter pRegExEngine = new IntegerParameter(params, "regex-engine", 0);
   final private transient IntegerParameter pRegExLimit = new IntegerParameter(params, "size-limit", 32 * 1024);
 
-  public Pattern regEx;
+  public ARegEx regEx;
   public int regExLimit;
   public List<String> namedFields;
 
@@ -49,14 +48,14 @@ public class RegExExtractor extends Extractor {
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
     super.configure(config, prefix);
     RegExExtractor.logger.trace("config {}: {}", prefix, config);
-    final Throwable e = pRegEx.getLastError();
-    if (e != null) {
-      RegExExtractor.logger.warn("REGEX error: ", e);
+    final String pattern = pRegEx.get();
+    regEx = RegularExpression.build(pattern, pRegExEngine.get());
+    if (regEx == null) {
+      RegExExtractor.logger.warn("REGEX error: {}", pattern);
     }
-    regEx = pRegEx.get();
-    regExLimit = pRegExLimit.get();
+    regEx.sizeLimit = pRegExLimit.get();
     if (pRegExExtractNamed.get() && (regEx != null)) {
-      namedFields = LibRegEx.getNamedGroup(regEx.pattern());
+      namedFields = LibRegEx.getNamedGroup(pattern);
     }
     else {
       namedFields = null;
@@ -79,33 +78,13 @@ public class RegExExtractor extends Extractor {
   @Override
   public List<String> getValues(final String value) {
     if ((regEx == null) || (value == null)) { return null; }
-    RegExExtractor.logger.trace("Pattern: {} -> body: {}", regEx.pattern(), value);
-    List<String> result = null;
-    final String match = LibStr.limit(value, regExLimit);
-    boolean success = false;
-    Matcher matcher = null;
-    try {
-      matcher = regEx.matcher(match);
-      success = matcher.find();
+    RegExExtractor.logger.trace("Pattern: {} -> body: {}", regEx.pattern, value);
+    List<String> result;
+    if (namedFields != null) {
+      result = regEx.extract(namedFields, value);
     }
-    catch (final StackOverflowError err) {
-      RegExExtractor.logger.warn("Pattern too complex: {}", regEx.pattern());
-    }
-    if (success) {
-      if (namedFields != null) {
-        final int size = namedFields.size();
-        result = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-          result.add(matcher.group(namedFields.get(i)));
-        }
-      }
-      else {
-        final int size = matcher.groupCount() + 1;
-        result = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-          result.add(matcher.group(i));
-        }
-      }
+    else {
+      result = regEx.extract(value);
     }
     return result;
   }

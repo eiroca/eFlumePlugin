@@ -19,7 +19,7 @@ package net.eiroca.sysadm.flume.type.filter;
 import java.util.regex.Pattern;
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.RegExParameter;
-import net.eiroca.library.system.LibRegEx;
+import net.eiroca.library.regex.LibRegEx;
 import net.eiroca.sysadm.flume.core.util.FilterBlackOrWhite;
 
 public class FilterRegEx extends FilterBlackOrWhite {

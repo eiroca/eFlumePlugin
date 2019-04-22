@@ -17,19 +17,13 @@
 package net.eiroca.sysadm.flume.api;
 
 import java.util.List;
-import java.util.Map;
-import org.apache.flume.interceptor.RegexExtractorInterceptor;
 
-/**
- * Extractor for groups matched by the {@link RegexExtractorInterceptor}
- */
 public interface IExtractor extends IConfigurable {
 
   boolean hasNames();
 
   List<String> getNames();
 
-  List<String> getValues(String value);
+  List<String> getValues(final String value);
 
-  Map<String, String> getFields(String value);
 }

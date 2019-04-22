@@ -14,7 +14,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.util.ultimate;
+package net.eiroca.sysadm.flume.util.interceptors;
 
 import java.util.Comparator;
 import org.apache.flume.Event;

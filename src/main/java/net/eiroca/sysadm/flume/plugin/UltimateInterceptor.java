@@ -42,8 +42,8 @@ import net.eiroca.sysadm.flume.core.util.Flume;
 import net.eiroca.sysadm.flume.core.util.LicenseCheck;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;
 import net.eiroca.sysadm.flume.type.action.ActionExtractor;
-import net.eiroca.sysadm.flume.util.ultimate.EventSorter;
-import net.eiroca.sysadm.flume.util.ultimate.UltimateConfig;
+import net.eiroca.sysadm.flume.util.interceptors.EventSorter;
+import net.eiroca.sysadm.flume.util.interceptors.UltimateConfig;
 
 public class UltimateInterceptor implements Interceptor {
 
@@ -276,9 +276,9 @@ public class UltimateInterceptor implements Interceptor {
     UltimateInterceptor.logger.debug("Close {}...", this);
   }
 
-  public static String replace(String body, final boolean standardReplacemetns, final List<PairEntry<String, String>> replacements) {
+  public static String replace(String body, final boolean standardReplacements, final List<PairEntry<String, String>> replacements) {
     if ((body != null)) {
-      if (standardReplacemetns) {
+      if (standardReplacements) {
         final StringBuffer newBody = new StringBuffer(body.length());
         char lastChar = (char)0;
         boolean changed = false;

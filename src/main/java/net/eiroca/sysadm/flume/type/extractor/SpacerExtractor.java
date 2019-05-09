@@ -56,6 +56,10 @@ public class SpacerExtractor extends Extractor {
   public List<String> getValues(final String value) {
     if ((fields == null) || (value == null)) { return null; }
     final List<String> result = LibStr.getList(value, fields.length);
+    logger.debug("Source: " + value);
+    for (int i = 0; i < fields.length; i++) {
+      logger.debug(fields[i] + ": " + result.get(i));
+    }
     return result;
   }
 

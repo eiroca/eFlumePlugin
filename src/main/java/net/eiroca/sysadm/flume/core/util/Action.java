@@ -68,8 +68,11 @@ abstract public class Action extends ConfigurableObject implements IAction {
   }
 
   protected void setHeader(final Map<String, String> headers, final String body, final String name, final IStringExtractor extractor) {
-    final String value = extractor.getValue(headers, body);
-    setHeader(headers, body, name, value);
+    final boolean isSet = headers.containsKey(name);
+    if ((!isSet) || force) {
+      final String value = extractor.getValue(headers, body);
+      setHeader(headers, body, name, value);
+    }
   }
 
   protected void setHeader(final Map<String, String> headers, final String body, final String name, String value) {

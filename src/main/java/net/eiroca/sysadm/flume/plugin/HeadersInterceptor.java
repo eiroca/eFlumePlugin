@@ -34,6 +34,7 @@ public class HeadersInterceptor implements Interceptor {
 
   public HeadersInterceptor(final HeadersConfig defaultConfig) {
     LicenseCheck.runCheck();
+    this.config = defaultConfig;
     HeadersInterceptor.logger.debug("Headers config: {}", this.config);
   }
 
@@ -52,15 +53,15 @@ public class HeadersInterceptor implements Interceptor {
     catch (final Exception e) {
       HeadersInterceptor.logger.error("Interceptor unexpexted error: ", e);
     }
-    HeadersInterceptor.logger.debug("Event: {}", event);
+    HeadersInterceptor.logger.debug("Interceptor header event: {}", event);
     return event;
   }
 
   @Override
   public List<Event> intercept(final List<Event> events) {
     if (events == null) { return events; }
-    long elapsed = System.currentTimeMillis();
     HeadersInterceptor.logger.debug("Interception {} event(s)", events.size(), this);
+    long elapsed = System.currentTimeMillis();
     for (Event e : events) {
       intercept(e);
     }
@@ -77,8 +78,6 @@ public class HeadersInterceptor implements Interceptor {
   public static class Builder implements Interceptor.Builder {
 
     HeadersConfig config;
-    String[] ruleFormat;
-    String sortHeader;
 
     @Override
     public void configure(final Context context) {

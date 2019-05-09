@@ -37,6 +37,8 @@ import net.eiroca.sysadm.flume.type.extractor.util.FieldConfig;
 
 public class ActionExtractor extends Action {
 
+  private static final String NONAME = "?";
+
   transient private static final Logger logger = Logs.getLogger();
 
   private static final String CTX_EXTRACTORFIELD_PREFIX = "field.";
@@ -74,6 +76,7 @@ public class ActionExtractor extends Action {
     if (fields != null) {
       for (final Entry<String, FieldConfig> fieldEntry : extractorsFields.entrySet()) {
         final FieldConfig fieldConfig = fieldEntry.getValue();
+        if (fieldConfig.name.equals(NONAME)) continue;
         String extracted = null;
         final String val = LibMap.getField(fields, fieldConfig.source, fieldConfig.sourceSep);
         if (val != null) {
@@ -93,11 +96,12 @@ public class ActionExtractor extends Action {
             ActionExtractor.logger.debug("Invalid conversion", result.getError());
           }
         }
+        String value = extracted;
         if (LibStr.isNotEmptyOrNull(extracted)) {
-          final String value = (fieldConfig.expandMacro) ? MacroExpander.expand(extracted, headers) : extracted;
+          value = (fieldConfig.expandMacro) ? MacroExpander.expand(extracted, headers) : extracted;
           headers.put(fieldConfig.name, value);
         }
-        ActionExtractor.logger.trace(LibStr.concatenate(fieldConfig.name, " = ", val, " -> ", extracted));
+        ActionExtractor.logger.trace(LibStr.concatenate("(", fieldConfig.converter.getName(), ") ", fieldConfig.name, " = ", val, " -> ", value));
       }
     }
     return fields;

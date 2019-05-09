@@ -17,6 +17,7 @@
 package net.eiroca.sysadm.flume.type.action;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.IntegerParameter;
@@ -37,7 +38,7 @@ public class HeaderRegEx extends HeaderAction {
   final private transient IntegerParameter pRegExLimit = new IntegerParameter(params, "size-limit", 16 * 1024);
   final private transient IntegerParameter pRegExEngine = new IntegerParameter(params, "regex-engine", 0);
   final private transient IntegerParameter pRegExMinSize = new IntegerParameter(params, "min-size", 512);
-  final private transient IntegerParameter pRegExMaxTime = new IntegerParameter(params, "max-time", 100);
+  final private transient IntegerParameter pRegExMaxTime = new IntegerParameter(params, "max-time", 100000);
 
   public String source;
   public ARegEx rule;
@@ -58,9 +59,9 @@ public class HeaderRegEx extends HeaderAction {
     }
     source = pRegExSource.get();
     rule = RegularExpression.build(pRegExPattern.get(), pRegExEngine.get());
-    rule.sizeLimit = pRegExLimit.get();
-    rule.sizeMin = pRegExMinSize.get();
-    rule.timeLimit = pRegExMaxTime.get();
+    rule.setSizeLimit(pRegExLimit.get());
+    rule.setSizeMin(pRegExMinSize.get());
+    rule.setTimeLimit(pRegExMaxTime.get(), TimeUnit.MILLISECONDS);
   }
 
   @Override

@@ -24,6 +24,7 @@ public class HeaderUUID extends HeaderAction {
 
   @Override
   public String getValue(final Map<String, String> headers, final String body) {
+
     return UUID.randomUUID().toString();
   }
 

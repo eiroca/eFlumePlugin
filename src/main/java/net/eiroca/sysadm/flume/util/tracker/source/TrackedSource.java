@@ -133,10 +133,11 @@ abstract public class TrackedSource extends ConfigurableObject implements ITrack
     Event event = null;
     if (lines.size() > 0) {
       final ByteArrayBuffer buf = new ByteArrayBuffer(getConfig().bufferSize);
+      byte[] separator = getConfig().separator;
       for (int i = 0; i < lines.size(); i++) {
         final LineResult line = lines.get(i);
-        if ((i > 0) && (getConfig().separator != null)) {
-          buf.append(getConfig().separator, 0, getConfig().separator.length);
+        if ((i > 0) && (separator != null)) {
+          buf.append(separator, 0, separator.length);
         }
         buf.append(line.line, 0, line.line.length);
       }

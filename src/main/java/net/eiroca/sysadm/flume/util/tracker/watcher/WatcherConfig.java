@@ -77,7 +77,7 @@ public class WatcherConfig {
   final transient private BooleanParameter pNegate = new BooleanParameter(params, "negate", false);
   final transient private BooleanParameter pNewEvent = new BooleanParameter(params, "new-event", true);
   final transient private StringParameter pSeparator = new StringParameter(params, "separator", "\r\n", true);
-  final transient private IntegerParameter pBufferSize = new IntegerParameter(params, "buffer-size", 32 * 1024);
+  final transient private IntegerParameter pBufferSize = new IntegerParameter(params, "buffer-size", 64 * 1024);
   final transient private IntegerParameter pKeepBlocks = new IntegerParameter(params, "keep-blocks", 20);
   final transient private IntegerParameter pMaxInvalidBlocks = new IntegerParameter(params, "max-invalid-blocks", 3);
   final transient private ByteParameter pInvalidChar = new ByteParameter(params, "invalid-char", (byte)0);

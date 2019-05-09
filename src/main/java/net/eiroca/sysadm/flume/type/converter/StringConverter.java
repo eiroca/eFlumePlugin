@@ -33,6 +33,8 @@ public class StringConverter extends Converter<String> {
   final private transient BooleanParameter pForceLower = new BooleanParameter(params, "force-lowercase", false);
   final private transient StringParameter pRemovePrefix = new StringParameter(params, "remove-prefix", null);
   final private transient StringParameter pForcePrefix = new StringParameter(params, "force-prefix", null);
+  final private transient StringParameter pRemoveSuffix = new StringParameter(params, "remove-suffix", null);
+  final private transient StringParameter pForceSuffix = new StringParameter(params, "force-suffix", null);
   final private transient IntegerParameter pBeginIndex = new IntegerParameter(params, "begin-index", false);
   final private transient IntegerParameter pEndIndex = new IntegerParameter(params, "end-index", false);
 
@@ -45,6 +47,8 @@ public class StringConverter extends Converter<String> {
   protected boolean forceLower;
   protected String removePrefix;
   protected String forcePrefix;
+  protected String removeSuffix;
+  protected String forceSuffix;
   protected Integer beginIndex;
   protected Integer endIndex;
 
@@ -62,6 +66,8 @@ public class StringConverter extends Converter<String> {
     forcePrefix = pForcePrefix.get();
     beginIndex = pBeginIndex.get();
     endIndex = pEndIndex.get();
+    removeSuffix = pRemoveSuffix.get();
+    forceSuffix = pForceSuffix.get();
   }
 
   @Override
@@ -82,8 +88,14 @@ public class StringConverter extends Converter<String> {
     if ((removePrefix != null) && (value.startsWith(removePrefix))) {
       value = value.substring(removePrefix.length(), value.length());
     }
+    if ((removeSuffix != null) && (value.endsWith(removeSuffix))) {
+      value = value.substring(0, value.length() - removeSuffix.length());
+    }
     if ((forcePrefix != null) && (!value.startsWith(forcePrefix))) {
       value = forcePrefix + value;
+    }
+    if ((forceSuffix != null) && (!value.endsWith(forceSuffix))) {
+      value = value + forceSuffix;
     }
     if ((beginIndex != null) || (endIndex != null)) {
       final int len = value.length();

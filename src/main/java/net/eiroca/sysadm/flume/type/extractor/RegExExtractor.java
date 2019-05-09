@@ -53,7 +53,7 @@ public class RegExExtractor extends Extractor {
     if (regEx == null) {
       RegExExtractor.logger.warn("REGEX error: {}", pattern);
     }
-    regEx.sizeLimit = pRegExLimit.get();
+    regEx.setSizeLimit(pRegExLimit.get());
     if (pRegExExtractNamed.get() && (regEx != null)) {
       namedFields = LibRegEx.getNamedGroup(pattern);
     }

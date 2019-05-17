@@ -34,8 +34,8 @@ public class HeadersInterceptor implements Interceptor {
 
   public HeadersInterceptor(final HeadersConfig defaultConfig) {
     LicenseCheck.runCheck();
-    this.config = defaultConfig;
-    HeadersInterceptor.logger.debug("Headers config: {}", this.config);
+    config = defaultConfig;
+    HeadersInterceptor.logger.debug("Headers config: {}", config);
   }
 
   @Override
@@ -62,7 +62,7 @@ public class HeadersInterceptor implements Interceptor {
     if (events == null) { return events; }
     HeadersInterceptor.logger.debug("Interception {} event(s)", events.size(), this);
     long elapsed = System.currentTimeMillis();
-    for (Event e : events) {
+    for (final Event e : events) {
       intercept(e);
     }
     elapsed = (System.currentTimeMillis() - elapsed);

@@ -38,7 +38,7 @@ public class NumberConverter extends Converter<Long> {
   }
 
   @Override
-  public Long doConvert(String value) {
+  public Long doConvert(final String value) {
     return Helper.getLong(value, defVal);
   }
 

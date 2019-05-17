@@ -23,6 +23,7 @@ import net.eiroca.sysadm.flume.core.util.Flume;
 import net.eiroca.sysadm.flume.type.extractor.RegExExtractor;
 import net.eiroca.sysadm.flume.type.extractor.SpacerExtractor;
 import net.eiroca.sysadm.flume.type.extractor.SplitterExtractor;
+import net.eiroca.sysadm.flume.type.extractor.WebLogExtractor;
 
 public class Extractors {
 
@@ -38,6 +39,7 @@ public class Extractors {
     Extractors.registry.addEntry("separator", SplitterExtractor.class.getName());
     Extractors.registry.addEntry("split", SplitterExtractor.class.getName());
     Extractors.registry.addEntry("splitter", SplitterExtractor.class.getName());
+    Extractors.registry.addEntry("weblog", WebLogExtractor.class.getName());
   }
 
   public static IExtractor build(final String type, final ImmutableMap<String, String> config, final String prefix) {

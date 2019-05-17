@@ -28,6 +28,7 @@ import org.apache.flume.Event;
 import org.slf4j.Logger;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
+import net.eiroca.ext.library.gson.Cursor;
 import net.eiroca.ext.library.gson.SimpleJson;
 import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.library.config.parameter.StringParameter;
@@ -95,6 +96,7 @@ public class RemappedJSONDecoder extends EventDecoder<JsonObject> {
   @Override
   public JsonObject decode(final Event event) {
     final SimpleJson json = new SimpleJson(expandName);
+    final Cursor c = new Cursor();
     final Map<String, String> headers = event.getHeaders();
     final String message = bodyName != null ? Flume.getBody(event, encoding) : null;
     for (final Entry<String, String> header : headers.entrySet()) {
@@ -110,11 +112,11 @@ public class RemappedJSONDecoder extends EventDecoder<JsonObject> {
         mappedName.put(name, newName);
       }
       if (LibStr.isNotEmptyOrNull(newName)) {
-        json.addProperty(newName, value);
+        json.addProperty(c, newName, value);
       }
     }
     if (LibStr.isNotEmptyOrNull(bodyName)) {
-      json.addProperty(bodyName, message);
+      json.addProperty(c, bodyName, message);
     }
     return json.getRoot();
   }

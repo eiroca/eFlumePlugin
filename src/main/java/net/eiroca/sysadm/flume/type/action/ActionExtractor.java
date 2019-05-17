@@ -76,7 +76,9 @@ public class ActionExtractor extends Action {
     if (fields != null) {
       for (final Entry<String, FieldConfig> fieldEntry : extractorsFields.entrySet()) {
         final FieldConfig fieldConfig = fieldEntry.getValue();
-        if (fieldConfig.name.equals(NONAME)) continue;
+        if (fieldConfig.name.equals(ActionExtractor.NONAME)) {
+          continue;
+        }
         String extracted = null;
         final String val = LibMap.getField(fields, fieldConfig.source, fieldConfig.sourceSep);
         if (val != null) {

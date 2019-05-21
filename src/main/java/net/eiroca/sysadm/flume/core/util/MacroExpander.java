@@ -23,11 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-import org.apache.flume.Clock;
-import org.apache.flume.Event;
-import org.apache.flume.SystemClock;
 import org.slf4j.Logger;
-import net.eiroca.ext.library.gson.GsonUtil;
 import net.eiroca.library.core.LibFormat;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.system.Logs;
@@ -49,6 +45,8 @@ public class MacroExpander {
   //
   // %(name) -> fields.get(name)
   //
+
+  private static final String EMPTY = "";
 
   transient private static final Logger logger = Logs.getLogger();
 
@@ -72,31 +70,29 @@ public class MacroExpander {
     }
   }
 
-  private static Clock clock = new SystemClock();
-
   /**
    * Not intended as a public API
    */
-  public static String replaceShorthand(final char c, final Map<String, String> headers, final TimeZone timeZone, final boolean needRounding, final int unit, final int roundDown, final boolean useLocalTimestamp, long ts) {
+  private static String replaceShorthand(final char c, final Map<String, String> headers, final TimeZone timeZone, final boolean needRounding, final int unit, final int roundDown, final boolean useLocalTimestamp, long ts) {
     if (!useLocalTimestamp) {
       String timestampHeader = null;
       timestampHeader = (headers != null) ? headers.get(MacroExpander.HEADER_TIMESTAMP) : null;
       if (timestampHeader == null) {
-        MacroExpander.logger.info("MacroExpand - Missing timestamp: {}", GsonUtil.toJSON(headers));
+        MacroExpander.logger.info("MacroExpand - Missing timestamp");
         timestampHeader = String.valueOf(ts);
       }
       try {
         ts = Long.valueOf(timestampHeader);
       }
       catch (final NumberFormatException e) {
-        throw new RuntimeException("Flume wasn't able to parse timestamp header in the event to resolve time based bucketing. Please check that you're correctly populating timestamp header (for example using TimestampInterceptor source interceptor).", e);
+        throw new RuntimeException("MacroExpander wasn't able to parse timestamp header in the event to resolve time based bucketing. Please check that you're correctly populating timestamp header (for example using TimestampInterceptor source interceptor).", e);
       }
     }
     if (needRounding) {
       ts = Flume.roundDown(roundDown, unit, ts, timeZone);
     }
     // It's a date
-    String formatString = "";
+    String formatString = MacroExpander.EMPTY;
     switch (c) {
       case '%':
         return "%";
@@ -157,7 +153,7 @@ public class MacroExpander {
         formatString = "a";
         break;
       case 's':
-        return "" + (ts / 1000);
+        return MacroExpander.EMPTY + (ts / 1000);
       case 'S':
         formatString = "ss";
         break;
@@ -179,7 +175,7 @@ public class MacroExpander {
         break;
       default:
         MacroExpander.logger.warn("Unrecognized escape in event format string: %" + c);
-        return "";
+        return MacroExpander.EMPTY;
     }
     final SimpleDateFormat format = LibFormat.getSimpleDateFormat(formatString);
     if (timeZone != null) {
@@ -195,7 +191,7 @@ public class MacroExpander {
   /**
    * Not intended as a public API
    */
-  public static String replaceStatic(final String key) {
+  private static String replaceStatic(final String key) {
     String replacementString = null;
     try {
       final boolean isDatetime = (key.length() > 2) && key.startsWith("\"") && key.endsWith("\"");
@@ -215,39 +211,13 @@ public class MacroExpander {
     catch (final Exception e) {
       replacementString = null;
     }
-    if (replacementString == null) { throw new RuntimeException("Flume wasn't able to parse the static escape sequence '" + key + "'"); }
+    if (replacementString == null) { throw new RuntimeException("MacroExpander wasn't able to parse the static escape sequence '" + key + "'"); }
     return replacementString;
   }
 
   // -----
   /**
-   * Replace all macro. Any unrecognized / not found tags will be replaced with the empty string.
-   */
-  public static String expand(final String macro, final Map<String, String> headers) {
-    return MacroExpander.expand(macro, headers, null, null, null, false, 0, 0, false);
-  }
-
-  public static String expand(final String macro, final Map<String, String> headers, final String body) {
-    return MacroExpander.expand(macro, headers, body, null, null, false, 0, 0, false);
-  }
-
-  /**
-   * Replace all macro. Any unrecognized / not found tags will be replaced with the empty string.
-   */
-  public static String expand(final String macro, final Map<String, String> headers, final String body, final Map<String, String> fields) {
-    return MacroExpander.expand(macro, headers, body, fields, null, false, 0, 0, false);
-  }
-
-  /**
-   * Replace all macro. Any unrecognized / not found tags will be replaced with the empty string.
-   */
-  public static String expand(final String macro, final Event e, final String encoding) {
-    final String body = Flume.getBody(e, encoding);
-    return MacroExpander.expand(macro, e.getHeaders(), body, null, null, false, 0, 0, false);
-  }
-
-  /**
-   * Replace all macro. Any unrecognized / not found tags will be replaced with the empty string.
+   * Replace all macro. Any unrecognised / not found tags will be replaced with the empty string.
    *
    * @param needRounding - Should the timestamp be rounded down?
    * @param unit - if needRounding is true, what unit to round down to. This must be one of the
@@ -261,56 +231,100 @@ public class MacroExpander {
    */
   public static String expand(final String macro, final Map<String, String> headers, final String body, final Map<String, String> fields, final TimeZone timeZone, final boolean needRounding, final int unit, final int roundDown, final boolean useLocalTimeStamp) {
     if (macro == null) { return null; }
-    if (macro.equals("%()")) { return (body != null) ? body : ""; }
-    final long ts = MacroExpander.clock.currentTimeMillis();
-    final StringBuilder sb = new StringBuilder();
-    int i = 0;
+    if (macro.equals("%()")) { return (body != null) ? body : MacroExpander.EMPTY; }
+    final long ts = System.currentTimeMillis();
+    int i = 0, p = 0, s = 0;
+    char ch, nc, c;
+    String name, replacement;
     final int size = macro.length();
-    ExtractedName r;
-    while (i < (size - 1)) {
-      final char ch = macro.charAt(i);
-      i++;
-      final char nc = macro.charAt(i);
-      switch (ch) {
-        case '%':
-          switch (nc) {
-            case '[':
-              r = ExtractedName.extract(macro, i + 1, ']');
-              i = r.newPos;
-              sb.append(MacroExpander.replaceStatic(r.name.toString()));
-              break;
-            case '(':
-              r = ExtractedName.extract(macro, i + 1, ')');
-              i = r.newPos;
-              final String name = r.name.toString();
-              if (LibStr.isEmptyOrNull(name)) {
-                sb.append((body != null) ? body : "");
-              }
-              else {
-                final String replacement = (fields != null) ? fields.get(name) : null;
-                sb.append(replacement != null ? replacement : "");
-              }
-              break;
-            case '{':
-              r = ExtractedName.extract(macro, i + 1, '}');
-              i = r.newPos;
-              final String replacement = headers.get(r.name.toString());
-              sb.append(replacement != null ? replacement : "");
-              break;
-            default:
+    final StringBuilder sb = new StringBuilder(size + 64);
+    while (i < size) {
+      ch = macro.charAt(i);
+      if (ch == '%') {
+        if (s < i) {
+          sb.append(macro, s, i);
+        }
+        i++;
+        nc = macro.charAt(i);
+        p = i + 1;
+        switch (nc) {
+          case '[':
+            i++;
+            while (i < size) {
+              c = macro.charAt(i);
               i++;
-              sb.append(MacroExpander.replaceShorthand(nc, headers, timeZone, needRounding, unit, roundDown, useLocalTimeStamp, ts));
-              break;
-          }
-          break;
-        default:
-          sb.append(ch);
+              if (c == ']') {
+                break;
+              }
+            }
+            name = macro.substring(p, i - 1);
+            sb.append(MacroExpander.replaceStatic(name));
+            break;
+          case '(':
+            i++;
+            while (i < size) {
+              c = macro.charAt(i);
+              i++;
+              if (c == ')') {
+                break;
+              }
+            }
+            name = macro.substring(p, i - 1);
+            if (LibStr.isEmptyOrNull(name)) {
+              if (body != null) {
+                sb.append(body);
+              }
+            }
+            else if (fields != null) {
+              replacement = fields.get(name);
+              if (replacement != null) {
+                sb.append(replacement);
+              }
+            }
+            break;
+          case '{':
+            i++;
+            while (i < size) {
+              c = macro.charAt(i);
+              i++;
+              if (c == '}') {
+                break;
+              }
+            }
+            name = macro.substring(p, i - 1);
+            replacement = headers.get(name);
+            if (replacement != null) {
+              sb.append(replacement);
+            }
+            break;
+          default:
+            i++;
+            sb.append(MacroExpander.replaceShorthand(nc, headers, timeZone, needRounding, unit, roundDown, useLocalTimeStamp, ts));
+            break;
+        }
+        s = i;
+      }
+      else {
+        i++;
       }
     }
-    if (i < size) {
-      sb.append(macro.charAt(i));
+    if (s == 0) { return macro; }
+    if (s < i) {
+      sb.append(macro, s, i);
     }
     return sb.toString();
+  }
+
+  public static String expand(final String macro, final Map<String, String> headers) {
+    return MacroExpander.expand(macro, headers, null, null, null, false, 0, 0, false);
+  }
+
+  public static String expand(final String macro, final Map<String, String> headers, final String body) {
+    return MacroExpander.expand(macro, headers, body, null, null, false, 0, 0, false);
+  }
+
+  public static String expand(final String macro, final Map<String, String> headers, final String body, final Map<String, String> fields) {
+    return MacroExpander.expand(macro, headers, body, fields, null, false, 0, 0, false);
   }
 
 }

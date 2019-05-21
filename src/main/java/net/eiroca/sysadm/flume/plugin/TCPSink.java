@@ -27,8 +27,8 @@ import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.Helper;
 import net.eiroca.sysadm.flume.core.util.BinaryEventSink;
+import net.eiroca.sysadm.flume.core.util.FlumetHelper;
 import net.eiroca.sysadm.flume.core.util.GenericSink;
-import net.eiroca.sysadm.flume.core.util.MacroExpander;
 import net.eiroca.sysadm.flume.util.ServerConnection;
 import net.eiroca.sysadm.flume.util.context.BufferedSinkContext;
 import net.eiroca.sysadm.flume.util.context.KeyedSinkContext;
@@ -76,7 +76,7 @@ public class TCPSink extends BinaryEventSink<KeyedSinkContext<SocketAddress>> {
     GenericSink.logger.debug("processEvent()");
     final byte[] body = event.getBody();
     if (body != null) {
-      final String serverName = MacroExpander.expand(serverFormat, event, encoding);
+      final String serverName = FlumetHelper.expand(serverFormat, event, encoding);
       final SocketAddress server = Helper.getServer(serverName);
       context.append(server, event);
       return EventStatus.OK;

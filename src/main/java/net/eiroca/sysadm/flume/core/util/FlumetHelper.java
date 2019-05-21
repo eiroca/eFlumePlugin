@@ -16,24 +16,16 @@
  **/
 package net.eiroca.sysadm.flume.core.util;
 
-public class ExtractedName {
+import org.apache.flume.Event;
 
-  StringBuilder name = new StringBuilder();
-  boolean complete = false;
-  int newPos;
+public class FlumetHelper {
 
-  static public ExtractedName extract(final String source, final int start, final char end) {
-    final ExtractedName r = new ExtractedName();
-    int i;
-    for (i = start; i < source.length(); i++) {
-      final char ch = source.charAt(i);
-      if (ch == end) {
-        r.complete = true;
-        break;
-      }
-      r.name.append(ch);
-    }
-    r.newPos = i + 1;
-    return r;
+  /**
+   * Replace all macro. Any unrecognised / not found tags will be replaced with the empty string.
+   */
+  public static String expand(final String macro, final Event e, final String encoding) {
+    final String body = Flume.getBody(e, encoding);
+    return MacroExpander.expand(macro, e.getHeaders(), body, null, null, false, 0, 0, false);
   }
+
 }

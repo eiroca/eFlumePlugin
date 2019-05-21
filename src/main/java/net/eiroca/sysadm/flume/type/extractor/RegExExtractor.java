@@ -49,7 +49,7 @@ public class RegExExtractor extends Extractor {
     super.configure(config, prefix);
     RegExExtractor.logger.trace("config {}: {}", prefix, config);
     final String pattern = pRegEx.get();
-    regEx = RegularExpression.build(pattern, pRegExEngine.get());
+    regEx = RegularExpression.build(getName(), pattern, pRegExEngine.get());
     if (regEx == null) {
       RegExExtractor.logger.warn("REGEX error: {}", pattern);
     }

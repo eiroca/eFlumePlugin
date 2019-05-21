@@ -58,7 +58,7 @@ public class HeaderRegEx extends HeaderAction {
       force = new Boolean(String.valueOf(value));
     }
     source = pRegExSource.get();
-    rule = RegularExpression.build(pRegExPattern.get(), pRegExEngine.get());
+    rule = RegularExpression.build(getName(), pRegExPattern.get(), pRegExEngine.get());
     rule.setSizeLimit(pRegExLimit.get());
     rule.setSizeMin(pRegExMinSize.get());
     rule.setTimeLimit(pRegExMaxTime.get(), TimeUnit.MILLISECONDS);

@@ -71,7 +71,7 @@ public class TrackerManager extends ConfigurableObject implements LifecycleAware
 
   private List<IWatcher> watchers = new ArrayList<>();
 
-  private final Map<String, TrackedSource> trackedSources = Maps.newHashMap();
+  private final Map<String, SourceTrack> trackedSources = Maps.newHashMap();
 
   public TrackerManager() {
     super();
@@ -116,7 +116,7 @@ public class TrackerManager extends ConfigurableObject implements LifecycleAware
     status = LifecycleState.STOP;
     try {
       writePosition(true);
-      for (final TrackedSource source : trackedSources.values()) {
+      for (final SourceTrack source : trackedSources.values()) {
         if (source.tracker != null) {
           source.tracker.close();
           source.tracker = null;
@@ -178,7 +178,7 @@ public class TrackerManager extends ConfigurableObject implements LifecycleAware
     boolean hasEvents = false;
     updateSources(false);
     final long now = System.currentTimeMillis();
-    for (final TrackedSource ts : trackedSources.values()) {
+    for (final SourceTrack ts : trackedSources.values()) {
       writePosition(false);
       if (ts.changed) {
         final boolean flush = (ts.lastCheck > 0) && ((now - ts.lastCheck) > getConfig().inactiveFlush);
@@ -222,14 +222,14 @@ public class TrackerManager extends ConfigurableObject implements LifecycleAware
     return status;
   }
 
-  private void commit(final TrackedSource ts) throws IOException {
+  private void commit(final SourceTrack ts) throws IOException {
     ts.tracker.commit();
     ts.idle = false;
     ts.checkPoint(System.currentTimeMillis(), ts.tracker.getCommittedPosition());
     writePosition(false);
   }
 
-  private boolean processEvents(final TrackedSource ts, final IEventProcessor receiver, final int batchSize, final boolean backoffWithoutNL, final boolean flush) throws IOException {
+  private boolean processEvents(final SourceTrack ts, final IEventProcessor receiver, final int batchSize, final boolean backoffWithoutNL, final boolean flush) throws IOException {
     Preconditions.checkNotNull(ts, "TrackedSource must be not NULL");
     Preconditions.checkNotNull(ts.tracker, "Source must be not NULL");
     Preconditions.checkArgument(ts.tracker.isOpen(), "Source must be open");
@@ -262,7 +262,7 @@ public class TrackerManager extends ConfigurableObject implements LifecycleAware
   public synchronized void checkInactiveSources(final IEventProcessor receiver, final int batchSize) throws IOException {
     final long now = System.currentTimeMillis();
     final ArrayList<String> toDelete = new ArrayList<>();
-    for (final TrackedSource ts : trackedSources.values()) {
+    for (final SourceTrack ts : trackedSources.values()) {
       if ((!ts.idle) && (getConfig().inactiveClose > 0) && ((now - ts.lastCheck) > getConfig().inactiveClose)) {
         TrackerManager.logger.info("Source idle: {} since: {}", ts.source, (now - ts.lastCheck));
         ts.idle = true;
@@ -318,7 +318,7 @@ public class TrackerManager extends ConfigurableObject implements LifecycleAware
 
   private String toPosInfoJson() {
     final List<Map<String, Object>> posInfos = Lists.newArrayList();
-    for (final TrackedSource ts : trackedSources.values()) {
+    for (final SourceTrack ts : trackedSources.values()) {
       if (ts.tracker != null) {
         ts.lastPos = ts.tracker.getCommittedPosition();
         ts.id = ts.tracker.getID();
@@ -399,9 +399,9 @@ public class TrackerManager extends ConfigurableObject implements LifecycleAware
         }
         jr.endObject();
         if (source != null) {
-          TrackedSource ts = trackedSources.get(source);
+          SourceTrack ts = trackedSources.get(source);
           if (ts == null) {
-            ts = new TrackedSource(id, source);
+            ts = new SourceTrack(id, source);
             ts.checkPoint(lastCheck, lastPos);
             trackedSources.put(ts.source, ts);
           }
@@ -435,11 +435,11 @@ public class TrackerManager extends ConfigurableObject implements LifecycleAware
         TrackerManager.logger.debug("Checking file: " + r);
         final String id = r.getID();
         final String path = r.getSource();
-        TrackedSource ts = trackedSources.get(path);
+        SourceTrack ts = trackedSources.get(path);
         if (ts == null) {
           long startPos;
           long lastChange;
-          ts = new TrackedSource(id, path);
+          ts = new SourceTrack(id, path);
           if (skipToEnd) {
             startPos = r.getSize();
             lastChange = r.getUpdateDate();

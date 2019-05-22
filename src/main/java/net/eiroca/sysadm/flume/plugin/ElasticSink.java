@@ -23,6 +23,7 @@ import net.eiroca.ext.library.elastic.ElasticBulk;
 import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.StringParameter;
+import net.eiroca.library.core.LibStr;
 import net.eiroca.sysadm.flume.api.IEventDecoder;
 import net.eiroca.sysadm.flume.core.EventDecoders;
 import net.eiroca.sysadm.flume.core.util.Flume;
@@ -76,6 +77,7 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
     index = pIndex.get();
     type = pType.get();
     id = pID.get();
+    if (LibStr.isEmptyOrNull(id)) id = null;
     useEventTime = pUseEventTime.get();
     pipeline = pPipeline.get();
     final int bulkSize = pBulkSize.get();

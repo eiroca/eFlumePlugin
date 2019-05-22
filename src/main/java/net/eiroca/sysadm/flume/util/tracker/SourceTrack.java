@@ -19,7 +19,7 @@ package net.eiroca.sysadm.flume.util.tracker;
 import net.eiroca.ext.library.gson.GsonUtil;
 import net.eiroca.sysadm.flume.api.ext.ITrackedSource;
 
-public class TrackedSource {
+public class SourceTrack {
 
   String id;
   String source;
@@ -37,7 +37,7 @@ public class TrackedSource {
 
   int rotations;
 
-  public TrackedSource(final String id, final String source) {
+  public SourceTrack(final String id, final String source) {
     this.id = id;
     this.source = source;
     idle = false;

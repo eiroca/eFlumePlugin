@@ -22,6 +22,7 @@ import org.apache.flume.Event;
 import net.eiroca.ext.library.elastic.ElasticBulk;
 import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.library.config.parameter.IntegerParameter;
+import net.eiroca.library.config.parameter.LongParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.sysadm.flume.api.IEventDecoder;
@@ -41,6 +42,7 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   final StringParameter pType = new StringParameter(params, "elastic-type", "flume");
   final StringParameter pID = new StringParameter(params, "elastic-id", null);
   final StringParameter pPipeline = new StringParameter(params, "elastic-pipeline", null);
+  final LongParameter pDiscardTime = new LongParameter(params, "elastic-overload-discard-time", 1000);
   final IntegerParameter pNumThread = new IntegerParameter(params, "elastic-max-threads", 25);
   final IntegerParameter pBulkSize = new IntegerParameter(params, "bulk-size", 1 * 1024 * 1024);
   final BooleanParameter pCheckBulk = new BooleanParameter(params, "check-result", false);
@@ -62,12 +64,14 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   int queueLimit;
   int bakeoffLimit;
   boolean useEventTime;
+  long discardTime;
 
   PriorityHelper priorityHelper = new PriorityHelper();
 
   private IEventDecoder<?> decoder;
 
-  ElasticBulk buffer;
+  ElasticBulk elastic;
+  private long lastOverload;
 
   @Override
   public void configure(final Context context) {
@@ -82,7 +86,7 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
     pipeline = pPipeline.get();
     final int bulkSize = pBulkSize.get();
     final int threads = pNumThread.get();
-    buffer = new ElasticBulk(endPoint, pCheckBulk.get(), bulkSize, threads);
+    elastic = new ElasticBulk(endPoint, pCheckBulk.get(), bulkSize, threads);
     queueLimit = pQueueLimit.get();
     if (queueLimit < 0) {
       queueLimit = 0;
@@ -91,6 +95,7 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
     if (bakeoffLimit < 0) {
       bakeoffLimit = Integer.MAX_VALUE;
     }
+    discardTime = pDiscardTime.get();
     priorityHelper.source = pPrioritySource.get();
     priorityHelper.priorityDefault = pPriorityDefault.get();
     priorityHelper.setPriorityMapping(pPriorityMapping.get());
@@ -101,8 +106,8 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   @Override
   public ElasticSinkContext processBegin() throws Exception {
     final ElasticSinkContext context = new ElasticSinkContext(this);
-    buffer.open();
-    final int queueSize = (queueLimit > 0) ? buffer.getQueueSize() : 0;
+    elastic.open();
+    final int queueSize = (queueLimit > 0) ? elastic.getQueueSize() : 0;
     if (queueSize > queueLimit) {
       GenericSink.logger.error("Indexer overload {} - discard events", queueSize);
       context.discard = true;
@@ -116,21 +121,24 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   @Override
   public EventStatus processEvent(final ElasticSinkContext context, final Event event) throws Exception {
     EventStatus result;
-    if (!context.discard) {
-      final Map<String, String> headers = event.getHeaders();
-      final String body = Flume.getBody(event, encoding);
-      if (priorityHelper.isEnabled(headers, body)) {
-        final String _index = MacroExpander.expand(index, headers, body, null, null, false, 0, 0, !useEventTime);
-        final String _type = MacroExpander.expand(type, headers, body);
-        final String _id = (id != null) ? MacroExpander.expand(id, headers, body) : null;
-        final String _pipeline = (pipeline != null) ? MacroExpander.expand(pipeline, headers, body) : null;
-        final Object obj = decoder.decode(event);
-        buffer.add(_index, _type, _id, _pipeline, String.valueOf(obj));
-        result = EventStatus.OK;
-      }
-      else {
-        result = EventStatus.IGNORED;
-      }
+    if (context.discard) { return EventStatus.IGNORED; }
+    long now = System.currentTimeMillis();
+    if (now <= lastOverload) { return EventStatus.IGNORED; }
+    if ((discardTime > 0) && elastic.isOverload()) {
+      GenericSink.logger.error("ElasticSearch Cluster overload - discarding events for {} ms", discardTime);
+      lastOverload = now + discardTime;
+      return EventStatus.IGNORED;
+    }
+    final Map<String, String> headers = event.getHeaders();
+    final String body = Flume.getBody(event, encoding);
+    if (priorityHelper.isEnabled(headers, body)) {
+      final String _index = MacroExpander.expand(index, headers, body, null, null, false, 0, 0, !useEventTime);
+      final String _type = MacroExpander.expand(type, headers, body);
+      final String _id = (id != null) ? MacroExpander.expand(id, headers, body) : null;
+      final String _pipeline = (pipeline != null) ? MacroExpander.expand(pipeline, headers, body) : null;
+      final Object obj = decoder.decode(event);
+      elastic.add(_index, _type, _id, _pipeline, String.valueOf(obj));
+      result = EventStatus.OK;
     }
     else {
       result = EventStatus.IGNORED;
@@ -141,8 +149,8 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   @Override
   public ProcessStatus processEnd(final ElasticSinkContext context) throws Exception {
     GenericSink.logger.debug("Closing elastic bulk");
-    buffer.close();
-    final int queueSize = buffer.getQueueSize();
+    elastic.close();
+    final int queueSize = elastic.getQueueSize();
     final ProcessStatus result;
     if (queueSize > bakeoffLimit) {
       result = ProcessStatus.BAKEOFF;

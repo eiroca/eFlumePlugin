@@ -19,6 +19,7 @@ package net.eiroca.sysadm.flume.core.util;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
+import net.eiroca.library.core.Helper;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.system.Logs;
 
@@ -43,12 +44,16 @@ public class PriorityHelper {
     final String _priorityName = MacroExpander.expand(source, headers, body);
     if (LibStr.isEmptyOrNull(_priorityName)) { return priorityDefault; }
     final Integer _priority = mappings.get(_priorityName.toLowerCase());
-    if (_priority == null) { return priorityDefault; }
-    return _priority;
+    if (_priority != null) return _priority;
+    return Helper.getInt(_priorityName, priorityDefault);
   }
 
   public boolean isEnabled(final Map<String, String> headers, final String body) {
     final int priority = getPriority(headers, body);
+    return (priority >= priorityMinimum) && (priority <= priorityMaximum);
+  }
+
+  public boolean isEnabled(final int priority) {
     return (priority >= priorityMinimum) && (priority <= priorityMaximum);
   }
 

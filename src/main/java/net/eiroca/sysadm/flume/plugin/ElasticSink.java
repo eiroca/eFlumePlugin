@@ -30,7 +30,6 @@ import net.eiroca.sysadm.flume.core.EventDecoders;
 import net.eiroca.sysadm.flume.core.util.Flume;
 import net.eiroca.sysadm.flume.core.util.GenericSink;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;
-import net.eiroca.sysadm.flume.core.util.PriorityHelper;
 
 public class ElasticSink extends GenericSink<ElasticSinkContext> {
 
@@ -42,18 +41,12 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   final StringParameter pType = new StringParameter(params, "elastic-type", "flume");
   final StringParameter pID = new StringParameter(params, "elastic-id", null);
   final StringParameter pPipeline = new StringParameter(params, "elastic-pipeline", null);
-  final LongParameter pDiscardTime = new LongParameter(params, "elastic-overload-discard-time", 1000);
+  final LongParameter pDiscardTime = new LongParameter(params, "elastic-overload-discard-time", 500);
   final IntegerParameter pNumThread = new IntegerParameter(params, "elastic-max-threads", 25);
   final IntegerParameter pBulkSize = new IntegerParameter(params, "bulk-size", 1 * 1024 * 1024);
   final BooleanParameter pCheckBulk = new BooleanParameter(params, "check-result", false);
   final IntegerParameter pQueueLimit = new IntegerParameter(params, "queue-limit", 100);
   final IntegerParameter pBakeOffLimit = new IntegerParameter(params, "bakeoff-limit", -1);
-
-  final StringParameter pPrioritySource = new StringParameter(params, "priority-source", null);
-  final IntegerParameter pPriorityDefault = new IntegerParameter(params, "priority-default", PriorityHelper.DEFAULT_PRIORITY);
-  final StringParameter pPriorityMapping = new StringParameter(params, "priority-mapping", PriorityHelper.DEFAULT_PRIORITY_MAPPING);
-  final IntegerParameter pPriorityMinimum = new IntegerParameter(params, "priority-minimum", 0);
-  final IntegerParameter pPriorityMaximum = new IntegerParameter(params, "priority-maximum", Integer.MAX_VALUE);
 
   /** Elastic Ingest URL to send events to. */
   String endPoint;
@@ -64,14 +57,10 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   int queueLimit;
   int bakeoffLimit;
   boolean useEventTime;
-  long discardTime;
-
-  PriorityHelper priorityHelper = new PriorityHelper();
 
   private IEventDecoder<?> decoder;
 
   ElasticBulk elastic;
-  private long lastOverload;
 
   @Override
   public void configure(final Context context) {
@@ -95,12 +84,7 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
     if (bakeoffLimit < 0) {
       bakeoffLimit = Integer.MAX_VALUE;
     }
-    discardTime = pDiscardTime.get();
-    priorityHelper.source = pPrioritySource.get();
-    priorityHelper.priorityDefault = pPriorityDefault.get();
-    priorityHelper.setPriorityMapping(pPriorityMapping.get());
-    priorityHelper.priorityMinimum = pPriorityMinimum.get();
-    priorityHelper.priorityMaximum = pPriorityMaximum.get();
+    elastic.setDiscarTime(pDiscardTime.get());
   }
 
   @Override
@@ -109,11 +93,15 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
     elastic.open();
     final int queueSize = (queueLimit > 0) ? elastic.getQueueSize() : 0;
     if (queueSize > queueLimit) {
-      GenericSink.logger.error("Indexer overload {} - discard events", queueSize);
+      GenericSink.logger.error("Indexer overload {} - discarding events", queueSize);
       context.discard = true;
     }
     else if (queueSize > 0) {
-      GenericSink.logger.warn("Indexer overload {}", queueSize);
+      GenericSink.logger.info("Indexer overload {}", queueSize);
+    }
+    if (elastic.isOverload()) {
+      GenericSink.logger.error("ElasticSearch Cluster overload - discarding events");
+
     }
     return context;
   }
@@ -122,13 +110,6 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   public EventStatus processEvent(final ElasticSinkContext context, final Event event) throws Exception {
     EventStatus result;
     if (context.discard) { return EventStatus.IGNORED; }
-    long now = System.currentTimeMillis();
-    if (now <= lastOverload) { return EventStatus.IGNORED; }
-    if ((discardTime > 0) && elastic.isOverload()) {
-      GenericSink.logger.error("ElasticSearch Cluster overload - discarding events for {} ms", discardTime);
-      lastOverload = now + discardTime;
-      return EventStatus.IGNORED;
-    }
     final Map<String, String> headers = event.getHeaders();
     final String body = Flume.getBody(event, encoding);
     if (priorityHelper.isEnabled(headers, body)) {

@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import net.eiroca.library.config.parameter.BooleanParameter;
-import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.sysadm.flume.api.IEventDecoder;
@@ -33,35 +32,28 @@ import net.eiroca.sysadm.flume.core.EventDecoders;
 import net.eiroca.sysadm.flume.core.util.GenericSink;
 import net.eiroca.sysadm.flume.core.util.GenericSinkContext;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;
-import net.eiroca.sysadm.flume.core.util.PriorityHelper;
 
 public class TraceSink extends GenericSink<GenericSinkContext<?>> {
 
-  final StringParameter pTraceLogger = new StringParameter(params, "logger", "%{logger}");
-  final StringParameter pTraceLoggerDefault = new StringParameter(params, "logger-default", "log.TraceSink");
-  final StringParameter pTracePriority = new StringParameter(params, "log-priority", "%{priority}");
-  final IntegerParameter pTracePriorityDefault = new IntegerParameter(params, "log-priority-default", PriorityHelper.DEFAULT_PRIORITY);
-  final StringParameter pPriorityMapping = new StringParameter(params, "priority-mapping", PriorityHelper.DEFAULT_PRIORITY_MAPPING);
-  final BooleanParameter pTraceHeader = new BooleanParameter(params, "log-header", false);
-  final StringParameter pDecoder = new StringParameter(params, "decoder", EventDecoders.registry.defaultName());
-  final StringParameter pTraceMessage = new StringParameter(params, "message", "%()");
+  final private StringParameter pTraceLogger = new StringParameter(params, "logger", "%{logger}");
+  final private StringParameter pTraceLoggerDefault = new StringParameter(params, "logger-default", "log.TraceSink");
+  final private BooleanParameter pTraceHeader = new BooleanParameter(params, "log-header", false);
+  final private StringParameter pDecoder = new StringParameter(params, "decoder", EventDecoders.registry.defaultName());
+  final private StringParameter pTraceMessage = new StringParameter(params, "message", "%()");
 
   private String logName;
   private String defLogName;
-
-  private final PriorityHelper priorityHelper = new PriorityHelper();
   private boolean logHeader;
   private String logMessage;
+
   private IEventDecoder<?> decoder;
+  private final HashMap<String, Logger> loggers = new HashMap<>();
 
   @Override
   public void configure(final Context context) {
     super.configure(context);
     logName = pTraceLogger.get();
     defLogName = pTraceLoggerDefault.get();
-    priorityHelper.source = pTracePriority.get();
-    priorityHelper.priorityDefault = pTracePriorityDefault.get();
-    priorityHelper.setPriorityMapping(pPriorityMapping.get());
     logHeader = pTraceHeader.get();
     logMessage = pTraceMessage.get();
     decoder = EventDecoders.build(pDecoder.get(), context.getParameters(), null);
@@ -71,14 +63,16 @@ public class TraceSink extends GenericSink<GenericSinkContext<?>> {
   public EventStatus processEvent(final GenericSinkContext<?> context, final Event event) throws Exception {
     GenericSink.logger.trace("Tracing {}", event);
     final Map<String, String> headers = event.getHeaders();
-    final Object obj = decoder.decode(event);
-    writeLog(headers, String.valueOf(obj));
+    final int priority = priorityHelper.getPriority(headers, null);
+    if (priorityHelper.isEnabled(priority)) {
+      final String body = String.valueOf(decoder.decode(event));
+      writeLog(headers, body, priority);
+    }
     return EventStatus.OK;
   }
 
-  private final void writeLog(final Map<String, String> headers, final String body) {
+  private final void writeLog(final Map<String, String> headers, final String body, int priority) {
     final Logger log = getLogger(headers, body);
-    final int priority = priorityHelper.getPriority(headers, body);
     final String message = getMessage(headers, body);
     if (logHeader) {
       MDC.clear();
@@ -119,8 +113,6 @@ public class TraceSink extends GenericSink<GenericSinkContext<?>> {
     final String _message = MacroExpander.expand(logMessage, headers, body);
     return _message;
   }
-
-  private final HashMap<String, Logger> loggers = new HashMap<>();
 
   public Logger getLogger(final Map<String, String> headers, final String body) {
     String _loggerName = MacroExpander.expand(logName, headers, body);

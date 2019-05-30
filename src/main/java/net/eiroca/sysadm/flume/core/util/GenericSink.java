@@ -45,12 +45,19 @@ abstract public class GenericSink<T extends GenericSinkContext<?>> extends Abstr
 
   final protected Parameters params = new Parameters();
   final private StringParameter pEncoding = new StringParameter(params, "encoding", "utf-8");
-  final protected IntegerParameter pBatchSize = new IntegerParameter(params, "batch-size", 100);
+  final private IntegerParameter pBatchSize = new IntegerParameter(params, "batch-size", 100);
+
+  final private StringParameter pPrioritySource = new StringParameter(params, "priority-source", "%{priority}");
+  final private IntegerParameter pPriorityDefault = new IntegerParameter(params, "priority-default", PriorityHelper.DEFAULT_PRIORITY);
+  final private StringParameter pPriorityMapping = new StringParameter(params, "priority-mapping", PriorityHelper.DEFAULT_PRIORITY_MAPPING);
+  final private IntegerParameter pPriorityMinimum = new IntegerParameter(params, "priority-minimum", 0);
+  final private IntegerParameter pPriorityMaximum = new IntegerParameter(params, "priority-maximum", Integer.MAX_VALUE);
 
   protected SinkCounter sinkCounter;
 
   protected String encoding;
   protected int batchSize;
+  protected PriorityHelper priorityHelper = new PriorityHelper();
 
   @Override
   public void configure(final Context context) {
@@ -62,6 +69,11 @@ abstract public class GenericSink<T extends GenericSinkContext<?>> extends Abstr
     Flume.laodConfig(params, context);
     encoding = pEncoding.get();
     batchSize = pBatchSize.get();
+    priorityHelper.source = pPrioritySource.get();
+    priorityHelper.priorityDefault = pPriorityDefault.get();
+    priorityHelper.setPriorityMapping(pPriorityMapping.get());
+    priorityHelper.priorityMinimum = pPriorityMinimum.get();
+    priorityHelper.priorityMaximum = pPriorityMaximum.get();
   }
 
   @Override
@@ -83,7 +95,7 @@ abstract public class GenericSink<T extends GenericSinkContext<?>> extends Abstr
   }
 
   public EventStatus processEvent(final T context, final Event event) throws Exception {
-    return EventStatus.OK;
+    return EventStatus.IGNORED;
   }
 
   public ProcessStatus processEnd(final T context) throws Exception {

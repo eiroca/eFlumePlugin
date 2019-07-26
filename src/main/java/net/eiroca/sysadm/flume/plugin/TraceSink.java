@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2001-2019 eIrOcA (eNrIcO Croce & sImOnA Burzio) - AGPL >= 3.0
+ * Copyright (C) 1999-2019 Enrico Croce - AGPL >= 3.0
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
  * GNU Affero General Public License as published by the Free Software Foundation, either version 3
@@ -71,7 +71,7 @@ public class TraceSink extends GenericSink<GenericSinkContext<?>> {
     return EventStatus.OK;
   }
 
-  private final void writeLog(final Map<String, String> headers, final String body, int priority) {
+  private final void writeLog(final Map<String, String> headers, final String body, final int priority) {
     final Logger log = getLogger(headers, body);
     final String message = getMessage(headers, body);
     if (logHeader) {

@@ -24,9 +24,6 @@ import net.eiroca.library.system.Logs;
 
 public class PriorityHelper {
 
-  private static final String VALUE_SEP = "=";
-  private static final String LIST_SEP = ",";
-
   protected static final Logger logger = Logs.getLogger();
 
   public static final int DEFAULT_PRIORITY = 3;
@@ -57,25 +54,12 @@ public class PriorityHelper {
   }
 
   public void setPriorityMapping(final String mapping) {
-    mappings = PriorityHelper.parsePriorityMapping(mapping);
-  }
-
-  public static HashMap<String, Integer> parsePriorityMapping(final String mapping) {
-    final HashMap<String, Integer> map = new HashMap<>();
     try {
-      for (final String mapEntry : mapping.split(PriorityHelper.LIST_SEP)) {
-        final String[] valPair = mapEntry.split(PriorityHelper.VALUE_SEP);
-        if (valPair.length == 2) {
-          final String name = valPair[0].toLowerCase();
-          final int val = Integer.parseInt(valPair[1]);
-          map.put(name, val);
-        }
-      }
+      mappings = LibStr.parseMapping(mapping);
     }
     catch (final Exception e) {
       PriorityHelper.logger.error("Invalid priority mapping string {}", mapping, e);
     }
-    return map;
   }
 
 }

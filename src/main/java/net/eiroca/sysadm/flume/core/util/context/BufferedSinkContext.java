@@ -14,19 +14,19 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.util.context;
+package net.eiroca.sysadm.flume.core.util.context;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.apache.flume.Event;
-import net.eiroca.sysadm.flume.core.util.BinaryEventSink;
+import net.eiroca.sysadm.flume.core.util.GenericSink;
 
 public class BufferedSinkContext extends SerializerSinkContext {
 
   int minBufferSize;
   ByteArrayOutputStream buffer;
 
-  public BufferedSinkContext(final BinaryEventSink<?> owner, final int minBufferSize) {
+  public BufferedSinkContext(final GenericSink<?> owner, final int minBufferSize) {
     super(owner);
     this.minBufferSize = minBufferSize;
   }
@@ -34,6 +34,13 @@ public class BufferedSinkContext extends SerializerSinkContext {
   public void openSerializer() throws IOException {
     buffer = new ByteArrayOutputStream(minBufferSize);
     openSerializer(buffer);
+  }
+
+  @Override
+  public void closeSerializer() throws IOException {
+    super.closeSerializer();
+    buffer.close();
+    buffer = null;
   }
 
   public void append(final Event event) throws IOException {

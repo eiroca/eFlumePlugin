@@ -34,7 +34,7 @@ import net.eiroca.library.config.Parameters;
 import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.ListParameter;
 import net.eiroca.library.config.parameter.StringParameter;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.util.tcp.MultiportAcceptor;
 
 /**
@@ -83,7 +83,7 @@ public class MultiportTCPSource extends AbstractSource implements EventDrivenSou
 
   @Override
   public void configure(final Context context) {
-    Flume.laodConfig(params, context);
+    FlumeHelper.laodConfig(params, context);
     host = pHost.get();
     final String[] portList = pPort.get();
     ports.clear();

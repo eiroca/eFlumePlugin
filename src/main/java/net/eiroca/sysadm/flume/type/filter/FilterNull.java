@@ -15,7 +15,7 @@
  **/
 package net.eiroca.sysadm.flume.type.filter;
 
-import net.eiroca.sysadm.flume.core.util.Filter;
+import net.eiroca.sysadm.flume.core.filters.Filter;
 
 public class FilterNull extends Filter {
 

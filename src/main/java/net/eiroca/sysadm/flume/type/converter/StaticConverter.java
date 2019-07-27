@@ -18,7 +18,7 @@ package net.eiroca.sysadm.flume.type.converter;
 
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.StringParameter;
-import net.eiroca.sysadm.flume.core.util.Converter;
+import net.eiroca.sysadm.flume.core.converters.Converter;
 
 /**
  * Converter that simply returns the passed in value

@@ -33,7 +33,7 @@ import com.google.gson.JsonObject;
 import net.eiroca.library.config.Parameters;
 import net.eiroca.library.config.parameter.CharParameter;
 import net.eiroca.library.config.parameter.StringParameter;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.type.eventdecoder.ext.DTJSONDecoder;
 
 public class BTJSONSerializer implements EventSerializer, Configurable {
@@ -62,7 +62,7 @@ public class BTJSONSerializer implements EventSerializer, Configurable {
 
   @Override
   public void configure(final Context context) {
-    Flume.laodConfig(params, context);
+    FlumeHelper.laodConfig(params, context);
     charset = pEncoding.get();
     lineDelimiter = pLineDelimiter.get();
     decoder.configure(context.getParameters(), null);

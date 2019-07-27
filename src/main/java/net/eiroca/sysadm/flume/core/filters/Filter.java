@@ -1,5 +1,4 @@
 /**
- *
  * Copyright (C) 1999-2019 Enrico Croce - AGPL >= 3.0
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -14,35 +13,31 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.type.converter;
+package net.eiroca.sysadm.flume.core.filters;
 
+import java.util.Map;
 import com.google.common.collect.ImmutableMap;
-import net.eiroca.library.config.parameter.DoubleParameter;
-import net.eiroca.library.core.Helper;
-import net.eiroca.sysadm.flume.core.converters.Converter;
+import net.eiroca.library.config.parameter.BooleanParameter;
+import net.eiroca.library.core.LibStr;
+import net.eiroca.sysadm.flume.api.IEventFilter;
+import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 
-/**
- * Converter that converts the passed in value into milliseconds using the specified formatting
- * pattern
- */
-public class DoubleConverter extends Converter<Double> {
+abstract public class Filter extends ConfigurableObject implements IEventFilter {
 
-  final private transient DoubleParameter pDefault = new DoubleParameter(params, "default", 0);
-  final private transient DoubleParameter pScale = new DoubleParameter(params, "scale", 1);
+  final protected transient BooleanParameter pAcceptNullBody = new BooleanParameter(params, "accept-null", false);
 
-  protected double scale;
-  protected double defVal;
+  public boolean acceptNullBody = false;
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
     super.configure(config, prefix);
-    scale = pScale.get();
-    defVal = pDefault.get();
+    acceptNullBody = pAcceptNullBody.get();
   }
 
   @Override
-  public Double doConvert(final String value) {
-    return Helper.getDouble(value, defVal) * scale;
+  public boolean accept(final Map<String, String> headers, final String body) {
+    if (LibStr.isEmptyOrNull(body)) { return acceptNullBody; }
+    return true;
   }
 
 }

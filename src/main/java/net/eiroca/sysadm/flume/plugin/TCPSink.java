@@ -26,14 +26,13 @@ import org.apache.flume.Event;
 import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.Helper;
-import net.eiroca.sysadm.flume.core.util.BinaryEventSink;
-import net.eiroca.sysadm.flume.core.util.FlumetHelper;
 import net.eiroca.sysadm.flume.core.util.GenericSink;
+import net.eiroca.sysadm.flume.core.util.MacroExpander;
+import net.eiroca.sysadm.flume.core.util.context.BufferedSinkContext;
+import net.eiroca.sysadm.flume.core.util.context.KeyedSinkContext;
 import net.eiroca.sysadm.flume.util.ServerConnection;
-import net.eiroca.sysadm.flume.util.context.BufferedSinkContext;
-import net.eiroca.sysadm.flume.util.context.KeyedSinkContext;
 
-public class TCPSink extends BinaryEventSink<KeyedSinkContext<SocketAddress>> {
+public class TCPSink extends GenericSink<KeyedSinkContext<SocketAddress>> {
 
   final StringParameter pServer = new StringParameter(params, "server");
   final IntegerParameter pConnectionRetries = new IntegerParameter(params, "connection-retries", 2);
@@ -72,16 +71,12 @@ public class TCPSink extends BinaryEventSink<KeyedSinkContext<SocketAddress>> {
   }
 
   @Override
-  public EventStatus processEvent(final KeyedSinkContext<SocketAddress> context, final Event event) throws Exception {
-    GenericSink.logger.debug("processEvent()");
-    final byte[] body = event.getBody();
-    if (body != null) {
-      final String serverName = FlumetHelper.expand(serverFormat, event, encoding);
-      final SocketAddress server = Helper.getServer(serverName);
-      context.append(server, event);
-      return EventStatus.OK;
-    }
-    return EventStatus.IGNORED;
+  protected EventStatus process(final KeyedSinkContext<SocketAddress> context, final Event event, final Map<String, String> headers, final String body) throws Exception {
+    GenericSink.logger.trace("processEvent()");
+    final String serverName = MacroExpander.expand(serverFormat, headers, body);
+    final SocketAddress server = Helper.getServer(serverName);
+    context.append(server, event);
+    return EventStatus.OK;
   }
 
   @Override

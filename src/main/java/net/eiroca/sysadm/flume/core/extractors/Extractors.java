@@ -14,12 +14,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core;
+package net.eiroca.sysadm.flume.core.extractors;
 
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.core.Registry;
 import net.eiroca.sysadm.flume.api.IExtractor;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.type.extractor.RegExExtractor;
 import net.eiroca.sysadm.flume.type.extractor.SpacerExtractor;
 import net.eiroca.sysadm.flume.type.extractor.SplitterExtractor;
@@ -43,7 +43,7 @@ public class Extractors {
   }
 
   public static IExtractor build(final String type, final ImmutableMap<String, String> config, final String prefix) {
-    return (IExtractor)Flume.buildIConfigurable(Extractors.registry.className(type), config, prefix);
+    return (IExtractor)FlumeHelper.buildIConfigurable(Extractors.registry.className(type), config, prefix);
   }
 
 }

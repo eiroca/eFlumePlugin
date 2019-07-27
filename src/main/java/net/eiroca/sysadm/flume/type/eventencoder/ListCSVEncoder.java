@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.sysadm.flume.api.ext.IEventListEncoder;
-import net.eiroca.sysadm.flume.core.util.EventEncoder;
+import net.eiroca.sysadm.flume.core.eventEncoders.EventEncoder;
 
 public class ListCSVEncoder extends EventEncoder<List<Object>> implements IEventListEncoder<List<Object>> {
 

@@ -13,29 +13,30 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core.util;
+package net.eiroca.sysadm.flume.core.converters;
 
-import java.util.HashMap;
-import org.apache.flume.Event;
-import org.apache.flume.event.SimpleEvent;
-import net.eiroca.sysadm.flume.api.IEventEncoder;
-import net.eiroca.sysadm.flume.api.IEventNotify;
+import net.eiroca.sysadm.flume.api.IConverter;
+import net.eiroca.sysadm.flume.api.IConverterResult;
+import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 
-public abstract class EventEncoder<T> extends ConfigurableObject implements IEventEncoder<T> {
+abstract public class Converter<T> extends ConfigurableObject implements IConverter<T> {
 
-  protected IEventNotify callback;
-
-  public Event newEvent() {
-    final Event event = new SimpleEvent();
-    final HashMap<String, String> headers = new HashMap<>();
-    headers.put("timestamp", String.valueOf(System.currentTimeMillis()));
-    event.setHeaders(headers);
-    return event;
-  }
+  abstract protected T doConvert(String value);
 
   @Override
-  public void setCallBack(final IEventNotify callback) {
-    this.callback = callback;
+  public IConverterResult<T> convert(final String value) {
+    final ConverterResult<T> result = new ConverterResult<>();
+    try {
+      result.value = doConvert(value);
+      result.valid = true;
+      result.error = null;
+    }
+    catch (final Exception e) {
+      result.value = null;
+      result.valid = false;
+      result.error = e;
+    }
+    return result;
   }
 
 }

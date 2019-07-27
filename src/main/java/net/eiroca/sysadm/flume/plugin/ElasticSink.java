@@ -25,15 +25,12 @@ import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.LongParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.LibStr;
-import net.eiroca.sysadm.flume.api.IEventDecoder;
-import net.eiroca.sysadm.flume.core.EventDecoders;
-import net.eiroca.sysadm.flume.core.util.Flume;
 import net.eiroca.sysadm.flume.core.util.GenericSink;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;
+import net.eiroca.sysadm.flume.util.context.ElasticSinkContext;
 
 public class ElasticSink extends GenericSink<ElasticSinkContext> {
 
-  final StringParameter pDecoder = new StringParameter(params, "decoder", EventDecoders.registry.defaultName());
   /** Server URL */
   final StringParameter pEndPoint = new StringParameter(params, "server", null, true, false);
   final StringParameter pIndex = new StringParameter(params, "elastic-index", null, true, false);
@@ -58,14 +55,11 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   int bakeoffLimit;
   boolean useEventTime;
 
-  private IEventDecoder<?> decoder;
-
   ElasticBulk elastic;
 
   @Override
   public void configure(final Context context) {
     super.configure(context);
-    decoder = EventDecoders.build(pDecoder.get(), context.getParameters(), pDecoder.getName() + ".");
     endPoint = pEndPoint.get();
     index = pIndex.get();
     type = pType.get();
@@ -109,23 +103,19 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   }
 
   @Override
-  public EventStatus processEvent(final ElasticSinkContext context, final Event event) throws Exception {
+  protected boolean discard(final ElasticSinkContext context) {
+    return context.discard;
+  }
+
+  @Override
+  protected EventStatus process(final ElasticSinkContext context, final Event event, final Map<String, String> headers, final String body) throws Exception {
     EventStatus result;
-    if (context.discard) { return EventStatus.IGNORED; }
-    final Map<String, String> headers = event.getHeaders();
-    final String body = Flume.getBody(event, encoding);
-    if (priorityHelper.isEnabled(headers, body)) {
-      final String _index = MacroExpander.expand(index, headers, body, null, null, false, 0, 0, !useEventTime);
-      final String _type = MacroExpander.expand(type, headers, body);
-      final String _id = (id != null) ? MacroExpander.expand(id, headers, body) : null;
-      final String _pipeline = (pipeline != null) ? MacroExpander.expand(pipeline, headers, body) : null;
-      final Object obj = decoder.decode(event);
-      elastic.add(_index, _type, _id, _pipeline, String.valueOf(obj));
-      result = EventStatus.OK;
-    }
-    else {
-      result = EventStatus.IGNORED;
-    }
+    final String _index = MacroExpander.expand(index, headers, body, null, null, false, 0, 0, !useEventTime);
+    final String _type = MacroExpander.expand(type, headers, body);
+    final String _id = (id != null) ? MacroExpander.expand(id, headers, body) : null;
+    final String _pipeline = (pipeline != null) ? MacroExpander.expand(pipeline, headers, body) : null;
+    elastic.add(_index, _type, _id, _pipeline, body);
+    result = EventStatus.OK;
     return result;
   }
 

@@ -30,14 +30,14 @@ import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.api.IConfigurable;
 import net.eiroca.sysadm.flume.api.INamedObject;
 
-public class Flume {
+public class FlumeHelper {
 
   transient private static final Logger logger = Logs.getLogger();
 
   public static final String BODY_ERROR_MESSAGE = "Unknow message of %d byte(s)";
 
   public static IConfigurable buildIConfigurable(final String clazzName, final ImmutableMap<String, String> config, final String prefix) {
-    return Flume.buildIConfigurable(null, clazzName, config, prefix);
+    return FlumeHelper.buildIConfigurable(null, clazzName, config, prefix);
   }
 
   public static IConfigurable buildIConfigurable(String name, final String clazzName, final ImmutableMap<String, String> config, final String prefix) {
@@ -50,7 +50,7 @@ public class Flume {
       if (obj.isConfigurable()) {
         name = (name == null) ? prefix : name;
         obj.configure(config, prefix);
-        Flume.logger.trace("Built {}: {}", clazzName, obj);
+        FlumeHelper.logger.trace("Built {}: {}", clazzName, obj);
       }
     }
     catch (final Exception e) {
@@ -64,7 +64,7 @@ public class Flume {
   }
 
   final public static String getBody(final Event event, final String encoding) {
-    return LibStr.getMessage(event.getBody(), encoding, Flume.BODY_ERROR_MESSAGE);
+    return LibStr.getMessage(event.getBody(), encoding, FlumeHelper.BODY_ERROR_MESSAGE);
   }
 
   final public static long roundDown(int roundDown, final int unit, final long ts, final TimeZone timeZone) {

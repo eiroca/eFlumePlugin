@@ -34,7 +34,7 @@ import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.api.ext.IDynaTraceEventDecoder;
-import net.eiroca.sysadm.flume.core.util.EventDecoder;
+import net.eiroca.sysadm.flume.core.eventDecoders.EventDecoder;
 
 public class DTJSONDecoder extends EventDecoder<List<JsonObject>> implements IDynaTraceEventDecoder<JsonObject> {
 

@@ -17,7 +17,7 @@ package net.eiroca.sysadm.flume.type.filter;
 
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.StringParameter;
-import net.eiroca.sysadm.flume.core.util.FilterBlackOrWhite;
+import net.eiroca.sysadm.flume.core.filters.FilterBlackOrWhite;
 
 public class FilterStartsWith extends FilterBlackOrWhite {
 

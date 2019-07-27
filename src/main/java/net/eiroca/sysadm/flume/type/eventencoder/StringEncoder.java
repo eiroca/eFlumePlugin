@@ -20,7 +20,7 @@ import java.io.UnsupportedEncodingException;
 import org.apache.flume.Event;
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.StringParameter;
-import net.eiroca.sysadm.flume.core.util.EventEncoder;
+import net.eiroca.sysadm.flume.core.eventEncoders.EventEncoder;
 
 public class StringEncoder extends EventEncoder<String> {
 

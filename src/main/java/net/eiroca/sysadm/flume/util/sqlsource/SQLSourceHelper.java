@@ -24,7 +24,7 @@ import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.PathParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.system.LibFile;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 
 /**
  * Helper to manage configuration parameters and utility methods
@@ -54,9 +54,9 @@ import net.eiroca.sysadm.flume.core.util.Flume;
  * @author <a href="mailto:lalazaro@keedio.com">Luis Lazaro</a>
  */
 
-public class SQLSourceHelper {
+public class SqlSourceHelper {
 
-  private static final Logger logger = LoggerFactory.getLogger(SQLSourceHelper.class);
+  private static final Logger logger = LoggerFactory.getLogger(SqlSourceHelper.class);
 
   private static final String PREFIX_HIBERNATE = "hibernate.";
   private static final String CURRENTINDEX_PLACEHOLDER = "$@$";
@@ -92,8 +92,8 @@ public class SQLSourceHelper {
    * @param context Flume source context, contains the properties from configuration file
    * @param sourceName source file name for store status
    */
-  public SQLSourceHelper(final Context context, final String sourceName) {
-    Flume.laodConfig(params, context);
+  public SqlSourceHelper(final Context context, final String sourceName) {
+    FlumeHelper.laodConfig(params, context);
     statusFileName = pStatusFile.get();
     table = pTable.get();
     customQuery = pQuery.get();
@@ -116,13 +116,13 @@ public class SQLSourceHelper {
     }
     query = buildQuery();
     /* Establish connection with database */
-    final Map<String, String> hibernateProperties = context.getSubProperties(SQLSourceHelper.PREFIX_HIBERNATE);
+    final Map<String, String> hibernateProperties = context.getSubProperties(SqlSourceHelper.PREFIX_HIBERNATE);
     final Iterator<Map.Entry<String, String>> it = hibernateProperties.entrySet().iterator();
     config = new Configuration();
     Map.Entry<String, String> e;
     while (it.hasNext()) {
       e = it.next();
-      config.setProperty(SQLSourceHelper.PREFIX_HIBERNATE + e.getKey(), e.getValue());
+      config.setProperty(SqlSourceHelper.PREFIX_HIBERNATE + e.getKey(), e.getValue());
     }
     establishSession();
   }
@@ -133,8 +133,8 @@ public class SQLSourceHelper {
       result = String.format("SELECT %s FROM %s ", columnsToSelect, table);
     }
     else {
-      if (customQuery.contains(SQLSourceHelper.CURRENTINDEX_PLACEHOLDER)) {
-        result = customQuery.replace(SQLSourceHelper.CURRENTINDEX_PLACEHOLDER, currentIndex);
+      if (customQuery.contains(SqlSourceHelper.CURRENTINDEX_PLACEHOLDER)) {
+        result = customQuery.replace(SqlSourceHelper.CURRENTINDEX_PLACEHOLDER, currentIndex);
       }
       else {
         result = customQuery;
@@ -153,7 +153,7 @@ public class SQLSourceHelper {
    */
   public void updateStatusFile() {
     if (!LibFile.writeString(statusFileName.toString(), currentIndex)) {
-      SQLSourceHelper.logger.error("Error updating status file!!!", LibFile.lastError);
+      SqlSourceHelper.logger.error("Error updating status file!!!", LibFile.lastError);
     }
   }
 
@@ -161,7 +161,7 @@ public class SQLSourceHelper {
     String result = configuredStartValue;
     result = LibFile.readString(statusFileName.toString());
     if (result == null) {
-      SQLSourceHelper.logger.error("Exception reading status file, doing back up and creating new status file");
+      SqlSourceHelper.logger.error("Exception reading status file, doing back up and creating new status file");
       backupStatusFile();
       result = configuredStartValue;
     }
@@ -196,10 +196,10 @@ public class SQLSourceHelper {
    * Connect to database using hibernate
    */
   public void establishSession() {
-    SQLSourceHelper.logger.info("Opening hibernate session");
+    SqlSourceHelper.logger.info("Opening hibernate session");
     serviceRegistry = new StandardServiceRegistryBuilder().applySettings(config.getProperties()).build();
-    SQLSourceHelper.factory = config.buildSessionFactory(serviceRegistry);
-    session = SQLSourceHelper.factory.openSession();
+    SqlSourceHelper.factory = config.buildSessionFactory(serviceRegistry);
+    session = SqlSourceHelper.factory.openSession();
     session.setCacheMode(CacheMode.IGNORE);
     session.setDefaultReadOnly(isReadOnlySession());
   }
@@ -208,9 +208,9 @@ public class SQLSourceHelper {
    * Close database connection
    */
   public void closeSession() {
-    SQLSourceHelper.logger.info("Closing hibernate session");
+    SqlSourceHelper.logger.info("Closing hibernate session");
     session.close();
-    SQLSourceHelper.factory.close();
+    SqlSourceHelper.factory.close();
   }
 
   private void resetConnection() throws InterruptedException {
@@ -247,7 +247,7 @@ public class SQLSourceHelper {
       rowsList = query.setResultTransformer(Transformers.TO_LIST).list();
     }
     catch (final Exception e) {
-      SQLSourceHelper.logger.error("Exception thrown, resetting connection.", e);
+      SqlSourceHelper.logger.error("Exception thrown, resetting connection.", e);
       resetConnection();
     }
     if (!rowsList.isEmpty()) {

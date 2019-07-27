@@ -25,8 +25,8 @@ import net.eiroca.library.config.parameter.ListParameter;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.api.IAction;
-import net.eiroca.sysadm.flume.core.Actions;
-import net.eiroca.sysadm.flume.core.util.Action;
+import net.eiroca.sysadm.flume.core.actions.Action;
+import net.eiroca.sysadm.flume.core.actions.Actions;
 
 public class ActionLogic extends Action {
 

@@ -24,7 +24,7 @@ import org.apache.flume.serialization.EventSerializer;
 import net.eiroca.library.config.Parameters;
 import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.library.config.parameter.StringParameter;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;
 
 /**
@@ -51,7 +51,7 @@ public class FormattedSerializer implements EventSerializer {
 
   protected FormattedSerializer(final OutputStream out, final Context context) {
     this.out = out;
-    Flume.laodConfig(params, context);
+    FlumeHelper.laodConfig(params, context);
     encoding = pEncoding.get();
     messageFormat = pMessageFormat.get();
     appendCR = pMessageCR.get();
@@ -78,7 +78,7 @@ public class FormattedSerializer implements EventSerializer {
   public byte[] format(final Event e) {
     byte[] result;
     if (messageFormat != null) {
-      final String body = Flume.getBody(e, encoding);
+      final String body = FlumeHelper.getBody(e, encoding);
       final String _message = MacroExpander.expand(messageFormat, e.getHeaders(), body);
       result = _message.getBytes();
     }

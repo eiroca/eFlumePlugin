@@ -1,5 +1,4 @@
 /**
- *
  * Copyright (C) 1999-2019 Enrico Croce - AGPL >= 3.0
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -14,25 +13,30 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.util.interceptors;
+package net.eiroca.sysadm.flume.core.eventEncoders;
 
-import java.util.Comparator;
+import java.util.HashMap;
 import org.apache.flume.Event;
-import net.eiroca.sysadm.flume.core.util.MacroExpander;
+import org.apache.flume.event.SimpleEvent;
+import net.eiroca.sysadm.flume.api.IEventEncoder;
+import net.eiroca.sysadm.flume.api.IEventNotify;
+import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 
-final public class EventSorter implements Comparator<Event> {
+public abstract class EventEncoder<T> extends ConfigurableObject implements IEventEncoder<T> {
 
-  String header;
+  protected IEventNotify callback;
 
-  public EventSorter(final String header) {
-    this.header = header;
+  public Event newEvent() {
+    final Event event = new SimpleEvent();
+    final HashMap<String, String> headers = new HashMap<>();
+    headers.put("timestamp", String.valueOf(System.currentTimeMillis()));
+    event.setHeaders(headers);
+    return event;
   }
 
   @Override
-  public int compare(final Event lhs, final Event rhs) {
-    // -1 - less than, 1 - greater than, 0 - equal, all inverted for descending
-    final String l = MacroExpander.expand(header, lhs.getHeaders());
-    final String r = MacroExpander.expand(header, rhs.getHeaders());
-    return l.compareTo(r);
+  public void setCallBack(final IEventNotify callback) {
+    this.callback = callback;
   }
+
 }

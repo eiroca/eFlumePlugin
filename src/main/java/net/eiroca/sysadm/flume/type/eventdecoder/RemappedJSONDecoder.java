@@ -35,8 +35,8 @@ import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.Helper;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.system.Logs;
-import net.eiroca.sysadm.flume.core.util.EventDecoder;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.eventDecoders.EventDecoder;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 
 public class RemappedJSONDecoder extends EventDecoder<JsonObject> {
 
@@ -98,7 +98,7 @@ public class RemappedJSONDecoder extends EventDecoder<JsonObject> {
     final SimpleGson data = new SimpleGson(expandName);
     final GsonCursor json = new GsonCursor(data);
     final Map<String, String> headers = event.getHeaders();
-    final String message = bodyName != null ? Flume.getBody(event, encoding) : null;
+    final String message = bodyName != null ? FlumeHelper.getBody(event, encoding) : null;
     for (final Entry<String, String> header : headers.entrySet()) {
       final String value = header.getValue();
       if (LibStr.isEmptyOrNull(value)) {

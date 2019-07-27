@@ -17,7 +17,7 @@
 package net.eiroca.sysadm.flume.type.action;
 
 import java.util.Map;
-import net.eiroca.sysadm.flume.core.util.HeaderAction;
+import net.eiroca.sysadm.flume.core.actions.HeaderAction;
 
 public class HeaderTimestamp extends HeaderAction {
 

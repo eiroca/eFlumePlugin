@@ -13,7 +13,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core.util;
+package net.eiroca.sysadm.flume.core.actions;
 
 import java.util.Map;
 import org.slf4j.Logger;
@@ -25,7 +25,9 @@ import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.api.IAction;
 import net.eiroca.sysadm.flume.api.IEventFilter;
 import net.eiroca.sysadm.flume.api.IStringExtractor;
-import net.eiroca.sysadm.flume.core.Filters;
+import net.eiroca.sysadm.flume.core.filters.Filters;
+import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
+import net.eiroca.sysadm.flume.core.util.MacroExpander;
 
 abstract public class Action extends ConfigurableObject implements IAction {
 

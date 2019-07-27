@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.system.Logs;
-import net.eiroca.sysadm.flume.core.util.Action;
+import net.eiroca.sysadm.flume.core.actions.Action;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;
 import net.eiroca.sysadm.flume.core.util.MappingCSVData;
 

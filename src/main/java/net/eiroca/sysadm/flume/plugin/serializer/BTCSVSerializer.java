@@ -31,7 +31,7 @@ import com.dynatrace.diagnostics.core.realtime.export.BtExport.BtOccurrence;
 import com.dynatrace.diagnostics.core.realtime.export.BtExport.BusinessTransaction;
 import net.eiroca.library.config.Parameters;
 import net.eiroca.library.config.parameter.StringParameter;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.type.eventdecoder.ext.DTCSVDecoder;
 
 class BTCSVSerializer implements EventSerializer, Configurable {
@@ -55,7 +55,7 @@ class BTCSVSerializer implements EventSerializer, Configurable {
 
   @Override
   public void configure(final Context context) {
-    Flume.laodConfig(params, context);
+    FlumeHelper.laodConfig(params, context);
     decoder.configure(context.getParameters(), null);
     charset = pEncoding.get();
     try {

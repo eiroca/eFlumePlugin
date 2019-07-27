@@ -14,12 +14,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core;
+package net.eiroca.sysadm.flume.core.converters;
 
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.core.Registry;
 import net.eiroca.sysadm.flume.api.IConverter;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.type.converter.CopyConverter;
 import net.eiroca.sysadm.flume.type.converter.DoubleConverter;
 import net.eiroca.sysadm.flume.type.converter.FormatConverter;
@@ -73,7 +73,7 @@ public class Converters {
   }
 
   public static IConverter<?> build(final String name, final ImmutableMap<String, String> config, final String prefix) {
-    return (IConverter<?>)Flume.buildIConfigurable(Converters.registry.className(name), config, prefix);
+    return (IConverter<?>)FlumeHelper.buildIConfigurable(Converters.registry.className(name), config, prefix);
   }
 
 }

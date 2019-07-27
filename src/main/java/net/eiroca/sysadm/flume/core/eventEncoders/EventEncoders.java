@@ -14,13 +14,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core;
+package net.eiroca.sysadm.flume.core.eventEncoders;
 
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.core.Registry;
 import net.eiroca.sysadm.flume.api.IEventEncoder;
 import net.eiroca.sysadm.flume.api.IEventNotify;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.eventDecoders.EventDecoders;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.type.eventdecoder.StringDecoder;
 import net.eiroca.sysadm.flume.type.eventencoder.ListCSVEncoder;
 
@@ -34,7 +35,7 @@ public class EventEncoders {
   }
 
   public static IEventEncoder<?> build(final String type, final ImmutableMap<String, String> config, final String prefix, final IEventNotify callback) {
-    final IEventEncoder<?> encoder = (IEventEncoder<?>)Flume.buildIConfigurable(EventEncoders.registry.className(type), config, prefix);
+    final IEventEncoder<?> encoder = (IEventEncoder<?>)FlumeHelper.buildIConfigurable(EventEncoders.registry.className(type), config, prefix);
     encoder.setCallBack(callback);
     return encoder;
   }

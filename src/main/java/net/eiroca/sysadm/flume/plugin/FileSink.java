@@ -43,7 +43,7 @@ import net.eiroca.library.config.Parameters;
 import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.LongParameter;
 import net.eiroca.library.config.parameter.StringParameter;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 
 public class FileSink extends AbstractSink implements Configurable, Runnable {
 
@@ -81,7 +81,7 @@ public class FileSink extends AbstractSink implements Configurable, Runnable {
 
   @Override
   public void configure(final Context context) {
-    Flume.laodConfig(params, context);
+    FlumeHelper.laodConfig(params, context);
     final String pathManagerType = pPathManagerType.get();
     final String directory = pDirectory.get();
     rollInterval = pRollInterval.get().intValue();
@@ -100,9 +100,7 @@ public class FileSink extends AbstractSink implements Configurable, Runnable {
         this.directory.mkdir();
       }
     }
-    catch (
-
-    final Exception e) {
+    catch (final Exception e) {
       FileSink.logger.error("Unable to create directory {}", directory, e);
       throw e;
     }
@@ -215,19 +213,19 @@ public class FileSink extends AbstractSink implements Configurable, Runnable {
     finally {
       transaction.close();
     }
-    try {
-      final File newFile = pathController.getCurrentFile();
-      if (!oldFile.equals(newFile)) {
-        if (oldFile.length() == 0) {
+    final File newFile = pathController.getCurrentFile();
+    if (!oldFile.equals(newFile)) {
+      if (oldFile.length() == 0) {
+        try {
           oldFile.delete();
         }
-      }
-      else if ((rollSize > 0) && (oldFile.length() > rollSize)) {
-        shouldRotate = true; // force rotate due to size
+        catch (final Exception e) {
+          FileSink.logger.warn("Could not delete potential empty file", e);
+        }
       }
     }
-    catch (final Exception e) {
-      FileSink.logger.warn("Could not delete potential empty file", e);
+    else if ((rollSize > 0) && (oldFile.length() > rollSize)) {
+      shouldRotate = true; // force rotate due to size
     }
     return result;
   }

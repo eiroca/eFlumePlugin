@@ -31,7 +31,7 @@ import net.eiroca.library.core.LibStr;
 import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.api.IConverter;
 import net.eiroca.sysadm.flume.api.IConverterResult;
-import net.eiroca.sysadm.flume.core.ConverterResult;
+import net.eiroca.sysadm.flume.core.converters.ConverterResult;
 import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 
 /**

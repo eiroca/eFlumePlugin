@@ -15,6 +15,7 @@
  **/
 package net.eiroca.sysadm.flume.core.util;
 
+import java.util.Map;
 import org.apache.flume.Channel;
 import org.apache.flume.ChannelException;
 import org.apache.flume.Context;
@@ -23,12 +24,19 @@ import org.apache.flume.EventDeliveryException;
 import org.apache.flume.Transaction;
 import org.apache.flume.conf.Configurable;
 import org.apache.flume.instrumentation.SinkCounter;
+import org.apache.flume.serialization.EventSerializer;
 import org.apache.flume.sink.AbstractSink;
 import org.slf4j.Logger;
 import net.eiroca.library.config.Parameters;
 import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.system.Logs;
+import net.eiroca.sysadm.flume.api.IEventDecoder;
+import net.eiroca.sysadm.flume.api.IEventFilter;
+import net.eiroca.sysadm.flume.core.eventDecoders.EventDecoders;
+import net.eiroca.sysadm.flume.core.filters.Filters;
+import net.eiroca.sysadm.flume.core.util.context.GenericSinkContext;
+import net.eiroca.sysadm.flume.plugin.serializer.FormattedSerializer;
 
 abstract public class GenericSink<T extends GenericSinkContext<?>> extends AbstractSink implements Configurable {
 
@@ -37,26 +45,24 @@ abstract public class GenericSink<T extends GenericSinkContext<?>> extends Abstr
   }
 
   public enum EventStatus {
-    OK, IGNORED, ERROR, BAKEOFF
+    OK, IGNORED, ERROR, STOP
   }
 
   protected static final Logger logger = Logs.getLogger();
 
   final protected Parameters params = new Parameters();
-  final private StringParameter pEncoding = new StringParameter(params, "encoding", "utf-8");
-  final private IntegerParameter pBatchSize = new IntegerParameter(params, "batch-size", 100);
+  final protected IntegerParameter pBatchSize = new IntegerParameter(params, "batch-size", 100);
+  final protected StringParameter pDecoder = new StringParameter(params, "decoder", EventDecoders.registry.defaultName());
+  final protected StringParameter pFilter = new StringParameter(params, "filter", null);
+  final protected StringParameter pSerializer = new StringParameter(params, "serializer", FormattedSerializer.Builder.class.getName());
 
-  final private StringParameter pPrioritySource = new StringParameter(params, "priority-source", "%{priority}");
-  final private IntegerParameter pPriorityDefault = new IntegerParameter(params, "priority-default", PriorityHelper.DEFAULT_PRIORITY);
-  final private StringParameter pPriorityMapping = new StringParameter(params, "priority-mapping", PriorityHelper.DEFAULT_PRIORITY_MAPPING);
-  final private IntegerParameter pPriorityMinimum = new IntegerParameter(params, "priority-minimum", 0);
-  final private IntegerParameter pPriorityMaximum = new IntegerParameter(params, "priority-maximum", Integer.MAX_VALUE);
+  protected int batchSize;
+  protected IEventDecoder<?> decoder;
+  protected IEventFilter filter;
+  protected String serializerType;
+  protected Context serializerContext;
 
   protected SinkCounter sinkCounter;
-
-  protected String encoding;
-  protected int batchSize;
-  protected PriorityHelper priorityHelper = new PriorityHelper();
 
   @Override
   public void configure(final Context context) {
@@ -65,14 +71,19 @@ abstract public class GenericSink<T extends GenericSinkContext<?>> extends Abstr
     if (sinkCounter == null) {
       sinkCounter = new SinkCounter(getName());
     }
-    Flume.laodConfig(params, context);
-    encoding = pEncoding.get();
+    FlumeHelper.laodConfig(params, context);
     batchSize = pBatchSize.get();
-    priorityHelper.source = pPrioritySource.get();
-    priorityHelper.priorityDefault = pPriorityDefault.get();
-    priorityHelper.setPriorityMapping(pPriorityMapping.get());
-    priorityHelper.priorityMinimum = pPriorityMinimum.get();
-    priorityHelper.priorityMaximum = pPriorityMaximum.get();
+    final String decoderType = pDecoder.get();
+    decoder = EventDecoders.build(decoderType, context.getParameters(), pDecoder.getName() + ".");
+    final String filterType = pFilter.get();
+    if (filterType != null) {
+      filter = Filters.build(filterType, context.getParameters(), pFilter.getName() + ".");
+    }
+    else {
+      filter = null;
+    }
+    serializerType = pSerializer.get();
+    serializerContext = new Context(context.getSubProperties(EventSerializer.CTX_PREFIX));
   }
 
   @Override
@@ -86,19 +97,8 @@ abstract public class GenericSink<T extends GenericSinkContext<?>> extends Abstr
   public void stop() {
     GenericSink.logger.debug("Stopping {}...", this);
     sinkCounter.stop();
-    GenericSink.logger.debug("Sink stopped. Event metrics:{}", sinkCounter);
-  }
-
-  public T processBegin() throws Exception {
-    return null;
-  }
-
-  public EventStatus processEvent(final T context, final Event event) throws Exception {
-    return EventStatus.IGNORED;
-  }
-
-  public ProcessStatus processEnd(final T context) throws Exception {
-    return ProcessStatus.COMMIT;
+    GenericSink.logger.debug("Sink stopped");
+    GenericSink.logger.info("Sink metrics: {}", sinkCounter);
   }
 
   @Override
@@ -136,7 +136,7 @@ abstract public class GenericSink<T extends GenericSinkContext<?>> extends Abstr
               stop = true;
               break;
             }
-            case BAKEOFF: {
+            case STOP: {
               eventsInBatch++;
               stop = true;
               break;
@@ -152,7 +152,6 @@ abstract public class GenericSink<T extends GenericSinkContext<?>> extends Abstr
       }
       if (eventsInBatch == 0) {
         sinkCounter.incrementBatchEmptyCount();
-        status = Status.BACKOFF;
       }
       else {
         if ((eventsInBatch >= batchSize)) {
@@ -162,19 +161,30 @@ abstract public class GenericSink<T extends GenericSinkContext<?>> extends Abstr
           sinkCounter.incrementBatchUnderflowCount();
         }
       }
-      final ProcessStatus exitStatus = processEnd(context);
-      if ((exitStatus == ProcessStatus.COMMIT) || (exitStatus == ProcessStatus.BAKEOFF)) {
-        txn.commit();
-        sinkCounter.addToEventDrainSuccessCount(eventsInBatch);
-      }
-      else {
-        txn.rollback();
-      }
-      if ((exitStatus == ProcessStatus.BAKEOFF) || (exitStatus == ProcessStatus.FAIL)) {
+      if (eventsInBatch == 0) {
         status = Status.BACKOFF;
       }
       else {
         status = Status.READY;
+      }
+      final ProcessStatus exitStatus = processEnd(context);
+      switch (exitStatus) {
+        case COMMIT:
+          txn.commit();
+          sinkCounter.addToEventDrainSuccessCount(eventsInBatch);
+          break;
+        case BAKEOFF:
+          txn.commit();
+          sinkCounter.addToEventDrainSuccessCount(eventsInBatch);
+          status = Status.BACKOFF;
+          break;
+        case ROLLBACK:
+          txn.rollback();
+          break;
+        case FAIL:
+          txn.rollback();
+          status = Status.BACKOFF;
+          break;
       }
     }
     catch (final Throwable t) {
@@ -198,6 +208,44 @@ abstract public class GenericSink<T extends GenericSinkContext<?>> extends Abstr
       txn.close();
     }
     return status;
+  }
+
+  public T processBegin() throws Exception {
+    return null;
+  }
+
+  public ProcessStatus processEnd(final T context) throws Exception {
+    return ProcessStatus.COMMIT;
+  }
+
+  public EventStatus processEvent(final T context, final Event event) throws Exception {
+    if (discard(context)) { return EventStatus.IGNORED; }
+    final Map<String, String> headers = event.getHeaders();
+    if (!accept(context, event, headers)) { return EventStatus.IGNORED; }
+    final Object obj = decoder.decode(event);
+    final String body = (obj != null) ? String.valueOf(obj) : null;
+    GenericSink.logger.trace("Processing {}", event);
+    return process(context, event, headers, body);
+  }
+
+  protected boolean discard(final T context) {
+    return false;
+  }
+
+  protected boolean accept(final T context, final Event event, final Map<String, String> headers) {
+    return (filter == null) || filter.accept(headers, null);
+  }
+
+  protected EventStatus process(final T context, final Event event, final Map<String, String> headers, final String body) throws Exception {
+    return EventStatus.IGNORED;
+  }
+
+  public String getSerializerType() {
+    return serializerType;
+  }
+
+  public Context getSerializerContext() {
+    return serializerContext;
   }
 
 }

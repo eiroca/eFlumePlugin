@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.base.Throwables;
 import net.eiroca.library.core.LibStr;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.plugin.MultiportTCPSource;
 
 public class MultiportAcceptor extends IoHandlerAdapter implements MessageParser.Callback {
@@ -63,7 +63,7 @@ public class MultiportAcceptor extends IoHandlerAdapter implements MessageParser
   public void messageComplete(final Map<String, Object> metadata, final byte[] buffer) throws IOException {
     MultiportAcceptor.logger.debug("Event received");
     sourceCounter.addToEventReceivedCount(1);
-    final String message = LibStr.getMessage(buffer, encoding, Flume.BODY_ERROR_MESSAGE);
+    final String message = LibStr.getMessage(buffer, encoding, FlumeHelper.BODY_ERROR_MESSAGE);
     final Event event = EventBuilder.withBody(message.getBytes());
     final Map<String, String> headers = event.getHeaders();
     for (final String key : metadata.keySet()) {

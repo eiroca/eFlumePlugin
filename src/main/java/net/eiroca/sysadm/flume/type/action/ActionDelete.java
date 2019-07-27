@@ -17,7 +17,7 @@
 package net.eiroca.sysadm.flume.type.action;
 
 import java.util.Map;
-import net.eiroca.sysadm.flume.core.util.Action;
+import net.eiroca.sysadm.flume.core.actions.Action;
 
 public class ActionDelete extends Action {
 

@@ -37,8 +37,8 @@ import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.sysadm.flume.api.IEventDecoder;
 import net.eiroca.sysadm.flume.api.ext.IDynaTraceEventDecoder;
-import net.eiroca.sysadm.flume.core.EventDecoders;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.eventDecoders.EventDecoders;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 
 public class DynaTraceBTHandler implements HTTPSourceHandler {
 
@@ -67,7 +67,7 @@ public class DynaTraceBTHandler implements HTTPSourceHandler {
    */
   @Override
   public void configure(final Context context) {
-    Flume.laodConfig(params, context);
+    FlumeHelper.laodConfig(params, context);
     dtServerHeader = pServerHeader.get();
     dtSystemProfileHeader = pSystemProfileHeader.get();
     dtApplicationHeader = pApplicationHeader.get();

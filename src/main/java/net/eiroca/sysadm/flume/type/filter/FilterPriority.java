@@ -19,18 +19,18 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.StringParameter;
-import net.eiroca.sysadm.flume.core.util.Filter;
+import net.eiroca.sysadm.flume.core.filters.Filter;
 import net.eiroca.sysadm.flume.core.util.PriorityHelper;
 
 public class FilterPriority extends Filter {
 
-  final StringParameter pPrioritySource = new StringParameter(params, "priority-source", null);
-  final IntegerParameter pPriorityDefault = new IntegerParameter(params, "priority-default", PriorityHelper.DEFAULT_PRIORITY);
-  final StringParameter pPriorityMapping = new StringParameter(params, "priority-mapping", PriorityHelper.DEFAULT_PRIORITY_MAPPING);
-  final IntegerParameter pPriorityMinimum = new IntegerParameter(params, "priority-minimum", 0);
-  final IntegerParameter pPriorityMaximum = new IntegerParameter(params, "priority-maximum", Integer.MAX_VALUE);
+  final private StringParameter pPrioritySource = new StringParameter(params, "priority-source", "%{priority}");
+  final private IntegerParameter pPriorityDefault = new IntegerParameter(params, "priority-default", PriorityHelper.DEFAULT_PRIORITY);
+  final private StringParameter pPriorityMapping = new StringParameter(params, "priority-mapping", PriorityHelper.DEFAULT_PRIORITY_MAPPING);
+  final private IntegerParameter pPriorityMinimum = new IntegerParameter(params, "priority-minimum", 0);
+  final private IntegerParameter pPriorityMaximum = new IntegerParameter(params, "priority-maximum", Integer.MAX_VALUE);
 
-  PriorityHelper priorityHelper = new PriorityHelper();
+  private final PriorityHelper priorityHelper = new PriorityHelper();
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {

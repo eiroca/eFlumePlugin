@@ -14,22 +14,21 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.util.context;
+package net.eiroca.sysadm.flume.core.util.context;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.flume.Event;
-import net.eiroca.sysadm.flume.core.util.BinaryEventSink;
-import net.eiroca.sysadm.flume.core.util.GenericSinkContext;
+import net.eiroca.sysadm.flume.core.util.GenericSink;
 
-public class KeyedSinkContext<KEY> extends GenericSinkContext<BinaryEventSink<?>> {
+public class KeyedSinkContext<KEY> extends GenericSinkContext<GenericSink<?>> {
 
   private static final int BUFFER_STARTSIZE = 8192;
 
   private final Map<KEY, BufferedSinkContext> subContexts = new HashMap<>();
 
-  public KeyedSinkContext(final BinaryEventSink<?> owner) {
+  public KeyedSinkContext(final GenericSink<?> owner) {
     super(owner);
   }
 

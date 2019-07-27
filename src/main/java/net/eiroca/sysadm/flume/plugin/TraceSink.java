@@ -25,28 +25,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import net.eiroca.library.config.parameter.BooleanParameter;
+import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.LibStr;
-import net.eiroca.sysadm.flume.api.IEventDecoder;
-import net.eiroca.sysadm.flume.core.EventDecoders;
 import net.eiroca.sysadm.flume.core.util.GenericSink;
-import net.eiroca.sysadm.flume.core.util.GenericSinkContext;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;
+import net.eiroca.sysadm.flume.core.util.PriorityHelper;
+import net.eiroca.sysadm.flume.core.util.context.GenericSinkContext;
 
 public class TraceSink extends GenericSink<GenericSinkContext<?>> {
 
   final private StringParameter pTraceLogger = new StringParameter(params, "logger", "%{logger}");
   final private StringParameter pTraceLoggerDefault = new StringParameter(params, "logger-default", "log.TraceSink");
   final private BooleanParameter pTraceHeader = new BooleanParameter(params, "log-header", false);
-  final private StringParameter pDecoder = new StringParameter(params, "decoder", EventDecoders.registry.defaultName());
   final private StringParameter pTraceMessage = new StringParameter(params, "message", "%()");
+  final private StringParameter pPrioritySource = new StringParameter(params, "priority-source", null);
+  final private IntegerParameter pPriorityDefault = new IntegerParameter(params, "priority-default", PriorityHelper.DEFAULT_PRIORITY);
+  final private StringParameter pPriorityMapping = new StringParameter(params, "priority-mapping", PriorityHelper.DEFAULT_PRIORITY_MAPPING);
 
   private String logName;
   private String defLogName;
   private boolean logHeader;
   private String logMessage;
+  private final PriorityHelper priorityHelper = new PriorityHelper();
 
-  private IEventDecoder<?> decoder;
   private final HashMap<String, Logger> loggers = new HashMap<>();
 
   @Override
@@ -56,24 +58,16 @@ public class TraceSink extends GenericSink<GenericSinkContext<?>> {
     defLogName = pTraceLoggerDefault.get();
     logHeader = pTraceHeader.get();
     logMessage = pTraceMessage.get();
-    decoder = EventDecoders.build(pDecoder.get(), context.getParameters(), null);
+    priorityHelper.source = pPrioritySource.get();
+    priorityHelper.priorityDefault = pPriorityDefault.get();
+    priorityHelper.setPriorityMapping(pPriorityMapping.get());
   }
 
   @Override
-  public EventStatus processEvent(final GenericSinkContext<?> context, final Event event) throws Exception {
-    GenericSink.logger.trace("Tracing {}", event);
-    final Map<String, String> headers = event.getHeaders();
-    final int priority = priorityHelper.getPriority(headers, null);
-    if (priorityHelper.isEnabled(priority)) {
-      final String body = String.valueOf(decoder.decode(event));
-      writeLog(headers, body, priority);
-    }
-    return EventStatus.OK;
-  }
-
-  private final void writeLog(final Map<String, String> headers, final String body, final int priority) {
+  protected EventStatus process(final GenericSinkContext<?> context, final Event event, final Map<String, String> headers, final String body) throws Exception {
     final Logger log = getLogger(headers, body);
     final String message = getMessage(headers, body);
+    final int priority = priorityHelper.getPriority(headers, body);
     if (logHeader) {
       MDC.clear();
       try {
@@ -107,6 +101,7 @@ public class TraceSink extends GenericSink<GenericSinkContext<?>> {
         log.trace(message);
         break;
     }
+    return EventStatus.OK;
   }
 
   public String getMessage(final Map<String, String> headers, final String body) {

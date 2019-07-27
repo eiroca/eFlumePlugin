@@ -26,7 +26,7 @@ import net.eiroca.library.core.LibStr;
 import net.eiroca.library.regex.ARegEx;
 import net.eiroca.library.regex.RegularExpression;
 import net.eiroca.library.system.Logs;
-import net.eiroca.sysadm.flume.core.util.HeaderAction;
+import net.eiroca.sysadm.flume.core.actions.HeaderAction;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;
 
 public class HeaderRegEx extends HeaderAction {

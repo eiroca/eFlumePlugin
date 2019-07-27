@@ -34,7 +34,7 @@ import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.LongParameter;
 import net.eiroca.library.core.Helper;
 import net.eiroca.sysadm.flume.api.ext.IEventProcessor;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.util.tracker.TrackerManager;
 
 public class TrackerSource extends AbstractSource implements PollableSource, Configurable, IEventProcessor {
@@ -68,7 +68,7 @@ public class TrackerSource extends AbstractSource implements PollableSource, Con
     if (sourceCounter == null) {
       sourceCounter = new SourceCounter(getName());
     }
-    Flume.laodConfig(params, context);
+    FlumeHelper.laodConfig(params, context);
     backoffSleepIncrement = pBackoffSleepIncrement.get();
     maxBackOffSleepInterval = pMaxBackOffSleepInterval.get();
     batchSize = pBatchSize.get();

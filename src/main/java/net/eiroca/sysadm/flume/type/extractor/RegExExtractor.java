@@ -26,7 +26,7 @@ import net.eiroca.library.regex.ARegEx;
 import net.eiroca.library.regex.LibRegEx;
 import net.eiroca.library.regex.RegularExpression;
 import net.eiroca.library.system.Logs;
-import net.eiroca.sysadm.flume.core.util.Extractor;
+import net.eiroca.sysadm.flume.core.extractors.Extractor;
 
 /**
  * Converter that simply returns the passed in value

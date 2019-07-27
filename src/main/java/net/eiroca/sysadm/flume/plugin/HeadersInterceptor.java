@@ -23,7 +23,7 @@ import org.apache.flume.Event;
 import org.apache.flume.interceptor.Interceptor;
 import org.slf4j.Logger;
 import net.eiroca.library.system.Logs;
-import net.eiroca.sysadm.flume.core.Actions;
+import net.eiroca.sysadm.flume.core.actions.Actions;
 import net.eiroca.sysadm.flume.core.util.LicenseCheck;
 import net.eiroca.sysadm.flume.util.interceptors.HeadersConfig;
 

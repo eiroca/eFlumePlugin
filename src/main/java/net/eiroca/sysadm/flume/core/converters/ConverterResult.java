@@ -14,7 +14,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core;
+package net.eiroca.sysadm.flume.core.converters;
 
 import net.eiroca.sysadm.flume.api.IConverterResult;
 

@@ -4,12 +4,12 @@ import java.sql.Types;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.type.StandardBasicTypes;
 
-public class SQLServerCustomDialect extends SQLServerDialect {
+public class SqlServerCustomDialect extends SQLServerDialect {
 
   /**
    * Initializes a new instance of the {@link SQLServerDialect} class.
    */
-  public SQLServerCustomDialect() {
+  public SqlServerCustomDialect() {
     registerHibernateType(Types.ARRAY, StandardBasicTypes.STRING.getName());
     registerHibernateType(Types.BIGINT, StandardBasicTypes.STRING.getName());
     registerHibernateType(Types.BINARY, StandardBasicTypes.STRING.getName());

@@ -16,7 +16,7 @@
  **/
 package net.eiroca.sysadm.flume.type.converter;
 
-import net.eiroca.sysadm.flume.core.util.Converter;
+import net.eiroca.sysadm.flume.core.converters.Converter;
 
 /**
  * Converter that simply returns the passed in value in lowercase

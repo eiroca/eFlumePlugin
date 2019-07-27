@@ -24,7 +24,7 @@ import net.eiroca.library.config.parameter.ListParameter;
 import net.eiroca.library.core.LibParser;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.system.Logs;
-import net.eiroca.sysadm.flume.core.util.Extractor;
+import net.eiroca.sysadm.flume.core.extractors.Extractor;
 
 public class SpacerExtractor extends Extractor {
 

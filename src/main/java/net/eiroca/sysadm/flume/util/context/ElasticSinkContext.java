@@ -1,4 +1,5 @@
 /**
+ *
  * Copyright (C) 1999-2019 Enrico Croce - AGPL >= 3.0
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -13,16 +14,18 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core.util;
+package net.eiroca.sysadm.flume.util.context;
 
-import java.util.Map;
-import net.eiroca.sysadm.flume.api.IStringExtractor;
+import net.eiroca.sysadm.flume.core.util.context.GenericSinkContext;
+import net.eiroca.sysadm.flume.plugin.ElasticSink;
 
-abstract public class HeaderAction extends Action implements IStringExtractor {
+public class ElasticSinkContext extends GenericSinkContext<ElasticSink> {
 
-  @Override
-  final public void run(final Map<String, String> headers, final String body) {
-    setHeader(headers, body, name, this);
+  public boolean discard;
+
+  public ElasticSinkContext(final ElasticSink owner) {
+    super(owner);
+    discard = false;
   }
 
 }

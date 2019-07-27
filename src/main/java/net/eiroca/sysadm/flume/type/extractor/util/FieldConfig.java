@@ -24,7 +24,7 @@ import net.eiroca.library.config.parameter.ListParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.sysadm.flume.api.IConverter;
-import net.eiroca.sysadm.flume.core.Converters;
+import net.eiroca.sysadm.flume.core.converters.Converters;
 
 public class FieldConfig {
 

@@ -13,30 +13,38 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core.util;
+package net.eiroca.sysadm.flume.type.filter;
 
 import java.util.Map;
 import com.google.common.collect.ImmutableMap;
-import net.eiroca.library.config.parameter.BooleanParameter;
-import net.eiroca.library.core.LibStr;
-import net.eiroca.sysadm.flume.api.IEventFilter;
+import net.eiroca.library.config.parameter.IntegerParameter;
+import net.eiroca.sysadm.flume.core.filters.Filter;
 
-abstract public class Filter extends ConfigurableObject implements IEventFilter {
+public class FilterSampler extends Filter {
 
-  final protected transient BooleanParameter pAcceptNullBody = new BooleanParameter(params, "accept-null", false);
+  final IntegerParameter pSampleRate = new IntegerParameter(params, "sample-rate", 1);
+  final IntegerParameter pSampleSize = new IntegerParameter(params, "sample-size", 1);
 
-  public boolean acceptNullBody = false;
+  public int counter = 0;
+  public int sampleRate = 1;
+  public int sampleSize = 1;
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
     super.configure(config, prefix);
-    acceptNullBody = pAcceptNullBody.get();
+    counter = 0;
+    sampleRate = pSampleRate.get();
+    sampleSize = pSampleSize.get();
   }
 
   @Override
   public boolean accept(final Map<String, String> headers, final String body) {
-    if (LibStr.isEmptyOrNull(body)) { return acceptNullBody; }
-    return true;
+    counter++;
+    final boolean accept = counter <= sampleRate;
+    if (counter >= sampleSize) {
+      counter = 0;
+    }
+    return accept;
   }
 
 }

@@ -88,7 +88,7 @@ public class MacroExpander {
       }
     }
     if (needRounding) {
-      ts = Flume.roundDown(roundDown, unit, ts, timeZone);
+      ts = FlumeHelper.roundDown(roundDown, unit, ts, timeZone);
     }
     // It's a date
     String formatString = MacroExpander.EMPTY;

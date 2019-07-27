@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.StringParameter;
-import net.eiroca.sysadm.flume.core.util.Converter;
+import net.eiroca.sysadm.flume.core.converters.Converter;
 
 public class StringConverter extends Converter<String> {
 

@@ -16,10 +16,11 @@
  **/
 package net.eiroca.sysadm.flume.plugin;
 
+import java.util.Map;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import net.eiroca.sysadm.flume.core.util.GenericSink;
-import net.eiroca.sysadm.flume.core.util.GenericSinkContext;
+import net.eiroca.sysadm.flume.core.util.context.GenericSinkContext;
 
 public class DynatraceSink extends GenericSink<GenericSinkContext<?>> {
 
@@ -30,6 +31,11 @@ public class DynatraceSink extends GenericSink<GenericSinkContext<?>> {
 
   @Override
   public EventStatus processEvent(final GenericSinkContext<?> context, final Event event) throws Exception {
+    return super.processEvent(context, event);
+  }
+
+  @Override
+  protected EventStatus process(final GenericSinkContext<?> context, final Event event, final Map<String, String> headers, final String body) throws Exception {
     return EventStatus.OK;
   }
 

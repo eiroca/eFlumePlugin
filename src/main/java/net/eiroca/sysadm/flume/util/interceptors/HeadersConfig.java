@@ -25,7 +25,7 @@ import com.google.gson.Gson;
 import net.eiroca.library.config.Parameters;
 import net.eiroca.library.config.parameter.ListParameter;
 import net.eiroca.sysadm.flume.api.IAction;
-import net.eiroca.sysadm.flume.core.Actions;
+import net.eiroca.sysadm.flume.core.actions.Actions;
 import net.eiroca.sysadm.flume.plugin.UltimateInterceptor;
 
 public class HeadersConfig {

@@ -32,10 +32,10 @@ import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.sysadm.flume.api.IEventEncoder;
 import net.eiroca.sysadm.flume.api.IEventNotify;
 import net.eiroca.sysadm.flume.api.ext.IEventListEncoder;
-import net.eiroca.sysadm.flume.core.EventEncoders;
-import net.eiroca.sysadm.flume.core.util.Flume;
-import net.eiroca.sysadm.flume.util.sqlsource.SQLSourceHelper;
+import net.eiroca.sysadm.flume.core.eventEncoders.EventEncoders;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.util.sqlsource.SqlSourceCounter;
+import net.eiroca.sysadm.flume.util.sqlsource.SqlSourceHelper;
 
 /**
  * A Source to read data from a SQL database. This source ask for new data in a table each
@@ -56,7 +56,7 @@ public class SQLSource extends AbstractSource implements Configurable, PollableS
   final transient private IntegerParameter pQueryDelay = new IntegerParameter(params, "query-delay", 5000); // in
                                                                                                             // ms
 
-  public SQLSourceHelper sqlSourceHelper;
+  public SqlSourceHelper sqlSourceHelper;
   private SqlSourceCounter sqlSourceCounter;
 
   private final List<Event> events = new ArrayList<>();
@@ -80,8 +80,8 @@ public class SQLSource extends AbstractSource implements Configurable, PollableS
       sqlSourceCounter = new SqlSourceCounter("SOURCESQL." + getName());
     }
     /* Initialize configuration parameters */
-    sqlSourceHelper = new SQLSourceHelper(context, getName());
-    Flume.laodConfig(params, context);
+    sqlSourceHelper = new SqlSourceHelper(context, getName());
+    FlumeHelper.laodConfig(params, context);
     final String encoderName = pEncoder.get();
     if (encoderName != null) {
       final IEventEncoder<?> temp = EventEncoders.build(encoderName, context.getParameters(), null, this);

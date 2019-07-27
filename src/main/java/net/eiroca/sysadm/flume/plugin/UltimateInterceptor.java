@@ -37,12 +37,12 @@ import net.eiroca.library.core.LibStr;
 import net.eiroca.library.data.PairEntry;
 import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.api.IExtractor;
-import net.eiroca.sysadm.flume.core.Actions;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.actions.Actions;
+import net.eiroca.sysadm.flume.core.util.EventSorter;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.core.util.LicenseCheck;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;
 import net.eiroca.sysadm.flume.type.action.ActionExtractor;
-import net.eiroca.sysadm.flume.util.interceptors.EventSorter;
 import net.eiroca.sysadm.flume.util.interceptors.UltimateConfig;
 
 public class UltimateInterceptor implements Interceptor {
@@ -144,7 +144,7 @@ public class UltimateInterceptor implements Interceptor {
       }
       final int newSize = Helper.size(data);
       boolean changed = newSize != oldSize;
-      final String originalBody = LibStr.getMessage(data, config.encoding, Flume.BODY_ERROR_MESSAGE);
+      final String originalBody = LibStr.getMessage(data, config.encoding, FlumeHelper.BODY_ERROR_MESSAGE);
       if (config.filter != null) {
         if (!config.filter.accept(headers, originalBody)) {
           UltimateInterceptor.logger.debug("event skipped: {}", event);
@@ -385,7 +385,7 @@ public class UltimateInterceptor implements Interceptor {
 
     @Override
     public void configure(final Context context) {
-      Flume.laodConfig(params, context);
+      FlumeHelper.laodConfig(params, context);
       ruleFormat = pRule.get();
       sortHeader = pSortHeader.get();
       config = new UltimateConfig(getClass().getName(), context.getParameters());

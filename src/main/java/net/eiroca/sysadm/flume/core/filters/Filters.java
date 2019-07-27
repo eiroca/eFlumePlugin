@@ -14,18 +14,21 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core;
+package net.eiroca.sysadm.flume.core.filters;
 
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.core.Registry;
 import net.eiroca.sysadm.flume.api.IEventFilter;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.type.filter.FilterContains;
 import net.eiroca.sysadm.flume.type.filter.FilterEndsWith;
+import net.eiroca.sysadm.flume.type.filter.FilterFieldSampler;
 import net.eiroca.sysadm.flume.type.filter.FilterKeywords;
 import net.eiroca.sysadm.flume.type.filter.FilterNull;
 import net.eiroca.sysadm.flume.type.filter.FilterPriority;
+import net.eiroca.sysadm.flume.type.filter.FilterRandom;
 import net.eiroca.sysadm.flume.type.filter.FilterRegEx;
+import net.eiroca.sysadm.flume.type.filter.FilterSampler;
 import net.eiroca.sysadm.flume.type.filter.FilterStartsWith;
 
 public class Filters extends Registry {
@@ -54,10 +57,15 @@ public class Filters extends Registry {
     Filters.registry.addEntry("keyword", FilterKeywords.class.getName());
     Filters.registry.addEntry("keywords", FilterKeywords.class.getName());
     Filters.registry.addEntry("priority", FilterPriority.class.getName());
+    Filters.registry.addEntry("sample", FilterSampler.class.getName());
+    Filters.registry.addEntry("sampler", FilterSampler.class.getName());
+    Filters.registry.addEntry("random", FilterRandom.class.getName());
+    Filters.registry.addEntry("limiter", FilterFieldSampler.class.getName());
+    Filters.registry.addEntry("field-sampler", FilterFieldSampler.class.getName());
   }
 
   public static IEventFilter build(final String type, final ImmutableMap<String, String> config, final String prefix) {
-    return (IEventFilter)Flume.buildIConfigurable(Filters.registry.className(type), config, prefix);
+    return (IEventFilter)FlumeHelper.buildIConfigurable(Filters.registry.className(type), config, prefix);
   }
 
   public static IEventFilter buildFilter(final ImmutableMap<String, String> config, final String prefix, String filterType, final String filterMatch) {
@@ -65,6 +73,14 @@ public class Filters extends Registry {
     if ((filterType == null) && (filterMatch != null)) {
       filterType = "regex";
     }
+    if (filterType != null) {
+      filter = Filters.build(filterType, config, prefix);
+    }
+    return filter;
+  }
+
+  public static IEventFilter buildFilter(final ImmutableMap<String, String> config, final String prefix, final String filterType) {
+    IEventFilter filter = null;
     if (filterType != null) {
       filter = Filters.build(filterType, config, prefix);
     }

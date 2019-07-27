@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.ListParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.system.LibFile;
-import net.eiroca.sysadm.flume.core.util.FilterBlackOrWhite;
+import net.eiroca.sysadm.flume.core.filters.FilterBlackOrWhite;
 
 public class FilterKeywords extends FilterBlackOrWhite {
 

@@ -19,7 +19,7 @@ package net.eiroca.sysadm.flume.type.converter;
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.LongParameter;
 import net.eiroca.library.core.Helper;
-import net.eiroca.sysadm.flume.core.util.Converter;
+import net.eiroca.sysadm.flume.core.converters.Converter;
 
 /**
  * Converter that converts the passed in value into milliseconds using the specified formatting

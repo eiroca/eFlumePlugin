@@ -19,7 +19,7 @@ package net.eiroca.sysadm.flume.util.context;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import net.eiroca.sysadm.flume.core.util.GenericSinkContext;
+import net.eiroca.sysadm.flume.core.util.context.GenericSinkContext;
 import net.eiroca.sysadm.flume.plugin.HttpSink;
 
 public class HttpSinkContext extends GenericSinkContext<HttpSink> {

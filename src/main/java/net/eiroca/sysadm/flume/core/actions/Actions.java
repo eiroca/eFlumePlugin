@@ -14,7 +14,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core;
+package net.eiroca.sysadm.flume.core.actions;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.core.Registry;
 import net.eiroca.sysadm.flume.api.IAction;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.type.action.ActionCSV;
 import net.eiroca.sysadm.flume.type.action.ActionDelete;
 import net.eiroca.sysadm.flume.type.action.ActionExtractor;
@@ -64,7 +64,7 @@ public class Actions {
   }
 
   public static IAction build(final String name, final String type, final ImmutableMap<String, String> config, final String prefix) {
-    return (IAction)Flume.buildIConfigurable(name, Actions.registry.className(type), config, prefix);
+    return (IAction)FlumeHelper.buildIConfigurable(name, Actions.registry.className(type), config, prefix);
   }
 
   public static IAction build(final String name, final ImmutableMap<String, String> config, final String prefix) {

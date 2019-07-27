@@ -13,18 +13,16 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core.util;
+package net.eiroca.sysadm.flume.core.actions;
 
-public class GenericSinkContext<SINK extends GenericSink<?>> {
+import java.util.Map;
+import net.eiroca.sysadm.flume.api.IStringExtractor;
 
-  protected SINK owner;
+abstract public class HeaderAction extends Action implements IStringExtractor {
 
-  public SINK getOwner() {
-    return owner;
-  }
-
-  public GenericSinkContext(final SINK owner) {
-    this.owner = owner;
+  @Override
+  final public void run(final Map<String, String> headers, final String body) {
+    setHeader(headers, body, name, this);
   }
 
 }

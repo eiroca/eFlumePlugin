@@ -39,7 +39,7 @@ import net.eiroca.library.core.Helper;
  */
 public class JsonFieldExtractorInterceptor implements Interceptor {
 
-  private static final Logger LOG = Logger.getLogger(JsonFieldExtractorInterceptor.class);
+  private static final Logger logger = Logger.getLogger(JsonFieldExtractorInterceptor.class);
 
   private final String propertyName;
   private final JsonFactory jsonFactory = new JsonFactory();
@@ -75,7 +75,7 @@ public class JsonFieldExtractorInterceptor implements Interceptor {
               return event;
             }
             else {
-              JsonFieldExtractorInterceptor.LOG.warn("Discarding event with non-string property value");
+              JsonFieldExtractorInterceptor.logger.warn("Discarding event with non-string property value");
               return null;
             }
           }
@@ -89,10 +89,10 @@ public class JsonFieldExtractorInterceptor implements Interceptor {
       }
     }
     catch (JsonParseException | UnsupportedEncodingException e) {
-      JsonFieldExtractorInterceptor.LOG.warn("Discarding event with invalid JSON formatting", e);
+      JsonFieldExtractorInterceptor.logger.warn("Discarding event with invalid JSON formatting", e);
     }
     catch (final IOException e) {
-      JsonFieldExtractorInterceptor.LOG.warn("Problem reading the event contents", e);
+      JsonFieldExtractorInterceptor.logger.warn("Problem reading the event contents", e);
     }
     finally {
       Helper.close(parser);

@@ -15,35 +15,38 @@
  **/
 package net.eiroca.sysadm.flume.type.filter;
 
-import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.Random;
 import com.google.common.collect.ImmutableMap;
-import net.eiroca.library.config.parameter.RegExParameter;
-import net.eiroca.library.regex.LibRegEx;
-import net.eiroca.sysadm.flume.core.filters.FilterBlackOrWhite;
+import net.eiroca.library.config.parameter.DoubleParameter;
+import net.eiroca.library.config.parameter.IntegerParameter;
+import net.eiroca.sysadm.flume.core.filters.Filter;
 
-public class FilterRegEx extends FilterBlackOrWhite {
+public class FilterRandom extends Filter {
 
-  final private transient RegExParameter pFilterWhiteList = new RegExParameter(params, "whitelist", null);
-  final private transient RegExParameter pFilterBlackList = new RegExParameter(params, "blacklist", null);
+  protected final DoubleParameter pRandomFreq = new DoubleParameter(params, "random-freq", 1.0);
+  protected final IntegerParameter pRandomSeed = new IntegerParameter(params, "random-seed", 0);
 
-  public Pattern filterWhiteList;
-  public Pattern filterBlackList;
+  private Random generator = new Random();
+  private double randomFreq = 1;
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
     super.configure(config, prefix);
-    filterWhiteList = pFilterWhiteList.get();
-    filterBlackList = pFilterBlackList.get();
+    randomFreq = pRandomFreq.get();
+    final int seed = pRandomSeed.get();
+    if (seed == 0) {
+      generator = new Random();
+    }
+    else {
+      generator = new Random(seed);
+    }
   }
 
   @Override
-  public boolean isInWhiteList(final String match) {
-    return (filterWhiteList != null) ? LibRegEx.find(filterWhiteList, match, filterMatchLimit) : false;
-  }
-
-  @Override
-  public boolean isInBlackList(final String match) {
-    return (filterBlackList != null) ? LibRegEx.find(filterBlackList, match, filterMatchLimit) : false;
+  public boolean accept(final Map<String, String> headers, final String body) {
+    final double dice = generator.nextDouble();
+    return (dice <= randomFreq);
   }
 
 }

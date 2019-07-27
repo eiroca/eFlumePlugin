@@ -1,4 +1,5 @@
 /**
+ *
  * Copyright (C) 1999-2019 Enrico Croce - AGPL >= 3.0
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the
@@ -15,16 +16,22 @@
  **/
 package net.eiroca.sysadm.flume.core.util;
 
+import java.util.Comparator;
 import org.apache.flume.Event;
 
-public class FlumetHelper {
+final public class EventSorter implements Comparator<Event> {
 
-  /**
-   * Replace all macro. Any unrecognised / not found tags will be replaced with the empty string.
-   */
-  public static String expand(final String macro, final Event e, final String encoding) {
-    final String body = Flume.getBody(e, encoding);
-    return MacroExpander.expand(macro, e.getHeaders(), body, null, null, false, 0, 0, false);
+  String header;
+
+  public EventSorter(final String header) {
+    this.header = header;
   }
 
+  @Override
+  public int compare(final Event lhs, final Event rhs) {
+    // -1 - less than, 1 - greater than, 0 - equal, all inverted for descending
+    final String l = MacroExpander.expand(header, lhs.getHeaders());
+    final String r = MacroExpander.expand(header, rhs.getHeaders());
+    return l.compareTo(r);
+  }
 }

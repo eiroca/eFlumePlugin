@@ -13,30 +13,16 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core.util;
+package net.eiroca.sysadm.flume.core.extractors;
 
-import net.eiroca.sysadm.flume.api.IConverter;
-import net.eiroca.sysadm.flume.api.IConverterResult;
-import net.eiroca.sysadm.flume.core.ConverterResult;
+import net.eiroca.sysadm.flume.api.IExtractor;
+import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 
-abstract public class Converter<T> extends ConfigurableObject implements IConverter<T> {
-
-  abstract protected T doConvert(String value);
+abstract public class Extractor extends ConfigurableObject implements IExtractor {
 
   @Override
-  public IConverterResult<T> convert(final String value) {
-    final ConverterResult<T> result = new ConverterResult<>();
-    try {
-      result.value = doConvert(value);
-      result.valid = true;
-      result.error = null;
-    }
-    catch (final Exception e) {
-      result.value = null;
-      result.valid = false;
-      result.error = e;
-    }
-    return result;
+  public boolean hasNames() {
+    return getNames() != null;
   }
 
 }

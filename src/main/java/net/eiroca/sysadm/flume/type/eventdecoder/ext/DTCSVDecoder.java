@@ -30,7 +30,7 @@ import net.eiroca.library.config.parameter.CharParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.api.ext.IDynaTraceEventDecoder;
-import net.eiroca.sysadm.flume.core.util.EventDecoder;
+import net.eiroca.sysadm.flume.core.eventDecoders.EventDecoder;
 
 public class DTCSVDecoder extends EventDecoder<List<String>> implements IDynaTraceEventDecoder<String> {
 

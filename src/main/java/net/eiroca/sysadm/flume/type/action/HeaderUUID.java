@@ -18,7 +18,7 @@ package net.eiroca.sysadm.flume.type.action;
 
 import java.util.Map;
 import java.util.UUID;
-import net.eiroca.sysadm.flume.core.util.HeaderAction;
+import net.eiroca.sysadm.flume.core.actions.HeaderAction;
 
 public class HeaderUUID extends HeaderAction {
 

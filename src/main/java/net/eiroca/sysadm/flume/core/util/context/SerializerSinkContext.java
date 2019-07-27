@@ -14,20 +14,19 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.util.context;
+package net.eiroca.sysadm.flume.core.util.context;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import org.apache.flume.serialization.EventSerializer;
 import org.apache.flume.serialization.EventSerializerFactory;
-import net.eiroca.sysadm.flume.core.util.BinaryEventSink;
-import net.eiroca.sysadm.flume.core.util.GenericSinkContext;
+import net.eiroca.sysadm.flume.core.util.GenericSink;
 
-public class SerializerSinkContext extends GenericSinkContext<BinaryEventSink<?>> {
+public class SerializerSinkContext extends GenericSinkContext<GenericSink<?>> {
 
   public EventSerializer serializer;
 
-  public SerializerSinkContext(final BinaryEventSink<?> owner) {
+  public SerializerSinkContext(final GenericSink<?> owner) {
     super(owner);
   }
 

@@ -13,9 +13,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core.util;
+package net.eiroca.sysadm.flume.core.eventDecoders;
 
 import net.eiroca.sysadm.flume.api.IEventDecoder;
+import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 
 abstract public class EventDecoder<T> extends ConfigurableObject implements IEventDecoder<T> {
 

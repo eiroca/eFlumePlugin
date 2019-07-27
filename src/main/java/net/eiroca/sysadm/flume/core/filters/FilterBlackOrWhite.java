@@ -13,7 +13,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core.util;
+package net.eiroca.sysadm.flume.core.filters;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +24,7 @@ import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.system.Logs;
+import net.eiroca.sysadm.flume.core.util.MacroExpander;
 
 abstract public class FilterBlackOrWhite extends Filter {
 

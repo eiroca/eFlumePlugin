@@ -19,8 +19,8 @@ package net.eiroca.sysadm.flume.type.eventdecoder;
 import org.apache.flume.Event;
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.StringParameter;
-import net.eiroca.sysadm.flume.core.util.EventDecoder;
-import net.eiroca.sysadm.flume.core.util.Flume;
+import net.eiroca.sysadm.flume.core.eventDecoders.EventDecoder;
+import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 
 public class StringDecoder extends EventDecoder<String> {
 
@@ -35,7 +35,7 @@ public class StringDecoder extends EventDecoder<String> {
 
   @Override
   public String decode(final Event event) {
-    return Flume.getBody(event, encoding);
+    return FlumeHelper.getBody(event, encoding);
   }
 
 }

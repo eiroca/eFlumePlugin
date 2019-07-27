@@ -34,9 +34,6 @@ import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.StringParameter;
-import net.eiroca.sysadm.flume.api.IEventDecoder;
-import net.eiroca.sysadm.flume.core.EventDecoders;
-import net.eiroca.sysadm.flume.core.util.Flume;
 import net.eiroca.sysadm.flume.core.util.GenericSink;
 import net.eiroca.sysadm.flume.core.util.MacroExpander;
 import net.eiroca.sysadm.flume.util.context.HttpSinkContext;
@@ -50,7 +47,8 @@ public class HttpSink extends GenericSink<HttpSinkContext> {
   private static final String ROLLBACK = "rollback";
   private static final String BACKOFF = "backoff";
 
-  final StringParameter pDecoder = new StringParameter(params, "decoder", EventDecoders.registry.defaultName());
+  final private StringParameter pEncoding = new StringParameter(params, "encoding", "utf-8");
+
   /** Server URL */
   final StringParameter pEndPoint = new StringParameter(params, "url");
   final StringParameter pMethod = new StringParameter(params, "method", "POST");
@@ -68,6 +66,8 @@ public class HttpSink extends GenericSink<HttpSinkContext> {
   final BooleanParameter pDefaultBackoff = new BooleanParameter(params, "default-backoff", true);
   final BooleanParameter pDefaultRollback = new BooleanParameter(params, "default-rollback", true);
   final BooleanParameter pDefaultIncrementMetrics = new BooleanParameter(params, "default-increment-metrics", false);
+
+  protected String encoding;
 
   /** Endpoint URL to POST events to. */
   String endPoint;
@@ -107,12 +107,10 @@ public class HttpSink extends GenericSink<HttpSinkContext> {
    */
   private final HashMap<String, Boolean> incrementMetricsOverrides = new HashMap<>();
 
-  private IEventDecoder<?> decoder;
-
   @Override
   public void configure(final Context context) {
     super.configure(context);
-    decoder = EventDecoders.build(pDecoder.get(), context.getParameters(), pDecoder.getName() + ".");
+    encoding = pEncoding.get();
     endPoint = pEndPoint.get();
     method = pMethod.get();
     connectTimeout = pConnectTimeout.get();
@@ -146,16 +144,13 @@ public class HttpSink extends GenericSink<HttpSinkContext> {
   }
 
   @Override
-  public EventStatus processEvent(final HttpSinkContext context, final Event event) throws Exception {
+  protected EventStatus process(final HttpSinkContext context, final Event event, final Map<String, String> headers, final String body) throws Exception {
     EventStatus result = EventStatus.OK;
     final CloseableHttpClient httpClient = context.getHttpClient();
-    final String body = Flume.getBody(event, encoding);
-    final Map<String, String> headers = event.getHeaders();
     final String url = MacroExpander.expand(endPoint, headers, body);
-    final Object obj = decoder.decode(event);
     final StringBuilder reqData = new StringBuilder();
-    if (obj != null) {
-      reqData.append(String.valueOf(obj));
+    if (body != null) {
+      reqData.append(String.valueOf(body));
     }
     GenericSink.logger.trace("Request URL : " + url);
     GenericSink.logger.trace("Request body: " + reqData);
@@ -184,7 +179,7 @@ public class HttpSink extends GenericSink<HttpSinkContext> {
     context.shouldBackeoff = findOverrideValue(httpStatusString, backoffOverrides, defaultBackoff);
     final boolean shouldIncrementMetrics = findOverrideValue(httpStatusString, incrementMetricsOverrides, defaultIncrementMetrics);
     if (context.shouldBackeoff || context.shouldRollback) {
-      result = shouldIncrementMetrics ? EventStatus.BAKEOFF : EventStatus.ERROR;
+      result = shouldIncrementMetrics ? EventStatus.STOP : EventStatus.ERROR;
     }
     else {
       result = shouldIncrementMetrics ? EventStatus.OK : EventStatus.IGNORED;

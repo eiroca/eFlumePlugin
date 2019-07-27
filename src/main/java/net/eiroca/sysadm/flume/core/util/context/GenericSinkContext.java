@@ -13,15 +13,20 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.core.util;
+package net.eiroca.sysadm.flume.core.util.context;
 
-import net.eiroca.sysadm.flume.api.IExtractor;
+import net.eiroca.sysadm.flume.core.util.GenericSink;
 
-abstract public class Extractor extends ConfigurableObject implements IExtractor {
+public class GenericSinkContext<SINK extends GenericSink<?>> {
 
-  @Override
-  public boolean hasNames() {
-    return getNames() != null;
+  protected SINK owner;
+
+  public SINK getOwner() {
+    return owner;
+  }
+
+  public GenericSinkContext(final SINK owner) {
+    this.owner = owner;
   }
 
 }

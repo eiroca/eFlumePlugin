@@ -15,6 +15,7 @@
  **/
 package net.eiroca.sysadm.flume.core.extractors;
 
+import java.util.List;
 import net.eiroca.sysadm.flume.api.IExtractor;
 import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 
@@ -23,6 +24,16 @@ abstract public class Extractor extends ConfigurableObject implements IExtractor
   @Override
   public boolean hasNames() {
     return getNames() != null;
+  }
+
+  @Override
+  public boolean hasAltNames() {
+    return getAltNames() != null;
+  }
+
+  @Override
+  public List<String> getAltNames() {
+    return null;
   }
 
 }

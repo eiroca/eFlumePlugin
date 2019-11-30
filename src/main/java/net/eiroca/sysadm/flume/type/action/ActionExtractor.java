@@ -71,8 +71,9 @@ public class ActionExtractor extends Action {
     ActionExtractor.logger.trace("Extrator: {}", extractor);
     ActionExtractor.logger.trace("Body: {}", body);
     final List<String> names = extractor.getNames();
+    final List<String> altNames = extractor.getAltNames();
     final List<String> values = extractor.getValues(body);
-    final Map<String, String> fields = LibMap.buildMap(names, values);
+    final Map<String, String> fields = (names != null) ? LibMap.buildMapFromAlt(values, names, altNames) : LibMap.buildMapFrom(values);
     if (fields != null) {
       for (final Entry<String, FieldConfig> fieldEntry : extractorsFields.entrySet()) {
         final FieldConfig fieldConfig = fieldEntry.getValue();

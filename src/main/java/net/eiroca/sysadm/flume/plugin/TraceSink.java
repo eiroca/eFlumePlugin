@@ -39,7 +39,7 @@ public class TraceSink extends GenericSink<GenericSinkContext<?>> {
   final private StringParameter pTraceLoggerDefault = new StringParameter(params, "logger-default", "log.TraceSink");
   final private BooleanParameter pTraceHeader = new BooleanParameter(params, "log-header", false);
   final private StringParameter pTraceMessage = new StringParameter(params, "message", "%()");
-  final private StringParameter pPrioritySource = new StringParameter(params, "priority-source", null);
+  final private StringParameter pPrioritySource = new StringParameter(params, "priority-source", "%{priority}");
   final private IntegerParameter pPriorityDefault = new IntegerParameter(params, "priority-default", PriorityHelper.DEFAULT_PRIORITY);
   final private StringParameter pPriorityMapping = new StringParameter(params, "priority-mapping", PriorityHelper.DEFAULT_PRIORITY_MAPPING);
 

@@ -46,7 +46,7 @@ public class FilterRandom extends Filter {
   @Override
   public boolean accept(final Map<String, String> headers, final String body) {
     final double dice = generator.nextDouble();
-    return (dice <= randomFreq);
+    return (dice < randomFreq);
   }
 
 }

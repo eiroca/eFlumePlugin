@@ -34,19 +34,33 @@ public class SpacerExtractor extends Extractor {
       "message"
   });
 
+  final private transient ListParameter pFieldsAlt = new ListParameter(params, "field-names-alt", null);
+
   public String[] fields;
+  public String[] fieldsAlt;
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
     super.configure(config, prefix);
     SpacerExtractor.logger.trace("config {}: {}", prefix, config);
     fields = pFields.get();
+    fieldsAlt = pFieldsAlt.get();
   }
 
   @Override
   public List<String> getNames() {
     final List<String> result = new ArrayList<>();
     LibStr.addAll(result, fields);
+    return result;
+  }
+
+  @Override
+  public List<String> getAltNames() {
+    List<String> result = null;
+    if ((fieldsAlt != null) && (fieldsAlt.length > 0)) {
+      result = new ArrayList<>();
+      LibStr.addAll(result, fieldsAlt);
+    }
     return result;
   }
 

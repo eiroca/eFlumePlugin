@@ -44,6 +44,7 @@ public class FilterFieldSampler extends Filter {
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
     super.configure(config, prefix);
+    FilterFieldSampler.logger.debug("FilterFieldSampler Context: {} {}", prefix, config);
     final int seed = pSampleSeed.get();
     if (seed == 0) {
       generator = new Random();
@@ -64,10 +65,11 @@ public class FilterFieldSampler extends Filter {
 
   @Override
   public boolean accept(final Map<String, String> headers, final String body) {
-    final int dice = generator.nextInt(100);
+    boolean result = true;
     int r = sampleDefaultRate;
+    String _fieldVal = null;
     if (sampleSource != null) {
-      final String _fieldVal = MacroExpander.expand(sampleSource, headers, body);
+      _fieldVal = MacroExpander.expand(sampleSource, headers, body);
       if (LibStr.isNotEmptyOrNull(_fieldVal)) {
         final Integer _rate = rate.get(_fieldVal.toLowerCase());
         if (_rate != null) {
@@ -75,7 +77,17 @@ public class FilterFieldSampler extends Filter {
         }
       }
     }
-    return dice < r;
+    if (r <= 0) {
+      result = false;
+    }
+    else if (r >= 100) {
+      result = true;
+    }
+    else {
+      final int dice = generator.nextInt(100);
+      result = dice < r;
+    }
+    return result;
   }
 
 }

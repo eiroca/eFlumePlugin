@@ -23,6 +23,10 @@ public interface IExtractor extends IConfigurable {
 
   List<String> getNames();
 
+  boolean hasAltNames();
+
+  List<String> getAltNames();
+
   List<String> getValues(final String value);
 
 }

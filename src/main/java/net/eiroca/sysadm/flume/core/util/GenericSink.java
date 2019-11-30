@@ -67,7 +67,7 @@ abstract public class GenericSink<T extends GenericSinkContext<?>> extends Abstr
   @Override
   public void configure(final Context context) {
     LicenseCheck.runCheck();
-    GenericSink.logger.debug("Configure {}...", context);
+    GenericSink.logger.info("Context: {}", context);
     if (sinkCounter == null) {
       sinkCounter = new SinkCounter(getName());
     }

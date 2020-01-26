@@ -36,6 +36,7 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   final StringParameter pIndex = new StringParameter(params, "elastic-index", null, true, false);
   final BooleanParameter pUseEventTime = new BooleanParameter(params, "use-event-time", false);
   final StringParameter pType = new StringParameter(params, "elastic-type", "flume");
+  final IntegerParameter pVersion = new IntegerParameter(params, "elastic-version", 6);
   final StringParameter pID = new StringParameter(params, "elastic-id", null);
   final StringParameter pPipeline = new StringParameter(params, "elastic-pipeline", null);
   final LongParameter pDiscardTime = new LongParameter(params, "elastic-overload-discard-time", 500);
@@ -71,7 +72,8 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
     pipeline = pPipeline.get();
     final int bulkSize = pBulkSize.get();
     final int threads = pNumThread.get();
-    elastic = new ElasticBulk(endPoint, pCheckBulk.get(), bulkSize, threads);
+    final int version = pVersion.get();
+    elastic = new ElasticBulk(endPoint, version, pCheckBulk.get(), bulkSize, threads);
     queueLimit = pQueueLimit.get();
     if (queueLimit < 0) {
       queueLimit = 0;

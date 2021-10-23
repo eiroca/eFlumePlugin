@@ -43,7 +43,7 @@ public class Extractors {
   }
 
   public static IExtractor build(final String type, final ImmutableMap<String, String> config, final String prefix) {
-    return (IExtractor)FlumeHelper.buildIConfigurable(Extractors.registry.className(type), config, prefix);
+    return (IExtractor)FlumeHelper.buildIConfigurable(Extractors.registry.value(type), config, prefix);
   }
 
 }

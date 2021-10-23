@@ -64,7 +64,7 @@ public class Actions {
   }
 
   public static IAction build(final String name, final String type, final ImmutableMap<String, String> config, final String prefix) {
-    return (IAction)FlumeHelper.buildIConfigurable(name, Actions.registry.className(type), config, prefix);
+    return (IAction)FlumeHelper.buildIConfigurable(name, Actions.registry.value(type), config, prefix);
   }
 
   public static IAction build(final String name, final ImmutableMap<String, String> config, final String prefix) {

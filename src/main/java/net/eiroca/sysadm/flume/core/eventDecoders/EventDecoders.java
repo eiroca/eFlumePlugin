@@ -55,7 +55,7 @@ public class EventDecoders {
   }
 
   public static IEventDecoder<?> build(final String type, final ImmutableMap<String, String> config, final String prefix) {
-    return (IEventDecoder<?>)FlumeHelper.buildIConfigurable(EventDecoders.registry.className(type), config, prefix);
+    return (IEventDecoder<?>)FlumeHelper.buildIConfigurable(EventDecoders.registry.value(type), config, prefix);
   }
 
 }

@@ -73,7 +73,7 @@ public class Converters {
   }
 
   public static IConverter<?> build(final String name, final ImmutableMap<String, String> config, final String prefix) {
-    return (IConverter<?>)FlumeHelper.buildIConfigurable(Converters.registry.className(name), config, prefix);
+    return (IConverter<?>)FlumeHelper.buildIConfigurable(Converters.registry.value(name), config, prefix);
   }
 
 }

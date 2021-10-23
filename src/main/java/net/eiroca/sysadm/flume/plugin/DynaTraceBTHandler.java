@@ -77,7 +77,7 @@ public class DynaTraceBTHandler implements HTTPSourceHandler {
     if (decoderName != null) {
       decoder = EventDecoders.build(decoderName, context.getParameters(), null);
       if (!(decoder instanceof IDynaTraceEventDecoder)) {
-        DynaTraceBTHandler.logger.debug("Decoder '{}' is not valid.", EventDecoders.registry.className(decoderName));
+        DynaTraceBTHandler.logger.debug("Decoder '{}' is not valid.", EventDecoders.registry.value(decoderName));
         decoder = null;
       }
     }

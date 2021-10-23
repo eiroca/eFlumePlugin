@@ -35,7 +35,7 @@ public class EventEncoders {
   }
 
   public static IEventEncoder<?> build(final String type, final ImmutableMap<String, String> config, final String prefix, final IEventNotify callback) {
-    final IEventEncoder<?> encoder = (IEventEncoder<?>)FlumeHelper.buildIConfigurable(EventEncoders.registry.className(type), config, prefix);
+    final IEventEncoder<?> encoder = (IEventEncoder<?>)FlumeHelper.buildIConfigurable(EventEncoders.registry.value(type), config, prefix);
     encoder.setCallBack(callback);
     return encoder;
   }

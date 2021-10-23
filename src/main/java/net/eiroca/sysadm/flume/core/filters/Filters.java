@@ -65,7 +65,7 @@ public class Filters extends Registry {
   }
 
   public static IEventFilter build(final String type, final ImmutableMap<String, String> config, final String prefix) {
-    return (IEventFilter)FlumeHelper.buildIConfigurable(Filters.registry.className(type), config, prefix);
+    return (IEventFilter)FlumeHelper.buildIConfigurable(Filters.registry.value(type), config, prefix);
   }
 
   public static IEventFilter buildFilter(final ImmutableMap<String, String> config, final String prefix, String filterType, final String filterMatch) {

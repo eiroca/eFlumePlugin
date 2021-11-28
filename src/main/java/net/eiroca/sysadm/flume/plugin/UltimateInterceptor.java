@@ -322,8 +322,7 @@ public class UltimateInterceptor implements Interceptor {
   }
 
   public static byte[] trim(final UltimateConfig config, byte[] body) {
-    if (Helper.isEmptyOrNull(config.lTrim) && Helper.isEmptyOrNull(config.rTrim)) { return body; }
-    if (body == null) { return body; }
+    if ((Helper.isEmptyOrNull(config.lTrim) && Helper.isEmptyOrNull(config.rTrim)) || (body == null)) { return body; }
     final int size = body.length;
     int start = 0;
     int end = size - 1;

@@ -217,13 +217,7 @@ public class AvroSource extends AbstractSource implements EventDrivenSource, Con
     sourceCounter.start();
     super.start();
     final NettyServer srv = (NettyServer)server;
-    connectionCountUpdater.scheduleWithFixedDelay(new Runnable() {
-
-      @Override
-      public void run() {
-        sourceCounter.setOpenConnectionCount(Long.valueOf(srv.getNumActiveConnections()));
-      }
-    }, 0, 60, TimeUnit.SECONDS);
+    connectionCountUpdater.scheduleWithFixedDelay(() -> sourceCounter.setOpenConnectionCount(Long.valueOf(srv.getNumActiveConnections())), 0, 60, TimeUnit.SECONDS);
 
     AvroSource.logger.info("Avro source {} started.", getName());
   }
@@ -248,13 +242,7 @@ public class AvroSource extends AbstractSource implements EventDrivenSource, Con
       pipelineFactory = new AdvancedChannelPipelineFactory(enableCompression, enableSsl, keystore, keystorePassword, keystoreType, enableIpFilter, patternRuleConfigDefinition);
     }
     else {
-      pipelineFactory = new ChannelPipelineFactory() {
-
-        @Override
-        public ChannelPipeline getPipeline() throws Exception {
-          return Channels.pipeline();
-        }
-      };
+      pipelineFactory = () -> Channels.pipeline();
     }
     return pipelineFactory;
   }

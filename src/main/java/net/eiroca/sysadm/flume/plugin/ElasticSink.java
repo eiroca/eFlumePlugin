@@ -16,6 +16,7 @@
  **/
 package net.eiroca.sysadm.flume.plugin;
 
+import java.util.Base64;
 import java.util.Map;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
@@ -33,10 +34,12 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
 
   /** Server URL */
   final StringParameter pEndPoint = new StringParameter(params, "server", null, true, false);
+  final StringParameter pUsername = new StringParameter(params, "username", null);
+  final StringParameter pPassword = new StringParameter(params, "password", null);
   final StringParameter pIndex = new StringParameter(params, "elastic-index", null, true, false);
   final BooleanParameter pUseEventTime = new BooleanParameter(params, "use-event-time", false);
   final StringParameter pType = new StringParameter(params, "elastic-type", "flume");
-  final IntegerParameter pVersion = new IntegerParameter(params, "elastic-version", 6);
+  final IntegerParameter pVersion = new IntegerParameter(params, "elastic-version", 7);
   final StringParameter pID = new StringParameter(params, "elastic-id", null);
   final StringParameter pPipeline = new StringParameter(params, "elastic-pipeline", null);
   final LongParameter pDiscardTime = new LongParameter(params, "elastic-overload-discard-time", 500);
@@ -48,6 +51,7 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
 
   /** Elastic Ingest URL to send events to. */
   String endPoint;
+  String auth;
   String index;
   String type;
   String id;
@@ -62,6 +66,13 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   public void configure(final Context context) {
     super.configure(context);
     endPoint = pEndPoint.get();
+    final String username = pUsername.get();
+    final String password = pPassword.get();
+    String auth = null;
+    if (username != null) {
+      final String credential = username + ":" + password;
+      auth = Base64.getEncoder().encodeToString(credential.getBytes());
+    }
     index = pIndex.get();
     type = pType.get();
     id = pID.get();
@@ -74,6 +85,9 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
     final int threads = pNumThread.get();
     final int version = pVersion.get();
     elastic = new ElasticBulk(endPoint, version, pCheckBulk.get(), bulkSize, threads);
+    if (auth != null) {
+      elastic.setAuthorization("Basic " + auth);
+    }
     queueLimit = pQueueLimit.get();
     if (queueLimit < 0) {
       queueLimit = 0;

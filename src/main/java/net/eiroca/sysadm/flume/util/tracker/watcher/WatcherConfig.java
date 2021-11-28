@@ -121,7 +121,7 @@ public class WatcherConfig {
     if (prefix != null) {
       prefix = prefix + ".";
     }
-    WatcherConfig.logger.trace("TrackedFileConfig prefix: {} config: {}", prefix, config);
+    WatcherConfig.logger.trace("WatcherConfig prefix: {} config: {}", prefix, config);
     params.loadConfig(config, prefix);
     //
     cachePatternMatching = pCachePatternMatching.get();

@@ -123,6 +123,7 @@ public class TrackerManagerConfig {
   }
 
   private void updatePrincipals(final ImmutableMap<String, String> context, final String prefix, final String[] principals) {
+    TrackerManagerConfig.logger.debug("Principals:");
     if (principals == null) { return; }
     for (final String principalName : principals) {
       final String basePrefix = LibStr.concatenate(prefix, TrackerManagerConfig.PRINCIPAL_PREFIX, ".", principalName);

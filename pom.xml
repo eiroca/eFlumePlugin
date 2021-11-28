@@ -13,9 +13,14 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jdk.version>1.8</jdk.version>
+    <flume.version>1.7.0</flume.version>
     <eLib.version>0.0.10</eLib.version>
     <eLicense.version>0.0.10</eLicense.version>
     <eJDBCDrivers.version>0.0.10</eJDBCDrivers.version>
+    <httpclient.version>4.5.13</httpclient.version>
+    <univocityparser.version>2.9.1</univocityparser.version>
+    <hibernate.version>5.6.1.Final</hibernate.version>
+    <protobuf.version>3.19.1</protobuf.version>
   </properties>
   <build>
     <finalName>${project.name}-${project.version}</finalName>
@@ -88,19 +93,8 @@
     <dependency>
       <groupId>org.apache.flume</groupId>
       <artifactId>flume-ng-core</artifactId>
-      <version>1.7.0</version>
+      <version>${flume.version}</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.protobuf</groupId>
-      <artifactId>protobuf-java</artifactId>
-      <scope>provided</scope>
-      <version>2.6.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>5.1.12.Final</version>
     </dependency>
     <dependency>
       <groupId>net.eiroca</groupId>
@@ -140,24 +134,37 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.5.12</version>
+      <version>${httpclient.version}</version>
     </dependency>
     <!-- -->
+    <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-c3p0 -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <version>${hibernate.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-c3p0</artifactId>
-      <version>5.4.4.Final</version>
+      <version>${hibernate.version}</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/com.univocity/univocity-parsers -->
     <dependency>
       <groupId>com.univocity</groupId>
       <artifactId>univocity-parsers</artifactId>
-      <version>2.8.4</version>
+      <version>${univocityparser.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.13.1</version>
       <scope>test</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>${protobuf.version}</version>
     </dependency>
   </dependencies>
 </project>

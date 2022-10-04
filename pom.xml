@@ -22,7 +22,7 @@
     <httpclient.version>4.5.13</httpclient.version>
     <univocityparser.version>2.9.1</univocityparser.version>
     <hibernate.version>5.6.1.Final</hibernate.version>
-    <protobuf.version>3.19.4</protobuf.version>
+    <protobuf.version>3.19.6</protobuf.version>
   </properties>
   <build>
     <finalName>${project.name}-${project.version}</finalName>

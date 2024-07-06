@@ -31,9 +31,9 @@ import net.eiroca.sysadm.flume.type.filter.FilterRegEx;
 import net.eiroca.sysadm.flume.type.filter.FilterSampler;
 import net.eiroca.sysadm.flume.type.filter.FilterStartsWith;
 
-public class Filters extends Registry {
+public class Filters extends Registry<String> {
 
-  public static final Registry registry = new Registry();
+  public static final Registry<String> registry = new Registry<String>();
 
   static {
     Filters.registry.addEntry(FilterRegEx.class.getName());

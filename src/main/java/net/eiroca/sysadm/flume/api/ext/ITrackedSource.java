@@ -48,5 +48,7 @@ public interface ITrackedSource extends IConfigurable, ReliableEventReader {
 
   public long getCommittedPosition();
 
-  public long getOpenDate();
+  public long getOpeningDate();
+  
+  public long getCurrentDate();
 }

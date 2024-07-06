@@ -36,7 +36,7 @@ import net.eiroca.sysadm.flume.type.action.HeaderUUID;
 
 public class Actions {
 
-  public static final Registry registry = new Registry();
+  public static final Registry<String> registry = new Registry<String>();
 
   private static final String HEADER_ACTION_SUFFIX_ = ".type";
   private static final String HEADER_ACTION_SUFFIX_ALT = ".action";

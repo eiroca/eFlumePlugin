@@ -34,7 +34,7 @@ import net.eiroca.sysadm.flume.type.converter.UpperConverter;
 
 public class Converters {
 
-  public static final Registry registry = new Registry();
+  public static final Registry<String> registry = new Registry<String>();
 
   static {
     Converters.registry.addEntry(CopyConverter.class.getName());

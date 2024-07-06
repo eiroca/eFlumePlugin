@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableMap;
  */
 public class PriorityConverter extends LookupConverter {
 
-  private static final String PRIORITY_MAPPING = "off=off,none=off,trace=T,debug=T,finer=T,fine=T,notice=I,notification=I,info=I,information=I,warn=W,warning=W,error=E,severe=E,fatal=F,critical=F,panic=F,all=all";
+  private static final String PRIORITY_MAPPING = "off=off,none=off,trace=T,debug=T,dbg=T,finer=T,fine=T,notice=I,notification=I,info=I,information=I,inf=I,warn=W,wrn=W,warning=W,error=E,err=E,severe=E,fatal=F,cri=F,critical=F,panic=F,all=all";
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {

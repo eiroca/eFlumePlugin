@@ -104,16 +104,17 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
     final ElasticSinkContext context = new ElasticSinkContext(this);
     elastic.open();
     final int queueSize = (queueLimit > 0) ? elastic.getQueueSize() : 0;
+    context.discard = false;
     if (queueSize > queueLimit) {
       GenericSink.logger.error("Indexer overload {} - discarding events", queueSize);
       context.discard = true;
     }
     else if (queueSize > 0) {
-      GenericSink.logger.info("Indexer overload {}", queueSize);
+      GenericSink.logger.warn("Indexer overload {}", queueSize);
     }
     if (elastic.isOverload()) {
       GenericSink.logger.error("ElasticSearch Cluster overload - discarding events");
-
+      context.discard = true;
     }
     return context;
   }

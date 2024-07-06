@@ -267,8 +267,8 @@ public class TrackerManager extends ConfigurableObject implements LifecycleAware
         TrackerManager.logger.info("Source idle: {} since: {}", ts.source, (now - ts.lastCheck));
         ts.idle = true;
       }
-      if ((!ts.idle) && (ts.tracker != null) && (getConfig().maxOpenTime > 0) && ((now - ts.tracker.getOpenDate()) > getConfig().maxOpenTime) && ts.tracker.isOpen()) {
-        TrackerManager.logger.info("Source maxOpenTime: {} since: {}", ts.source, (now - ts.tracker.getOpenDate()));
+      if ((!ts.idle) && (ts.tracker != null) && (getConfig().maxOpenTime > 0) && ((now - ts.tracker.getOpeningDate()) > getConfig().maxOpenTime) && ts.tracker.isOpen()) {
+        TrackerManager.logger.info("Source maxOpenTime: {} since: {}", ts.source, (now - ts.tracker.getOpeningDate()));
         ts.idle = true;
       }
       if (ts.idle && (ts.tracker != null)) {
@@ -430,7 +430,7 @@ public class TrackerManager extends ConfigurableObject implements LifecycleAware
     final long now = System.currentTimeMillis();
     for (final IWatcher watcher : watchers) {
       final String sourceGroup = watcher.getName();
-      TrackerManager.logger.debug("updating soruce: {}", sourceGroup);
+      TrackerManager.logger.debug("Updating source: {}", sourceGroup);
       for (final IWatcherResult r : watcher.getMatchingFiles()) {
         TrackerManager.logger.debug("Checking file: " + r);
         final String id = r.getID();
@@ -470,6 +470,7 @@ public class TrackerManager extends ConfigurableObject implements LifecycleAware
         }
       }
     }
+    TrackerManager.logger.debug("Updating sources completed");
   }
 
   private ITrackedSource trackSource(final IWatcher watcher, final String fileGroup, final IWatcherResult r, final String fileKey, final long committedPos) {

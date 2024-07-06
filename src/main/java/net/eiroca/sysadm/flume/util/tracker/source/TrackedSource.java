@@ -39,6 +39,9 @@ abstract public class TrackedSource extends ConfigurableObject implements ITrack
   protected WatcherConfig config;
   protected boolean committed = true;
 
+  private long openingDate;
+  private long currentDate;
+
   @Override
   public void commit() throws IOException {
     committed = true;
@@ -63,6 +66,8 @@ abstract public class TrackedSource extends ConfigurableObject implements ITrack
 
   @Override
   public List<Event> readEvents(final int numEvents, final boolean backoffWithoutNL, final boolean flush) throws IOException {
+    TrackedSource.logger.trace("ReadEvents");
+    currentDate = System.currentTimeMillis();
     final List<Event> events = Lists.newLinkedList();
     for (int i = 0; i < numEvents; i++) {
       final Event event = readSourceEvent(backoffWithoutNL, flush);
@@ -153,11 +158,23 @@ abstract public class TrackedSource extends ConfigurableObject implements ITrack
       }
       header = getConfig().sourceHeaderName;
       if (header != null) {
-        eventHeaders.put(header, getSource());
+        String source = getSource();
+        eventHeaders.put(header, source);
+      }
+      header = getConfig().ingestTimeHeaderName;
+      if (header != null) {
+        eventHeaders.put(header, String.valueOf(getCurrentDate()));
       }
       lines.clear();
     }
     return event;
+  }
+
+  @Override
+  public void open(final long pos) throws IOException {
+    TrackedSource.logger.info(String.format("Opening file: %s ID: %s pos: %d", getSource(), getID(), pos));
+    openingDate = System.currentTimeMillis();
+    currentDate = openingDate;
   }
 
   @Override
@@ -173,5 +190,13 @@ abstract public class TrackedSource extends ConfigurableObject implements ITrack
   abstract public long getMarkPos();
 
   @Override
-  abstract public long getOpenDate();
+  public long getOpeningDate() {
+    return openingDate;
+  }
+
+  @Override
+  public long getCurrentDate() {
+    return currentDate;
+  }
+
 }

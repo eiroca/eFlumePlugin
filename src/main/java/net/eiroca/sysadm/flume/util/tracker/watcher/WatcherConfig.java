@@ -95,6 +95,7 @@ public class WatcherConfig {
 
   public String offsetHeaderName;
   public String sourceHeaderName;
+  public String ingestTimeHeaderName;
 
   public String encoding;
   public byte delimiter;
@@ -187,6 +188,9 @@ public class WatcherConfig {
     }
     if (offsetHeaderName == null) {
       offsetHeaderName = parent.offsetHeaderName;
+    }
+    if (ingestTimeHeaderName == null) {
+      ingestTimeHeaderName = parent.ingestTimeHeaderName;
     }
   }
 

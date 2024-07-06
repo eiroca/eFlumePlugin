@@ -26,8 +26,6 @@ abstract public class TrackedStream extends TrackedSource {
   protected String id;
   protected String source;
 
-  protected long openDate;
-
   protected long markPos;
   protected long commitPos;
 
@@ -132,11 +130,6 @@ abstract public class TrackedStream extends TrackedSource {
   @Override
   public long getCommittedPosition() {
     return commitPos;
-  }
-
-  @Override
-  public long getOpenDate() {
-    return openDate;
   }
 
   @Override

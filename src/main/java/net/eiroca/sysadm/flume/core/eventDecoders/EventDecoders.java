@@ -29,7 +29,7 @@ import net.eiroca.sysadm.flume.type.eventdecoder.ext.DTJSONDecoder;
 
 public class EventDecoders {
 
-  public static final Registry registry = new Registry();
+  public static final Registry<String> registry = new Registry<String>();
 
   static {
     EventDecoders.registry.addEntry(StringDecoder.class.getName());

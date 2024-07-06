@@ -76,9 +76,8 @@ public class TrackedSMB extends TrackedStream {
   @Override
   public void open(final long pos) throws IOException {
     id = LibSmb.getID(file);
-    TrackedSource.logger.info(String.format("Opening file: %s ID: %s pos: %d", file, getID(), pos));
+    super.open(pos);
     channel = new SmbRandomAccessFile(source, "r", config.shareMode, context);
-    openDate = System.currentTimeMillis();
     commit(pos);
     seek(pos);
   }

@@ -62,12 +62,17 @@ public class TrackerManagerConfig {
   final transient private BooleanParameter pSkipToEnd = new BooleanParameter(params, "skip-to-end", true);
 
   /** Whether to add the byte offset of a tracked line to the header */
-  final transient private BooleanParameter pSetOffsetHeader = new BooleanParameter(params, "set-offset-header", false);
-  /** Whether to include absolute path filename in a header. */
-  final transient private BooleanParameter pSetPathHeader = new BooleanParameter(params, "set-path-header", false);
-  /** Header in which to put absolute path filename. */
-  final transient private StringParameter pSourceHeaderName = new StringParameter(params, "path-header-key", "source");
+  final transient private BooleanParameter pSetOffsetHeader = new BooleanParameter(params, "set-offset-header", true);
   final transient private StringParameter pOffsetHeaderName = new StringParameter(params, "offset-header-key", "byteoffset");
+  
+  /** Whether to include absolute path filename in a header. */
+  final transient private BooleanParameter pSetSourceHeader = new BooleanParameter(params, "set-source-header", true);
+  final transient private StringParameter pSourceHeaderName = new StringParameter(params, "source-header-key", "sourcepath");
+
+  /** Whether to include ingest time in a header. */
+  final transient private BooleanParameter pSetIngestHeader = new BooleanParameter(params, "set-ingest-header", true);
+  final transient private StringParameter pIngestHeaderName = new StringParameter(params, "ingest-header-key", "ingesttime");
+
   final transient private BooleanParameter pCanBakeOff = new BooleanParameter(params, "bakeoff", true);
 
   /** Watchers */
@@ -93,6 +98,7 @@ public class TrackerManagerConfig {
 
   public String sourceHeaderName;
   public String offsetHeaderName;
+  public String ingestTimeHeaderName;
 
   public boolean skipToEnd;
   public boolean canBakeOff;
@@ -104,8 +110,9 @@ public class TrackerManagerConfig {
     params.loadConfig(config, prefix);
     positionFilePath = pPositionFilePath.get().toString();
     skipToEnd = pSkipToEnd.get();
-    sourceHeaderName = pSetOffsetHeader.get() ? pSourceHeaderName.get() : null;
-    offsetHeaderName = pSetPathHeader.get() ? pOffsetHeaderName.get() : null;
+    sourceHeaderName = pSetSourceHeader.get() ? pSourceHeaderName.get() : null;
+    offsetHeaderName = pSetOffsetHeader.get() ? pOffsetHeaderName.get() : null;
+    ingestTimeHeaderName = pSetIngestHeader.get() ? pIngestHeaderName.get() : null;
     writePosInterval = pWritePosInternval.get();
     inactiveFlush = pInactiveFlush.get();
     inactiveClose = pInactiveClose.get();

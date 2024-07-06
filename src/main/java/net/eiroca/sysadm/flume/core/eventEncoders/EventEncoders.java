@@ -27,7 +27,7 @@ import net.eiroca.sysadm.flume.type.eventencoder.ListCSVEncoder;
 
 public class EventEncoders {
 
-  public static final Registry registry = new Registry();
+  public static final Registry<String> registry = new Registry<String>();
 
   static {
     EventEncoders.registry.addEntry(StringDecoder.class.getName());

@@ -70,9 +70,8 @@ public class TrackedFile extends TrackedStream {
   @Override
   public void open(final long pos) throws IOException {
     id = LibFile.getFileKey(file);
-    TrackedSource.logger.info(String.format("Opening file: %s ID: %s pos: %d", file, getID(), pos));
+    super.open(pos);
     channel = FileChannel.open(file.toPath(), StandardOpenOption.READ);
-    openDate = System.currentTimeMillis();
     commit(pos);
     seek(pos);
   }
@@ -125,7 +124,7 @@ public class TrackedFile extends TrackedStream {
           }
         }
       }
-      catch (final java.io.IOException e) {
+      catch (final IOException e) {
         TrackedSource.logger.warn("Unexpected IO error. Aborting {}", source, e);
         size = -1;
       }

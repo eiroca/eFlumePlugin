@@ -27,7 +27,7 @@ import net.eiroca.sysadm.flume.type.extractor.WebLogExtractor;
 
 public class Extractors {
 
-  public static final Registry registry = new Registry();
+  public static final Registry<String> registry = new Registry<String>();
 
   static {
     Extractors.registry.addEntry(RegExExtractor.class.getName());

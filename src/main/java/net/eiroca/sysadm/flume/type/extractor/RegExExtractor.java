@@ -38,7 +38,7 @@ public class RegExExtractor extends Extractor {
   final private transient StringParameter pRegEx = new StringParameter(params, "pattern");
   final private transient BooleanParameter pRegExExtractNamed = new BooleanParameter(params, "extract-named", true);
   final private transient IntegerParameter pRegExEngine = new IntegerParameter(params, "regex-engine", 0);
-  final private transient IntegerParameter pRegExLimit = new IntegerParameter(params, "size-limit", 32 * 1024);
+  final private transient IntegerParameter pRegExLimit = new IntegerParameter(params, "size-limit", 4 * 1024);
 
   public ARegEx regEx;
   public int regExLimit;

@@ -14,28 +14,18 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.type.action;
+package net.eiroca.sysadm.flume.plugin;
 
 import java.util.Map;
-import com.google.common.collect.ImmutableMap;
-import net.eiroca.library.config.parameter.StringParameter;
-import net.eiroca.sysadm.flume.core.actions.HeaderAction;
+import org.apache.flume.Event;
+import net.eiroca.sysadm.flume.core.util.GenericSink;
+import net.eiroca.sysadm.flume.core.util.context.GenericSinkContext;
 
-public class HeaderSet extends HeaderAction {
-
-  final private transient StringParameter pValue = new StringParameter(params, "value", null, false, true);
-
-  protected String value;
+public class VoidSink extends GenericSink<GenericSinkContext<?>> {
 
   @Override
-  public void configure(final ImmutableMap<String, String> config, final String prefix) {
-    super.configure(config, prefix);
-    value = pValue.get();
-  }
-
-  @Override
-  public String getValue(final Map<String, String> headers, final String body) {
-    return value;
+  protected EventStatus process(final GenericSinkContext<?> context, final Event event, final Map<String, String> headers, final String body) throws Exception {
+    return EventStatus.OK;
   }
 
 }

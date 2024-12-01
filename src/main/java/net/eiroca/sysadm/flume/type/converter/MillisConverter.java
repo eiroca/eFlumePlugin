@@ -44,7 +44,7 @@ public class MillisConverter extends ConfigurableObject implements IConverter<Lo
 
   final private transient StringParameter pFormat = new StringParameter(params, "format", null);
   final private transient StringParameter pTimeZone = new StringParameter(params, "timezone", null);
-  final private transient BooleanParameter pSilentError = new BooleanParameter(params, "silent-error", false);
+  final private transient BooleanParameter pSilentError = new BooleanParameter(params, "silent-error", true);
 
   private static final String CFG_PATTERN_BACKUP = "format-";
 

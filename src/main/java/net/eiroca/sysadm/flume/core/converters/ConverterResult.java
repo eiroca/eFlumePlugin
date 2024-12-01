@@ -24,6 +24,12 @@ public class ConverterResult<T> implements IConverterResult<T> {
   public T value;
   public Exception error;
 
+  public ConverterResult() {
+    valid = false;
+    error = null;
+    value = null;
+  }
+
   @Override
   public boolean isValid() {
     return valid;

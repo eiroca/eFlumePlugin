@@ -47,6 +47,7 @@ public class Actions {
     Actions.registry.addEntry("delete", ActionDelete.class.getName());
     Actions.registry.addEntry("sequence", HeaderSequence.class.getName());
     Actions.registry.addEntry("timestamp", HeaderTimestamp.class.getName());
+    Actions.registry.addEntry("agent", HeaderSet.class.getName());
     Actions.registry.addEntry("csv", ActionCSV.class.getName());
     Actions.registry.addEntry("regex", HeaderRegEx.class.getName());
     Actions.registry.addEntry("logid", HeaderUUID.class.getName());

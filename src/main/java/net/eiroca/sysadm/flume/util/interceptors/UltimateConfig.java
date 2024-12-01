@@ -87,6 +87,8 @@ public class UltimateConfig {
   final private transient ListParameter pFailedHeaders = new ListParameter(paramsFailed, "headers", null);
   final private transient StringParameter pFailedEncoding = new StringParameter(paramsFailed, "encoding-new", null);
 
+  public String rule;
+
   public String encoding;
   public boolean silentError;
 
@@ -115,6 +117,7 @@ public class UltimateConfig {
 
   public UltimateConfig(final String name, final ImmutableMap<String, String> config) {
     configure(config);
+    this.rule = name;
     UltimateConfig.logger.info("Config for {}: {}", name, this);
   }
 

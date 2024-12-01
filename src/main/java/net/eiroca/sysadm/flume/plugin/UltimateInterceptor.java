@@ -129,10 +129,11 @@ public class UltimateInterceptor implements Interceptor {
     boolean isSuccess = false;
     final long now = System.currentTimeMillis();
     UltimateInterceptor.logger.trace("Intercept {}...", this);
+    UltimateConfig config = null;
     try {
       UltimateInterceptor.logger.trace("Intercept Event: {}", event);
       final Map<String, String> headers = event.getHeaders();
-      final UltimateConfig config = getConfig(ruleFormat, headers);
+      config = getConfig(ruleFormat, headers);
       UltimateInterceptor.logger.trace("Intercept Config: {}", config);
       byte[] data = event.getBody();
       final int oldSize = Helper.size(data);
@@ -233,7 +234,9 @@ public class UltimateInterceptor implements Interceptor {
     final long elapsed = System.currentTimeMillis() - now;
     UltimateInterceptor.logger.debug("Success: {} event: {}", isSuccess, event);
     if (elapsed > UltimateInterceptor.EVENT_TIME_LIMIT) {
-      UltimateInterceptor.logger.info("SLOW processing {} ms event: {}", elapsed, event);
+      String confName = (config != null) ? config.rule : "";
+      UltimateInterceptor.logger.info("SLOW processing {} ms event. Rule: {}", elapsed, confName);
+      UltimateInterceptor.logger.debug("SLOW processing body: {}", event);
     }
     return event;
   }

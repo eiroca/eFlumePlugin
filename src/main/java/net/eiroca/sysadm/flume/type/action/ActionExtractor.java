@@ -95,7 +95,7 @@ public class ActionExtractor extends Action {
             extracted = (res != null) ? String.valueOf(res) : "";
           }
           if (!result.isValid() || (result.getError() != null)) {
-            ActionExtractor.logger.info("Invalid conversion of {} in : {} ", val, body);
+            ActionExtractor.logger.info("{} invalid conversion of {}", fieldConfig.name, val);
             ActionExtractor.logger.debug("Invalid conversion", result.getError());
           }
         }

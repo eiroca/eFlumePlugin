@@ -16,19 +16,18 @@
  **/
 package net.eiroca.sysadm.flume.type.converter;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.slf4j.Logger;
+import java.util.Locale;
+import java.util.StringTokenizer;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.LibStr;
-import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.api.IConverter;
 import net.eiroca.sysadm.flume.api.IConverterResult;
 import net.eiroca.sysadm.flume.core.converters.ConverterResult;
@@ -40,9 +39,8 @@ import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
  */
 public class MillisConverter extends ConfigurableObject implements IConverter<Long> {
 
-  transient private static final Logger logger = Logs.getLogger();
-
   final private transient StringParameter pFormat = new StringParameter(params, "format", null);
+  final private transient StringParameter pLocale = new StringParameter(params, "locale", "en");
   final private transient StringParameter pTimeZone = new StringParameter(params, "timezone", null);
   final private transient BooleanParameter pSilentError = new BooleanParameter(params, "silent-error", true);
 
@@ -50,37 +48,56 @@ public class MillisConverter extends ConfigurableObject implements IConverter<Lo
 
   protected final List<DateTimeFormatter> formatters = new ArrayList<>();
   protected boolean silentError = false;
-  protected DateTimeZone timezone = null;
+  protected Locale locale = null;
+  protected ZoneId zid;
+
+  public static Locale stringToLocale(final String s) {
+    final StringTokenizer tempStringTokenizer = new StringTokenizer(s, ",");
+    if (tempStringTokenizer.hasMoreTokens()) {
+      final String l = tempStringTokenizer.nextToken();
+      if (tempStringTokenizer.hasMoreTokens()) {
+        final String c = tempStringTokenizer.nextToken();
+        return new Locale(l, c);
+      }
+      return new Locale(l);
+    }
+    return null;
+  }
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
     super.configure(config, prefix);
+    final String localeStr = pLocale.get();
+    locale = MillisConverter.stringToLocale(localeStr);
+    final String timezoneName = pTimeZone.get();
+    if (timezoneName != null) {
+      zid = ZoneId.of(timezoneName);
+    }
+    else {
+      zid = ZoneId.systemDefault();
+    }
     String pattern = pFormat.get();
     if (pattern != null) {
-      formatters.add(DateTimeFormat.forPattern(pattern));
+      formatters.add(DateTimeFormatter.ofPattern(pattern, locale).withZone(zid));
     }
     for (int i = 0; i < 10; i++) {
       pattern = config.get(LibStr.concatenate(prefix, MillisConverter.CFG_PATTERN_BACKUP, i));
       if (pattern != null) {
-        formatters.add(DateTimeFormat.forPattern(pattern));
+        formatters.add(DateTimeFormatter.ofPattern(pattern, locale).withZone(zid));
       }
     }
     Preconditions.checkArgument(formatters.size() > 0, "Must configure with a valid pattern");
-    final String timezoneName = pTimeZone.get();
-    if (timezoneName != null) {
-      timezone = DateTimeZone.forID(timezoneName);
-    }
     silentError = pSilentError.get();
   }
 
   @Override
   public IConverterResult<Long> convert(final String value) {
     final ConverterResult<Long> result = new ConverterResult<>();
-    DateTime datetime = null;
+    ZonedDateTime datetime = null;
     if (LibStr.isNotEmptyOrNull(value)) {
       for (final DateTimeFormatter formatter : formatters) {
         try {
-          datetime = formatter.parseDateTime(value);
+          datetime = ZonedDateTime.parse(value, formatter);
         }
         catch (final Exception e) {
           result.valid = false;
@@ -92,18 +109,13 @@ public class MillisConverter extends ConfigurableObject implements IConverter<Lo
           break;
         }
       }
-      if ((timezone != null) && (datetime != null)) {
-        final DateTime dt1 = new DateTime(datetime.getMillis());
-        datetime = datetime.withZoneRetainFields(timezone);
-        final DateTime dt2 = new DateTime(datetime.getMillis());
-        MillisConverter.logger.trace("Changed datetime {} -> {}", dt1, dt2);
-      }
     }
     if ((datetime == null) && (silentError)) {
-      datetime = new DateTime();
+      result.value = System.currentTimeMillis();
+      result.valid = true;
     }
     if (datetime != null) {
-      result.value = datetime.getMillis();
+      result.value = datetime.toInstant().toEpochMilli();
       result.valid = true;
     }
     return result;

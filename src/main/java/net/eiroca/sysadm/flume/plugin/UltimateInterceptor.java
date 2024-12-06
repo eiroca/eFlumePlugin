@@ -35,6 +35,7 @@ import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.Helper;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.data.PairEntry;
+import net.eiroca.library.data.Tags;
 import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.api.IExtractor;
 import net.eiroca.sysadm.flume.core.actions.Actions;
@@ -155,14 +156,14 @@ public class UltimateInterceptor implements Interceptor {
       String body = UltimateInterceptor.replace(originalBody, config.standardReplacements, config.replacements);
       changed = changed | (!body.equals(originalBody));
       Actions.execute(config.headers, headers, body);
-      Map<String, String> fields = null;
+      Tags fields = null;
       String newBody = null;
       String newEncoding = null;
       if (config.extractors.size() > 0) {
         for (final IExtractor extractor : config.extractors) {
           UltimateInterceptor.logger.trace("Checking: {}", extractor);
           try {
-            fields = ActionExtractor.extract(extractor, config.extractorsFields, headers, body);
+            fields = ActionExtractor.extractFields(extractor, config.extractorsFields, headers, body);
           }
           catch (final Exception e) {
             if (!config.silentError) { throw e; }
@@ -179,7 +180,7 @@ public class UltimateInterceptor implements Interceptor {
       }
       if (isSuccess) {
         if (config.successOutput != null) {
-          newBody = MacroExpander.expand(config.successOutput, headers, body, fields);
+          newBody = MacroExpander.expand(config.successOutput, headers, body, fields.map());
         }
         newEncoding = config.successEncoding;
         Actions.execute(config.successHeaders, headers, newBody != null ? newBody : body);

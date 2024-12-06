@@ -228,13 +228,14 @@ public class MacroExpander {
    *          needRounding is false.
    * @return Escaped string.
    */
-  public static String expand(final String macro, final Map<String, String> headers, final String body, final Map<String, String> fields, final TimeZone timeZone, final boolean needRounding, final int unit, final int roundDown, final boolean useLocalTimeStamp) {
+  public static String expand(final String macro, final Map<String, String> headers, final String body, final Map<String, Object> fields, final TimeZone timeZone, final boolean needRounding, final int unit, final int roundDown, final boolean useLocalTimeStamp) {
     if (macro == null) { return null; }
     if (macro.equals("%()")) { return (body != null) ? body : MacroExpander.EMPTY; }
     final long ts = System.currentTimeMillis();
     int i = 0, p = 0, s = 0;
     char ch, nc, c;
-    String name, replacement;
+    String name;
+    Object replacement;
     final int size = macro.length();
     final StringBuilder sb = new StringBuilder(size + 64);
     while (i < size) {
@@ -322,7 +323,7 @@ public class MacroExpander {
     return MacroExpander.expand(macro, headers, body, null, null, false, 0, 0, false);
   }
 
-  public static String expand(final String macro, final Map<String, String> headers, final String body, final Map<String, String> fields) {
+  public static String expand(final String macro, final Map<String, String> headers, final String body, final Map<String, Object> fields) {
     return MacroExpander.expand(macro, headers, body, fields, null, false, 0, 0, false);
   }
 

@@ -44,12 +44,10 @@ public class FieldConfig {
     init(name, source, sourceSep, converter, false);
   }
 
-  private void init(final String name, final String[] source, final String sourceSep, final IConverter<?> converter, final boolean expandMacro) {
-    this.name = name;
-    this.source = source;
-    this.sourceSep = sourceSep;
-    this.converter = converter;
-    this.expandMacro = expandMacro;
+  public FieldConfig(final String name, final String source, final String sourceSep, final IConverter<?> converter) {
+    init(name, new String[] {
+        source
+    }, sourceSep, converter, false);
   }
 
   public FieldConfig(final ImmutableMap<String, String> config, final String prefix, final String name) {
@@ -68,6 +66,14 @@ public class FieldConfig {
     final IConverter<?> converter = Converters.build(converterName, config, baseKey);
     init(name, source, pFieldSourceSep.get(), converter, pExpandMacro.get());
     Preconditions.checkNotNull(converter, "Could not instantiate converter: {}", converterName);
+  }
+
+  private void init(final String name, final String[] source, final String sourceSep, final IConverter<?> converter, final boolean expandMacro) {
+    this.name = name;
+    this.source = source;
+    this.sourceSep = sourceSep;
+    this.converter = converter;
+    this.expandMacro = expandMacro;
   }
 
 }

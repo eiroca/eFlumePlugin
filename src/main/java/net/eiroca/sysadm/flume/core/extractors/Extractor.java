@@ -16,24 +16,47 @@
 package net.eiroca.sysadm.flume.core.extractors;
 
 import java.util.List;
+import net.eiroca.library.data.Tags;
 import net.eiroca.sysadm.flume.api.IExtractor;
 import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 
 abstract public class Extractor extends ConfigurableObject implements IExtractor {
 
-  @Override
+  abstract public List<String> getNames();
+
+  abstract public List<String> getValues(final String value);
+
+  public List<String> getAltNames() {
+    return null;
+  }
+
   public boolean hasNames() {
     return getNames() != null;
   }
 
-  @Override
   public boolean hasAltNames() {
     return getAltNames() != null;
   }
 
   @Override
-  public List<String> getAltNames() {
-    return null;
+  public Tags getTags(String value) {
+    if (value == null) return null;
+    final List<String> names = getNames();
+    final List<String> altNames = getAltNames();
+    final List<String> values = getValues(value);
+    final Tags tags = new Tags();
+    tags.setTagFormat("%s: %s");
+    tags.setDefaultTagValue("");
+    if ((names != null) && (names.size() == values.size())) {
+      tags.addValues(names, values);
+    }
+    else if ((altNames != null) && (altNames.size() == values.size())) {
+      tags.addValues(altNames, values);
+    }
+    else {
+      tags.addValues(values);
+    }
+    return tags;
   }
 
 }

@@ -15,18 +15,10 @@
  **/
 package net.eiroca.sysadm.flume.api;
 
-import java.util.List;
+import net.eiroca.library.data.Tags;
 
 public interface IExtractor extends IConfigurable {
 
-  boolean hasNames();
-
-  List<String> getNames();
-
-  boolean hasAltNames();
-
-  List<String> getAltNames();
-
-  List<String> getValues(final String value);
+  Tags getTags(final String value);
 
 }

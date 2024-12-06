@@ -14,7 +14,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  **/
-package net.eiroca.sysadm.flume.type.eventdecoder;
+package net.eiroca.sysadm.flume.type.extractor;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,44 +22,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import org.apache.flume.Event;
 import org.slf4j.Logger;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonObject;
-import net.eiroca.ext.library.gson.GsonCursor;
-import net.eiroca.ext.library.gson.SimpleGson;
+import net.eiroca.ext.library.gson.LibGson;
 import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.core.Helper;
-import net.eiroca.library.core.LibStr;
+import net.eiroca.library.data.Tags;
 import net.eiroca.library.system.Logs;
-import net.eiroca.sysadm.flume.core.eventDecoders.EventDecoder;
-import net.eiroca.sysadm.flume.core.util.FlumeHelper;
+import net.eiroca.sysadm.flume.api.IExtractor;
+import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 
-public class RemappedJSONDecoder extends EventDecoder<JsonObject> {
+public class JsonExtractor extends ConfigurableObject implements IExtractor {
 
   transient private static final Logger logger = Logs.getLogger();
 
-  final private transient StringParameter pEncoding = new StringParameter(params, "encoding", "UTF-8");
-  final private transient BooleanParameter pExpandName = new BooleanParameter(params, "expand-name", true);
-  final private transient StringParameter pBodyName = new StringParameter(params, "body-property", "message", false, true);
+  final private transient BooleanParameter pExpandNodes = new BooleanParameter(params, "expand-nodes", true);
   final private transient BooleanParameter pIgnoreMissing = new BooleanParameter(params, "ignore-missing", false);
-  final private transient StringParameter pMissingPrefix = new StringParameter(params, "missing-prefix", null);
+  final private transient StringParameter pMissingPrefix = new StringParameter(params, "missing-prefix", "");
   final private transient StringParameter pMappingFile = new StringParameter(params, "mapping", null);
 
-  public String encoding;
-
   Map<String, String> mappedName = new HashMap<>();
-  boolean expandName;
-  String bodyName;
+  boolean expandNodes;
   String missingPrefix;
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
     params.loadConfig(config, prefix);
-    encoding = pEncoding.get();
-    expandName = pExpandName.get();
-    bodyName = pBodyName.get();
+    expandNodes = pExpandNodes.get();
     if (!pIgnoreMissing.get()) {
       missingPrefix = pMissingPrefix.get();
     }
@@ -76,41 +66,19 @@ public class RemappedJSONDecoder extends EventDecoder<JsonObject> {
         }
       }
       catch (final FileNotFoundException e) {
-        RemappedJSONDecoder.logger.warn("Missing file " + path, e);
+        logger.warn("Missing file " + path, e);
       }
       catch (final IOException e) {
-        RemappedJSONDecoder.logger.warn("Error reading file " + path, e);
+        logger.warn("Error reading file " + path, e);
       }
     }
-    RemappedJSONDecoder.logger.debug("RemappedJSON: " + this);
+    logger.debug("JsonExtractor: " + this);
   }
 
   @Override
-  public JsonObject decode(final Event event) {
-    final SimpleGson data = new SimpleGson(expandName);
-    final GsonCursor json = new GsonCursor(data);
-    final Map<String, String> headers = event.getHeaders();
-    final String message = bodyName != null ? FlumeHelper.getBody(event, encoding) : null;
-    for (final Entry<String, String> header : headers.entrySet()) {
-      final String value = header.getValue();
-      if (LibStr.isEmptyOrNull(value)) {
-        continue;
-      }
-      final String name = header.getKey();
-      final boolean exist = mappedName.containsKey(name);
-      String newName = mappedName.get(name);
-      if (!exist && (missingPrefix != null)) {
-        newName = missingPrefix + name;
-        mappedName.put(name, newName);
-      }
-      if (LibStr.isNotEmptyOrNull(newName)) {
-        json.addProperty(newName, value);
-      }
-    }
-    if (LibStr.isNotEmptyOrNull(bodyName)) {
-      json.addProperty(bodyName, message);
-    }
-    return data.getRoot();
+  public Tags getTags(final String value) {
+    Tags t = LibGson.getTags(value, expandNodes, missingPrefix, mappedName);
+    return t;
   }
 
 }

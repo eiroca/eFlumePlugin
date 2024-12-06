@@ -31,6 +31,9 @@ public class PriorityConverter extends LookupConverter {
     if (mapping == null) {
       mapping = parseMapping(PriorityConverter.PRIORITY_MAPPING);
     }
+    if (mappingDefault == null) {
+      mappingDefault = "I";
+    }
   }
 
 }

@@ -30,6 +30,7 @@ import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.ListParameter;
 import net.eiroca.library.config.parameter.PathParameter;
 import net.eiroca.library.config.parameter.StringParameter;
+import net.eiroca.library.core.Helper;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.util.tracker.watcher.WatcherConfig;
@@ -64,7 +65,7 @@ public class TrackerManagerConfig {
   /** Whether to add the byte offset of a tracked line to the header */
   final transient private BooleanParameter pSetOffsetHeader = new BooleanParameter(params, "set-offset-header", true);
   final transient private StringParameter pOffsetHeaderName = new StringParameter(params, "offset-header-key", "byteoffset");
-  
+
   /** Whether to include absolute path filename in a header. */
   final transient private BooleanParameter pSetSourceHeader = new BooleanParameter(params, "set-source-header", true);
   final transient private StringParameter pSourceHeaderName = new StringParameter(params, "source-header-key", "sourcepath");
@@ -82,6 +83,9 @@ public class TrackerManagerConfig {
   /** Principal */
   public static final String PRINCIPAL_PREFIX = "principal";
   final transient private ListParameter pPrincipals = new ListParameter(params, TrackerManagerConfig.PRINCIPAL_PREFIX + "s", LibStr.EMPTY_STRINGS);
+
+  /** Mode, collector=false use only watcher with the current hostname */
+  final transient private BooleanParameter pCollectorMode = new BooleanParameter(params, "collector-mode", true);
 
   public String positionFilePath;
   public int writePosInterval;
@@ -103,6 +107,9 @@ public class TrackerManagerConfig {
   public boolean skipToEnd;
   public boolean canBakeOff;
 
+  public boolean collectorMode;
+  public String hostname;
+
   public Map<String, WatcherConfig> watcherConfigs = new HashMap<>();
   public transient Map<String, NtlmPasswordAuthenticator> principalConfigs = new HashMap<>();
 
@@ -122,6 +129,8 @@ public class TrackerManagerConfig {
     maxAge = pMaxAge.get();
     shareMode = pShareMode.get();
     canBakeOff = pCanBakeOff.get();
+    collectorMode = pCollectorMode.get();
+    hostname = Helper.getHostName();
     principalConfigs.clear();
     updatePrincipals(config, prefix, pPrincipals.get());
     watcherConfigs.clear();

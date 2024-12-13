@@ -19,6 +19,8 @@ import net.eiroca.library.data.Tags;
 
 public interface IExtractor extends IConfigurable {
 
+  String getName();
+
   Tags getTags(final String value);
 
 }

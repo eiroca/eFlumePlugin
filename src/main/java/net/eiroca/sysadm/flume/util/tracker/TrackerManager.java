@@ -48,6 +48,8 @@ import net.eiroca.sysadm.flume.api.ext.IWatcher;
 import net.eiroca.sysadm.flume.api.ext.IWatcherResult;
 import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 import net.eiroca.sysadm.flume.plugin.TrackerSource;
+import net.eiroca.sysadm.flume.util.tracker.watcher.DatedFileWatcher;
+import net.eiroca.sysadm.flume.util.tracker.watcher.DatedSmbFileWatcher;
 import net.eiroca.sysadm.flume.util.tracker.watcher.DirectoryWatcher;
 import net.eiroca.sysadm.flume.util.tracker.watcher.FileWatcher;
 import net.eiroca.sysadm.flume.util.tracker.watcher.SmbDirectoryWatcher;
@@ -145,19 +147,33 @@ public class TrackerManager extends ConfigurableObject implements LifecycleAware
     for (final Entry<String, WatcherConfig> e : config.watcherConfigs.entrySet()) {
       IWatcher watcher = null;
       final WatcherConfig conf = e.getValue();
+      if (!config.collectorMode) {
+        if (!config.hostname.startsWith(conf.name)) {
+          TrackerManager.logger.debug("Skipping: {}", conf.name);
+          continue;
+        }
+      }
       TrackerManager.logger.trace("building watcher for: {}", conf.name);
       switch (conf.type) {
+        case DATEDFILE:
+          watcher = new DatedFileWatcher(conf);
+          break;
         case FILE:
           watcher = new FileWatcher(conf);
           break;
         case SMBFILE:
           watcher = new SmbFileWatcher(conf);
           break;
+        case DATEDSMBFILE:
+          watcher = new DatedSmbFileWatcher(conf);
+          break;
         case SMBREGEX:
           watcher = new SmbDirectoryWatcher(conf);
           break;
-        default:
+        case DIRECTORY:
           watcher = new DirectoryWatcher(conf);
+          break;
+        case UNKNOWN:
           break;
       }
       if (watcher != null) {

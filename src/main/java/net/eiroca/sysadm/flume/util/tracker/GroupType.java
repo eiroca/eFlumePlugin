@@ -17,5 +17,5 @@
 package net.eiroca.sysadm.flume.util.tracker;
 
 public enum GroupType {
-  UNKNOWN, DIRECTORY, FILE, SMBFILE, SMBREGEX
+  UNKNOWN, DIRECTORY, FILE, DATEDFILE, SMBFILE, DATEDSMBFILE, SMBREGEX
 }

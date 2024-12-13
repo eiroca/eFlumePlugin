@@ -41,9 +41,10 @@ abstract public class Extractor extends ConfigurableObject implements IExtractor
   @Override
   public Tags getTags(String value) {
     if (value == null) return null;
+    final List<String> values = getValues(value);
+    if (values == null) return null;
     final List<String> names = getNames();
     final List<String> altNames = getAltNames();
-    final List<String> values = getValues(value);
     final Tags tags = new Tags();
     tags.setTagFormat("%s: %s");
     tags.setDefaultTagValue("");

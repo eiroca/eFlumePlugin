@@ -15,26 +15,40 @@
  **/
 package net.eiroca.sysadm.flume.core.converters;
 
+import com.google.common.collect.ImmutableMap;
+import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.sysadm.flume.api.IConverter;
 import net.eiroca.sysadm.flume.api.IConverterResult;
 import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 
 abstract public class Converter<T> extends ConfigurableObject implements IConverter<T> {
 
+  final private transient BooleanParameter pSkipNull = new BooleanParameter(params, "skip-null", false);
+
+  protected boolean allowNull;
+
   abstract protected T doConvert(String value);
+
+  @Override
+  public void configure(final ImmutableMap<String, String> config, final String prefix) {
+    super.configure(config, prefix);
+    allowNull = !pSkipNull.get();
+  }
 
   @Override
   public IConverterResult<T> convert(final String value) {
     final ConverterResult<T> result = new ConverterResult<>();
-    try {
-      result.value = doConvert(value);
-      result.valid = true;
-      result.error = null;
-    }
-    catch (final Exception e) {
-      result.value = null;
-      result.valid = false;
-      result.error = e;
+    if (allowNull || (value != null)) {
+      try {
+        result.value = doConvert(value);
+        result.valid = true;
+        result.error = null;
+      }
+      catch (final Exception e) {
+        result.value = null;
+        result.valid = false;
+        result.error = e;
+      }
     }
     return result;
   }

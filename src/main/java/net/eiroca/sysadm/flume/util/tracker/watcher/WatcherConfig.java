@@ -43,9 +43,11 @@ public class WatcherConfig {
 
   private static final String HEADER_PREFIX = "header.";
 
-  private static final String SMB_PREFIX = "smb:";
-  private static final String FILE_PREFIX = "file:";
   private static final String DIR_PREFIX = "dir:";
+  private static final String FILE_PREFIX = "file:";
+  private static final String DATEDFILE_PREFIX = "file#:";
+  private static final String SMB_PREFIX = "smb:";
+  private static final String DATEDSMB_PREFIX = "smb#:";
   private static final String SMBREGEX_PREFIX = "regex:";
   private static final String REGEX_RULE1 = "..";
   private static final String REGEX_RULE2 = "*";
@@ -231,12 +233,20 @@ public class WatcherConfig {
       type = GroupType.FILE;
       path = path.substring(WatcherConfig.FILE_PREFIX.length());
     }
+    else if (path.startsWith(WatcherConfig.DATEDFILE_PREFIX)) {
+      type = GroupType.DATEDFILE;
+      path = path.substring(WatcherConfig.DATEDFILE_PREFIX.length());
+    }
     else if (path.startsWith(WatcherConfig.DIR_PREFIX)) {
       type = GroupType.DIRECTORY;
       path = path.substring(WatcherConfig.DIR_PREFIX.length());
     }
     else if (path.startsWith(WatcherConfig.SMB_PREFIX)) {
       type = isRegEx ? GroupType.SMBREGEX : GroupType.SMBFILE;
+    }
+    else if (path.startsWith(WatcherConfig.DATEDSMB_PREFIX)) {
+      type = GroupType.DATEDSMBFILE;
+      path = path.substring(1);
     }
     else if (path.startsWith(WatcherConfig.SMBREGEX_PREFIX)) {
       type = GroupType.SMBREGEX;

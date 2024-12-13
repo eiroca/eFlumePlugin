@@ -21,6 +21,7 @@ import net.eiroca.library.core.Registry;
 import net.eiroca.sysadm.flume.api.IExtractor;
 import net.eiroca.sysadm.flume.core.util.FlumeHelper;
 import net.eiroca.sysadm.flume.type.extractor.AltLogExtractor;
+import net.eiroca.sysadm.flume.type.extractor.JsonExtractor;
 import net.eiroca.sysadm.flume.type.extractor.OptMsgExtractor;
 import net.eiroca.sysadm.flume.type.extractor.RegExExtractor;
 import net.eiroca.sysadm.flume.type.extractor.SpacerExtractor;
@@ -38,6 +39,7 @@ public class Extractors {
     Extractors.registry.addEntry("pattern", RegExExtractor.class.getName());
     Extractors.registry.addEntry("spacer", SpacerExtractor.class.getName());
     Extractors.registry.addEntry("space", SpacerExtractor.class.getName());
+    Extractors.registry.addEntry("spaces", SpacerExtractor.class.getName());
     Extractors.registry.addEntry("separator", SplitterExtractor.class.getName());
     Extractors.registry.addEntry("split", SplitterExtractor.class.getName());
     Extractors.registry.addEntry("splitter", SplitterExtractor.class.getName());
@@ -45,6 +47,7 @@ public class Extractors {
     Extractors.registry.addEntry("altlog", AltLogExtractor.class.getName());
     Extractors.registry.addEntry("optmsg", OptMsgExtractor.class.getName());
     Extractors.registry.addEntry("weblogic", WeblogicExtractor.class.getName());
+    Extractors.registry.addEntry("json", JsonExtractor.class.getName());
   }
 
   public static IExtractor build(final String type, final ImmutableMap<String, String> config, final String prefix) {

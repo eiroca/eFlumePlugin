@@ -16,19 +16,16 @@
  **/
 package net.eiroca.sysadm.flume.plugin;
 
-import java.io.FileReader;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.interceptor.Interceptor;
 import org.slf4j.Logger;
-import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.Parameters;
 import net.eiroca.library.config.parameter.ListParameter;
 import net.eiroca.library.config.parameter.StringParameter;
@@ -74,29 +71,6 @@ public class UltimateInterceptor implements Interceptor {
     UltimateInterceptor.logger.debug("Initialize {}...", this);
   }
 
-  private UltimateConfig readRule(final String ruleName) {
-    UltimateConfig result = null;
-    UltimateConfig.logger.debug("Reading external rules {}", ruleName);
-    try (FileReader reader = new FileReader(ruleName)) {
-      final Properties p = new Properties();
-      p.load(reader);
-      final Map<String, String> map = new HashMap<>();
-      for (final Object key : p.keySet()) {
-        final Object val = p.get(key);
-        map.put(String.valueOf(key), String.valueOf(val));
-      }
-      final ImmutableMap<String, String> ruleConf = ImmutableMap.copyOf(map);
-      result = new UltimateConfig(ruleName, ruleConf);
-    }
-    catch (final Exception e) {
-      UltimateConfig.logger.warn("Error reading rule {}: {}", ruleName, e.getClass().getSimpleName() + "->" + e.getMessage());
-      UltimateConfig.logger.trace("Error reading rule {}", ruleName, e);
-      result = null;
-    }
-    return result;
-
-  }
-
   public UltimateConfig getConfig(final String[] ruleFormat, final Map<String, String> headers) {
     UltimateConfig result = null;
     if (ruleFormat != null) {
@@ -107,7 +81,7 @@ public class UltimateInterceptor implements Interceptor {
         // synchronized (UltimateInterceptor.configCache) {
         entry = UltimateInterceptor.configCache.get(ruleName);
         if (entry == null) {
-          result = readRule(ruleName);
+          result = UltimateConfig.readRule(ruleName);
           entry = new PairEntry<>(new Date(), result);
           UltimateInterceptor.configCache.put(ruleName, entry);
         }
@@ -163,7 +137,7 @@ public class UltimateInterceptor implements Interceptor {
         for (final IExtractor extractor : config.extractors) {
           UltimateInterceptor.logger.trace("Checking: {}", extractor);
           try {
-            fields = ActionExtractor.extractFields(extractor, config.extractorsFields, headers, body);
+            fields = ActionExtractor.extractFields("%()", extractor, config.extractorsFields, headers, body);
           }
           catch (final Exception e) {
             if (!config.silentError) { throw e; }

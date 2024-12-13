@@ -25,7 +25,7 @@ public class ConverterResult<T> implements IConverterResult<T> {
   public Exception error;
 
   public ConverterResult() {
-    valid = false;
+    valid = true;
     error = null;
     value = null;
   }

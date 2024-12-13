@@ -16,10 +16,15 @@
  **/
 package net.eiroca.sysadm.flume.util.interceptors;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableMap;
@@ -29,6 +34,7 @@ import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.config.parameter.ListParameter;
 import net.eiroca.library.config.parameter.StringParameter;
+import net.eiroca.library.core.Helper;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.data.PairEntry;
 import net.eiroca.sysadm.flume.api.IAction;
@@ -44,6 +50,9 @@ import net.eiroca.sysadm.flume.type.extractor.util.FieldConfig;
 public class UltimateConfig {
 
   public static final Logger logger = LoggerFactory.getLogger(UltimateInterceptor.class);
+
+  private static final String PREFIX_INCLUDE = "include";
+  private static final String FMT_INCLUDE = PREFIX_INCLUDE + ".%d";
 
   private static final String CTX_HEADER_PREFIX = "header.";
   private static final String CTX_BODY_PREFIX = "body.";
@@ -115,6 +124,109 @@ public class UltimateConfig {
   public String failedEncoding;
   public List<IAction> failedHeaders = new ArrayList<>();
 
+  public static UltimateConfig readRule(final String ruleName) {
+    UltimateConfig result = null;
+    UltimateConfig.logger.debug("Reading external rules {}", ruleName);
+    try {
+      Path rulPath = Paths.get(ruleName);
+      if (rulPath != null) {
+        rulPath = rulPath.getParent();
+      }
+      String basePath;
+      if (rulPath == null) {
+        basePath = "";
+      }
+      else {
+        basePath = rulPath.toString();
+      }
+      Properties p = Helper.loadProperties(ruleName, false);
+      String[] includePaths = getIncludes(basePath, p);
+      p = Helper.mergeProperties(p, null, includePaths);
+      runFixUp(p);
+      UltimateConfig.logger.trace("Fixed properties {}", p);
+      final Map<String, String> map = new HashMap<>();
+      for (Entry<Object, Object> e : p.entrySet()) {
+        final Object key = e.getKey();
+        final Object val = e.getValue();
+        map.put(key.toString(), val.toString());
+      }
+      final ImmutableMap<String, String> ruleConf = ImmutableMap.copyOf(map);
+      UltimateConfig.logger.debug("Final rule: {}", new Gson().toJson(ruleConf).toString());
+      result = new UltimateConfig(ruleName, ruleConf);
+    }
+    catch (final Exception e) {
+      UltimateConfig.logger.warn("Error reading rule {}: {}", ruleName, e.getClass().getSimpleName() + "->" + e.getMessage());
+      UltimateConfig.logger.trace("Error reading rule {}", ruleName, e);
+      result = null;
+    }
+    return result;
+  }
+
+  private static void runFixUp(Properties p) {
+    for (Entry<Object, Object> e : p.entrySet()) {
+      Object o = e.getValue();
+      if (o == null) continue;
+      String name = e.getKey().toString();
+      String val = e.getValue().toString();
+      if (name.startsWith("@")) {
+        int pos = name.indexOf('@', 1);
+        if (pos > 1) {
+          // Fix-up tag @ignored@key = val  p[key] = p[key]+' '+val
+          String key = name.substring(pos + 1);
+          String oldVal = p.getProperty(key, null);
+          if (oldVal == null) {
+            p.setProperty(key, val);
+          }
+          else {
+            p.setProperty(key, oldVal + " " + val);
+          }
+          p.remove(name);
+        }
+      }
+    }
+  }
+
+  private static String[] getIncludes(String basePath, Properties p) {
+    List<String> includes = new ArrayList<String>();
+    String path;
+    path = p.getProperty(PREFIX_INCLUDE, null);
+    if (path != null) {
+      includes.add(path);
+      p.remove(PREFIX_INCLUDE);
+    }
+    int i = 0;
+    do {
+      String propName = String.format(FMT_INCLUDE, i);
+      path = p.getProperty(propName, null);
+      if (path != null) {
+        includes.add(path);
+        p.remove(propName);
+      }
+      i++;
+    }
+    while (i < 100);
+    if (p.contains(PREFIX_INCLUDE)) {
+    }
+    String[] res = null;
+    int siz = includes.size();
+    if (siz > 0) {
+      res = new String[siz];
+      for (i = 0; i < siz; i++) {
+        path = includes.get(i);
+        Path incPath = Paths.get(path);
+        boolean exists = Files.exists(incPath);
+        if (exists) {
+          res[i] = incPath.toString();
+        }
+        else {
+          res[i] = basePath + Helper.FS + path;
+        }
+        UltimateConfig.logger.trace("Including rule {}", res[i]);
+      }
+    }
+    return res;
+  }
+
   public UltimateConfig(final String name, final ImmutableMap<String, String> config) {
     configure(config);
     this.rule = name;
@@ -122,7 +234,7 @@ public class UltimateConfig {
   }
 
   protected void configure(final ImmutableMap<String, String> config) {
-    UltimateConfig.logger.trace("Starting config");
+    UltimateConfig.logger.trace("Starting config: {}", config);
     params.loadConfig(config, null);
     encoding = pEncoding.get();
     silentError = pSilentError.get();

@@ -35,7 +35,7 @@ public class HeaderRegEx extends HeaderAction {
 
   final private transient StringParameter pRegExSource = new StringParameter(params, "source", " %() ");
   final private transient StringParameter pRegExPattern = new StringParameter(params, "pattern", "\\s(.*)\\s");
-  final private transient IntegerParameter pRegExLimit = new IntegerParameter(params, "size-limit", 16 * 1024);
+  final private transient IntegerParameter pRegExLimit = new IntegerParameter(params, "size-limit", 8 * 1024);
   final private transient IntegerParameter pRegExEngine = new IntegerParameter(params, "regex-engine", 0);
   final private transient IntegerParameter pRegExMinSize = new IntegerParameter(params, "min-size", 512);
   final private transient IntegerParameter pRegExMaxTime = new IntegerParameter(params, "max-time", 100000);
@@ -62,6 +62,7 @@ public class HeaderRegEx extends HeaderAction {
     rule.setSizeLimit(pRegExLimit.get());
     rule.setSizeMin(pRegExMinSize.get());
     rule.setTimeLimit(pRegExMaxTime.get(), TimeUnit.MILLISECONDS);
+    HeaderRegEx.logger.debug("{} config:{}", name, config);
   }
 
   @Override

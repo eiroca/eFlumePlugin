@@ -44,16 +44,19 @@ public class ActionExtractor extends Action {
 
   private static final String CTX_EXTRACTORFIELD_PREFIX = "field.";
 
+  final private transient StringParameter pSource = new StringParameter(params, "source", " %() "); // What to parser
   final private transient StringParameter pExtractorType = new StringParameter(params, "parser", Extractors.registry.defaultName());
-  final private transient ListParameter pExtractorFields = new ListParameter(params, "fields", null);
+  final private transient ListParameter pExtractorFields = new ListParameter(params, "fields", null); // Extracted fields post processing
 
   protected IExtractor extractor;
   protected Map<String, FieldConfig> extractorsFields = new HashMap<>();
+  protected String source;
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
     super.configure(config, prefix);
     final String type = pExtractorType.get();
+    source = pSource.get();
     extractor = Extractors.build(type, config, LibStr.concatenate(prefix, ".", type, "."));
     extractorsFields = ActionExtractor.buildExtractorFields(extractor, pExtractorFields.get(), config, LibStr.concatenate(prefix, ".") + ActionExtractor.CTX_EXTRACTORFIELD_PREFIX);
     ActionExtractor.logger.debug("{} config: {}", getName(), this);
@@ -63,15 +66,15 @@ public class ActionExtractor extends Action {
   public void run(final Map<String, String> headers, final String body) {
     if (extractor != null) {
       ActionExtractor.logger.trace("Processing {}", getName());
-      ActionExtractor.extractFields(extractor, extractorsFields, headers, body);
+      ActionExtractor.extractFields(source, extractor, extractorsFields, headers, body);
     }
   }
 
-  public static Tags extractFields(final IExtractor extractor, final Map<String, FieldConfig> extractorsFields, final Map<String, String> headers, final String body) {
+  public static Tags extractFields(String source, final IExtractor extractor, final Map<String, FieldConfig> extractorsFields, final Map<String, String> headers, final String body) {
     if ((extractor == null) || (body == null)) { return null; }
-    ActionExtractor.logger.trace("Extrator: {}", extractor);
-    ActionExtractor.logger.trace("Body: {}", body);
-    final Tags fields = extractor.getTags(body);
+    String text = MacroExpander.expand(source, headers, body);
+    ActionExtractor.logger.trace(LibStr.concatenate("Extractor:", extractor.getName(), "Source:", source, "Text:", text));
+    final Tags fields = extractor.getTags(text);
     if (fields != null) {
       // Copy value for default fields
       final Iterator<Entry<String, Object>> x = fields.namedIterator();

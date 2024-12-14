@@ -27,11 +27,18 @@ import net.eiroca.library.regex.LibRegEx;
 import net.eiroca.library.regex.RegularExpression;
 import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.core.extractors.Extractor;
+import net.eiroca.sysadm.flume.core.extractors.Extractors;
 
 /**
  * Converter that simply returns the passed in value
  */
 public class RegExExtractor extends Extractor {
+
+  static {
+    Extractors.registry.addEntry(RegExExtractor.class.getName());
+    Extractors.registry.addEntry("regex", RegExExtractor.class.getName());
+    Extractors.registry.addEntry("pattern", RegExExtractor.class.getName());
+  }
 
   transient private static final Logger logger = Logs.getLogger();
 

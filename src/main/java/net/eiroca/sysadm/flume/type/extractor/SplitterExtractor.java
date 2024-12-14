@@ -20,8 +20,15 @@ import java.util.List;
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.CharParameter;
 import net.eiroca.library.core.LibParser;
+import net.eiroca.sysadm.flume.core.extractors.Extractors;
 
 public class SplitterExtractor extends SpacerExtractor {
+
+  static {
+    Extractors.registry.addEntry("separator", SplitterExtractor.class.getName());
+    Extractors.registry.addEntry("split", SplitterExtractor.class.getName());
+    Extractors.registry.addEntry("splitter", SplitterExtractor.class.getName());
+  }
 
   final private transient CharParameter pSeparator = new CharParameter(params, "separator", ',');
 

@@ -25,9 +25,16 @@ import net.eiroca.library.core.LibParser;
 import net.eiroca.library.core.LibStr;
 import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.core.extractors.Extractor;
+import net.eiroca.sysadm.flume.core.extractors.Extractors;
 
 public class SpacerExtractor extends Extractor {
 
+  static {
+    Extractors.registry.addEntry("spacer", SpacerExtractor.class.getName());
+    Extractors.registry.addEntry("space", SpacerExtractor.class.getName());
+    Extractors.registry.addEntry("spaces", SpacerExtractor.class.getName());
+
+  }
   transient private static final Logger logger = Logs.getLogger();
 
   final private transient ListParameter pFields = new ListParameter(params, "field-names", new String[] {

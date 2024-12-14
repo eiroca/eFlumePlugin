@@ -42,9 +42,9 @@ public class ActionExtractor extends Action {
 
   transient private static final Logger logger = Logs.getLogger();
 
-  private static final String CTX_EXTRACTORFIELD_PREFIX = "field.";
+  private static final String CTX_EXTRACTORFIELD_PREFIX = "field";
 
-  final private transient StringParameter pSource = new StringParameter(params, "source", " %() "); // What to parser
+  final private transient StringParameter pSource = new StringParameter(params, "source", "%()"); // What to parser (default body)
   final private transient StringParameter pExtractorType = new StringParameter(params, "parser", Extractors.registry.defaultName());
   final private transient ListParameter pExtractorFields = new ListParameter(params, "fields", null); // Extracted fields post processing
 
@@ -55,10 +55,10 @@ public class ActionExtractor extends Action {
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
     super.configure(config, prefix);
-    final String type = pExtractorType.get();
     source = pSource.get();
+    final String type = pExtractorType.get();
     extractor = Extractors.build(type, config, LibStr.concatenate(prefix, ".", type, "."));
-    extractorsFields = ActionExtractor.buildExtractorFields(extractor, pExtractorFields.get(), config, LibStr.concatenate(prefix, ".") + ActionExtractor.CTX_EXTRACTORFIELD_PREFIX);
+    extractorsFields = ActionExtractor.buildExtractorFields(extractor, pExtractorFields.get(), config, LibStr.concatenate(prefix, ".", ActionExtractor.CTX_EXTRACTORFIELD_PREFIX, "."));
     ActionExtractor.logger.debug("{} config: {}", getName(), this);
   }
 
@@ -71,9 +71,9 @@ public class ActionExtractor extends Action {
   }
 
   public static Tags extractFields(String source, final IExtractor extractor, final Map<String, FieldConfig> extractorsFields, final Map<String, String> headers, final String body) {
-    if ((extractor == null) || (body == null)) { return null; }
     String text = MacroExpander.expand(source, headers, body);
     ActionExtractor.logger.trace(LibStr.concatenate("Extractor:", extractor.getName(), "Source:", source, "Text:", text));
+    if (text == null) { return null; }
     final Tags fields = extractor.getTags(text);
     if (fields != null) {
       // Copy value for default fields

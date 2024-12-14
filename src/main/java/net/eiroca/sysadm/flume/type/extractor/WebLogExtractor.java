@@ -20,8 +20,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import net.eiroca.library.core.LibParser;
 import net.eiroca.library.system.Logs;
+import net.eiroca.sysadm.flume.core.extractors.Extractors;
 
 public class WebLogExtractor extends SpacerExtractor {
+
+  static {
+    Extractors.registry.addEntry("weblog", WebLogExtractor.class.getName());
+  }
 
   transient private static final Logger logger = Logs.getLogger();
 

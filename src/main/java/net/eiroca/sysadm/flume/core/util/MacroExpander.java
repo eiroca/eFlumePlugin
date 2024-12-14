@@ -216,7 +216,7 @@ public class MacroExpander {
 
   // -----
   /**
-   * Replace all macro. Any unrecognised / not found tags will be replaced with the empty string.
+   * Replace all macro. Any unrecognized / not found tags will be replaced with the empty string.
    *
    * @param needRounding - Should the timestamp be rounded down?
    * @param unit - if needRounding is true, what unit to round down to. This must be one of the

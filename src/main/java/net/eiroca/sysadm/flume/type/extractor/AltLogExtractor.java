@@ -23,8 +23,13 @@ import net.eiroca.library.config.parameter.CharParameter;
 import net.eiroca.library.config.parameter.IntegerParameter;
 import net.eiroca.library.core.LibParser;
 import net.eiroca.library.system.Logs;
+import net.eiroca.sysadm.flume.core.extractors.Extractors;
 
 public class AltLogExtractor extends SpacerExtractor {
+
+  static {
+    Extractors.registry.addEntry("altlog", AltLogExtractor.class.getName());
+  }
 
   transient private static final Logger logger = Logs.getLogger();
 

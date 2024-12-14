@@ -31,9 +31,14 @@ import net.eiroca.library.core.Helper;
 import net.eiroca.library.data.Tags;
 import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.api.IExtractor;
+import net.eiroca.sysadm.flume.core.extractors.Extractors;
 import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 
 public class JsonExtractor extends ConfigurableObject implements IExtractor {
+
+  static {
+    Extractors.registry.addEntry("json", JsonExtractor.class.getName());
+  }
 
   transient private static final Logger logger = Logs.getLogger();
 

@@ -26,4 +26,5 @@ public interface IEventEncoder<T> extends IConfigurable {
 
   void encode(T data);
 
+
 }

@@ -16,11 +16,15 @@
 package net.eiroca.sysadm.flume.core.extractors;
 
 import java.util.List;
+import org.slf4j.Logger;
 import net.eiroca.library.data.Tags;
+import net.eiroca.library.system.Logs;
 import net.eiroca.sysadm.flume.api.IExtractor;
 import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
 
 abstract public class Extractor extends ConfigurableObject implements IExtractor {
+
+  transient private static final Logger logger = Logs.getLogger();
 
   abstract public List<String> getNames();
 
@@ -57,6 +61,7 @@ abstract public class Extractor extends ConfigurableObject implements IExtractor
     else {
       tags.addValues(values);
     }
+    logger.trace("Extracted tags: {}", tags);
     return tags;
   }
 

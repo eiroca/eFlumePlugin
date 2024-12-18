@@ -17,6 +17,7 @@ package net.eiroca.sysadm.flume.core.converters;
 
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.BooleanParameter;
+import net.eiroca.library.core.LibStr;
 import net.eiroca.sysadm.flume.api.IConverter;
 import net.eiroca.sysadm.flume.api.IConverterResult;
 import net.eiroca.sysadm.flume.core.util.ConfigurableObject;
@@ -38,7 +39,7 @@ abstract public class Converter<T> extends ConfigurableObject implements IConver
   @Override
   public IConverterResult<T> convert(final String value) {
     final ConverterResult<T> result = new ConverterResult<>();
-    if (allowNull || (value != null)) {
+    if (allowNull || LibStr.isNotEmptyOrNull(value)) {
       try {
         result.value = doConvert(value);
         result.valid = true;

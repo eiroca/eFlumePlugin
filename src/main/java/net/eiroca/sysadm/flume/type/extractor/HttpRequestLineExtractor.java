@@ -21,13 +21,8 @@ import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.data.Tags;
 import net.eiroca.library.system.Logs;
-import net.eiroca.sysadm.flume.core.extractors.Extractors;
 
 public class HttpRequestLineExtractor extends SpacerExtractor {
-
-  static {
-    Extractors.registry.addEntry("httprequest", HttpRequestLineExtractor.class.getName());
-  }
 
   transient private static final Logger logger = Logs.getLogger();
 
@@ -103,7 +98,7 @@ public class HttpRequestLineExtractor extends SpacerExtractor {
       pos++;
     }
     if (state != LineStates.IN_PROTOCOL) { return false; }
-    t.add(protocolName, row.substring(start, pos));
+    t.add(protocolName, row.substring(start));
     return true;
   }
 

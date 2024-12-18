@@ -22,13 +22,8 @@ import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.CharParameter;
 import net.eiroca.library.core.LibParser;
 import net.eiroca.library.system.Logs;
-import net.eiroca.sysadm.flume.core.extractors.Extractors;
 
 public class OptMsgExtractor extends SpacerExtractor {
-
-  static {
-    Extractors.registry.addEntry("optmsg", OptMsgExtractor.class.getName());
-  }
 
   transient private static final Logger logger = Logs.getLogger();
 

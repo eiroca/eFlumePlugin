@@ -24,27 +24,27 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.slf4j.Logger;
 import com.google.common.collect.ImmutableMap;
+import net.eiroca.library.config.parameter.BooleanParameter;
 import net.eiroca.library.config.parameter.ListParameter;
 import net.eiroca.library.config.parameter.StringParameter;
 import net.eiroca.library.data.Tags;
 import net.eiroca.library.system.Logs;
-import net.eiroca.sysadm.flume.core.extractors.Extractors;
 
 public class HttpQueryExtractor extends SpacerExtractor {
-
-  static {
-    Extractors.registry.addEntry("httpquery", HttpQueryExtractor.class.getName());
-  }
 
   transient private static final Logger logger = Logs.getLogger();
 
   final private transient StringParameter pPrefix = new StringParameter(params, "prefix", "httpquery_");
   final private transient StringParameter pCharsetName = new StringParameter(params, "charset", "UTF-8");
-  final private transient ListParameter pRemoveList = new ListParameter(params, "remove-param", null);
+  final private transient ListParameter pParamsList = new ListParameter(params, "params", null);
+  final private transient BooleanParameter pMode = new BooleanParameter(params, "params-remove", true);
+  final private transient BooleanParameter pCaseSensitive = new BooleanParameter(params, "case-sensitive", true);
 
-  public String prefix;
-  public Charset charset;
-  public Set<String> removeList;
+  protected String prefix;
+  protected Charset charset;
+  protected boolean isRemove;
+  protected boolean caseSensitive;
+  protected Set<String> paramList;
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
@@ -52,12 +52,14 @@ public class HttpQueryExtractor extends SpacerExtractor {
     HttpQueryExtractor.logger.trace("config {}: {}", prefix, config);
     this.prefix = pPrefix.get();
     charset = Charset.forName(pCharsetName.get());
-    removeList = new TreeSet<>();
+    caseSensitive = pCaseSensitive.get();
+    isRemove = pMode.get();
+    paramList = new TreeSet<>();
     String[] tempRemoveList;
-    tempRemoveList = pRemoveList.get();
+    tempRemoveList = pParamsList.get();
     if (tempRemoveList != null) {
       for (final String element : tempRemoveList) {
-        removeList.add(element);
+        paramList.add(element);
       }
     }
   }
@@ -70,8 +72,11 @@ public class HttpQueryExtractor extends SpacerExtractor {
     List<NameValuePair> params;
     params = URLEncodedUtils.parse(value, charset);
     for (final NameValuePair param : params) {
-      final String name = param.getName();
-      if (!removeList.contains(name)) {
+      String name = param.getName();
+      if (!caseSensitive) name = name.toLowerCase();
+      boolean inList = paramList.contains(name);
+      boolean add = (!inList && isRemove) || (inList && !isRemove);
+      if (add) {
         final String val = param.getValue();
         result.add(prefix + name, val);
       }

@@ -17,18 +17,15 @@
 package net.eiroca.sysadm.flume.type.extractor;
 
 import java.util.List;
+import org.slf4j.Logger;
 import com.google.common.collect.ImmutableMap;
 import net.eiroca.library.config.parameter.CharParameter;
 import net.eiroca.library.core.LibParser;
-import net.eiroca.sysadm.flume.core.extractors.Extractors;
+import net.eiroca.library.system.Logs;
 
 public class SplitterExtractor extends SpacerExtractor {
 
-  static {
-    Extractors.registry.addEntry("separator", SplitterExtractor.class.getName());
-    Extractors.registry.addEntry("split", SplitterExtractor.class.getName());
-    Extractors.registry.addEntry("splitter", SplitterExtractor.class.getName());
-  }
+  transient private static final Logger logger = Logs.getLogger();
 
   final private transient CharParameter pSeparator = new CharParameter(params, "separator", ',');
 
@@ -43,7 +40,8 @@ public class SplitterExtractor extends SpacerExtractor {
   @Override
   public List<String> getValues(final String value) {
     if ((fields == null) || (value == null)) { return null; }
-    final List<String> result = LibParser.splitWithSep(value, separator, fields.length);
+    SplitterExtractor.logger.trace("Splitter source: {}", value);
+    final List<String> result = LibParser.splitWithSep(value, separator, -1);
     return result;
   }
 

@@ -17,13 +17,32 @@
 package net.eiroca.sysadm.flume.type.action;
 
 import java.util.Map;
+import com.google.common.collect.ImmutableMap;
+import net.eiroca.library.config.parameter.ListParameter;
 import net.eiroca.sysadm.flume.core.actions.Action;
 
 public class ActionDelete extends Action {
 
+  final private transient ListParameter pHeaders = new ListParameter(params, "header-names", null);
+
+  protected String[] headerNames;
+
+  @Override
+  public void configure(final ImmutableMap<String, String> config, final String prefix) {
+    super.configure(config, prefix);
+    headerNames = pHeaders.get();
+  }
+
   @Override
   public void run(final Map<String, String> headers, final String body) {
-    headers.remove(name);
+    if (headerNames != null) {
+      for (String header : headerNames) {
+        headers.remove(header);
+      }
+    }
+    else {
+      headers.remove(name);
+    }
   }
 
 }

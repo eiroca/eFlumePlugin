@@ -65,7 +65,7 @@ public class ActionExtractor extends Action {
   @Override
   public void run(final Map<String, String> headers, final String body) {
     if (extractor != null) {
-      ActionExtractor.logger.trace("Processing {}", getName());
+      logger.trace("Processing {}", getName());
       ActionExtractor.extractFields(source, extractor, extractorsFields, headers, body);
     }
   }

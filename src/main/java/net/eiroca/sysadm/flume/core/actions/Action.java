@@ -66,6 +66,7 @@ abstract public class Action extends ConfigurableObject implements IAction {
     expand = pExpand.get();
     silentError = pSilentError.get();
     filter = Filters.buildFilter(config, LibStr.concatenate(sessionPrefix, Action.CTX_FITLER_PREFIX), pFilterType.get(), pFilterMatch.get());
+    logger.trace("Config: {}", this.toString());
   }
 
   protected void setHeader(final Map<String, String> headers, final String body, final String name, final IStringExtractor extractor) {
@@ -94,9 +95,9 @@ abstract public class Action extends ConfigurableObject implements IAction {
 
   @Override
   final public void execute(final Map<String, String> headers, final String body) {
-    Action.logger.trace("Executing {}", getName());
+    logger.trace("Executing {}", getName());
     if ((filter == null) || filter.accept(headers, body)) {
-      Action.logger.trace("Running {}", getName());
+      logger.trace("Running {}", getName());
       try {
         run(headers, body);
       }

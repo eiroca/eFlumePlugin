@@ -19,7 +19,7 @@
     <eLib.version>0.0.10</eLib.version>
     <eLicense.version>0.0.10</eLicense.version>
     <eJDBCDrivers.version>0.0.10</eJDBCDrivers.version>
-    <httpclient.version>4.5.13</httpclient.version>
+    <httpclient.version>4.5.14</httpclient.version>
     <univocityparser.version>2.9.1</univocityparser.version>
     <hibernate.version>5.6.14.Final</hibernate.version>
     <protobuf.version>3.19.4</protobuf.version>

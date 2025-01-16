@@ -127,7 +127,7 @@ public class ElasticSink extends GenericSink<ElasticSinkContext> {
   @Override
   protected EventStatus process(final ElasticSinkContext context, final Event event, final Map<String, String> headers, final String body) throws Exception {
     EventStatus result;
-    final String _index = MacroExpander.expand(index, headers, body, null, null, false, 0, 0, !useEventTime);
+    final String _index = MacroExpander.expand(index, headers, body, null, null, false, 0, 0, !useEventTime).toLowerCase();
     final String _type = MacroExpander.expand(type, headers, body);
     final String _id = (id != null) ? MacroExpander.expand(id, headers, body) : null;
     final String _pipeline = (pipeline != null) ? MacroExpander.expand(pipeline, headers, body) : null;

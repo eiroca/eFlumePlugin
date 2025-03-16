@@ -60,3 +60,5 @@ licenses/*.lic
 #
 **/target/*
 /target/
+**/.classpath
+**/.project

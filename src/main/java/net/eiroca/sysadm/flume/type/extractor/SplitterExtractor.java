@@ -41,7 +41,7 @@ public class SplitterExtractor extends SpacerExtractor {
   public List<String> getValues(final String value) {
     if ((fields == null) || (value == null)) { return null; }
     SplitterExtractor.logger.trace("Splitter source: {}", value);
-    final List<String> result = LibParser.splitWithSep(value, separator, -1);
+    final List<String> result = LibParser.splitWithSep(value, separator, fieldCount);
     return result;
   }
 

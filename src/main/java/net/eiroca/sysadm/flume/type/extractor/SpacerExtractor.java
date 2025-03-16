@@ -38,6 +38,7 @@ public class SpacerExtractor extends Extractor {
 
   public String[] fields;
   public String[] fieldsAlt;
+  public int fieldCount;
 
   @Override
   public void configure(final ImmutableMap<String, String> config, final String prefix) {
@@ -45,6 +46,15 @@ public class SpacerExtractor extends Extractor {
     SpacerExtractor.logger.trace("config {}: {}", prefix, config);
     fields = pFields.get();
     fieldsAlt = pFieldsAlt.get();
+    if (fields == null) {
+      fieldCount = (fieldsAlt != null) ? fieldsAlt.length : -1;
+    }
+    else if (fieldsAlt == null) {
+      fieldCount = fields.length;
+    }
+    else {
+      fieldCount = -1;
+    }
   }
 
   @Override
@@ -68,7 +78,7 @@ public class SpacerExtractor extends Extractor {
   public List<String> getValues(final String value) {
     if ((fields == null) || (value == null)) { return null; }
     SpacerExtractor.logger.debug("Source: {}", value);
-    final List<String> result = LibParser.splitWithSpaces(value, -1);
+    final List<String> result = LibParser.splitWithSpaces(value, fieldCount);
     return result;
   }
 
